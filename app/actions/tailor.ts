@@ -1,0 +1,130 @@
+'use server'
+
+import { generateText, Output } from 'ai'
+import { z } from 'zod'
+import { db } from '@/lib/db'
+import { tailoredCv } from '@/lib/db/schema'
+import { getUserId } from '@/lib/session'
+import { getUsage } from '@/app/actions/queries'
+import { revalidatePath } from 'next/cache'
+import { and, eq } from 'drizzle-orm'
+
+const tailorSchema = z.object({
+  jobTitle: z.string().describe('The job title extracted from the posting'),
+  company: z
+    .string()
+    .nullable()
+    .describe('The hiring company name if present, else null'),
+  summary: z
+    .string()
+    .describe('A 2-3 sentence professional summary tailored to this role'),
+  tailoredCv: z
+    .string()
+    .describe(
+      'The full rewritten CV in clean markdown, tailored to the job, preserving the truth of the original experience but reordering, rephrasing and emphasising relevant achievements with quantified impact.',
+    ),
+  coverLetter: z
+    .string()
+    .describe('A concise, professional cover letter tailored to the role'),
+  keywords: z
+    .array(z.string())
+    .describe('The key ATS keywords from the job that are now reflected in the CV'),
+  matchBefore: z
+    .number()
+    .describe('Estimated ATS match score (0-100) of the ORIGINAL CV for this job'),
+  matchAfter: z
+    .number()
+    .describe('Estimated ATS match score (0-100) of the TAILORED CV for this job'),
+})
+
+export type TailorResult = {
+  ok: boolean
+  error?: string
+  cvId?: number
+}
+
+export async function tailorCv(input: {
+  jobDescription: string
+  originalCv: string
+  jobTitleHint?: string
+}): Promise<TailorResult> {
+  const userId = await getUserId()
+
+  // Enforce usage limits
+  const usage = await getUsage()
+  if (usage.remaining !== Infinity && usage.remaining <= 0) {
+    return {
+      ok: false,
+      error:
+        usage.plan === 'free'
+          ? 'You have used all 3 free tailored CVs. Upgrade to keep going.'
+          : 'You have reached your monthly limit. Upgrade your plan for more.',
+    }
+  }
+
+  const jobDescription = input.jobDescription.trim()
+  const originalCv = input.originalCv.trim()
+
+  if (jobDescription.length < 40 || originalCv.length < 40) {
+    return {
+      ok: false,
+      error: 'Please paste a fuller job description and CV (at least a few lines each).',
+    }
+  }
+
+  try {
+    const { experimental_output } = await generateText({
+      model: 'openai/gpt-5-mini',
+      system:
+        'You are an expert CV writer and career coach for the Nigerian and remote-first job market. ' +
+        'You tailor real CVs to specific job descriptions to pass Applicant Tracking Systems (ATS) and impress recruiters. ' +
+        'Rules: never fabricate jobs, degrees, or qualifications the candidate does not have. ' +
+        'Reorder and rephrase real experience, weave in the exact keywords from the job description naturally, ' +
+        'quantify achievements where the original implies them, and use clean, scannable formatting. ' +
+        'Be honest in the match scores: a generic untailored CV should usually score between 30-55 before tailoring.',
+      prompt:
+        `JOB DESCRIPTION:\n${jobDescription}\n\n` +
+        `CANDIDATE'S CURRENT CV:\n${originalCv}\n\n` +
+        (input.jobTitleHint ? `The user says the role is: ${input.jobTitleHint}\n\n` : '') +
+        'Tailor this CV to the job. Produce the structured output.',
+      experimental_output: Output.object({ schema: tailorSchema }),
+    })
+
+    const out = experimental_output
+
+    const [row] = await db
+      .insert(tailoredCv)
+      .values({
+        userId,
+        jobTitle: input.jobTitleHint?.trim() || out.jobTitle || 'Untitled role',
+        company: out.company ?? null,
+        jobDescription,
+        originalCv,
+        tailoredCv: out.tailoredCv,
+        coverLetter: out.coverLetter,
+        summary: out.summary,
+        keywords: JSON.stringify(out.keywords ?? []),
+        matchBefore: Math.round(out.matchBefore ?? 0),
+        matchAfter: Math.round(out.matchAfter ?? 0),
+      })
+      .returning({ id: tailoredCv.id })
+
+    revalidatePath('/dashboard')
+    revalidatePath('/dashboard/cvs')
+    return { ok: true, cvId: row.id }
+  } catch (err) {
+    console.log('[v0] tailorCv error:', err instanceof Error ? err.message : err)
+    return {
+      ok: false,
+      error: 'We could not tailor your CV right now. Please try again in a moment.',
+    }
+  }
+}
+
+export async function deleteTailoredCv(id: number) {
+  const userId = await getUserId()
+  await db
+    .delete(tailoredCv)
+    .where(and(eq(tailoredCv.id, id), eq(tailoredCv.userId, userId)))
+  revalidatePath('/dashboard/cvs')
+}
