@@ -11,3 +11,6 @@ export async function getSessionUser() {
   const session = await auth.api.getSession({ headers: await headers() })
   return session?.user ?? null
 }
+
+// Alias used across the dashboard and API routes.
+export const getCurrentUser = getSessionUser

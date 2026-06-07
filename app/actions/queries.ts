@@ -91,6 +91,26 @@ export async function getApplications() {
     .orderBy(desc(application.updatedAt))
 }
 
+export async function getApplicationStats() {
+  const userId = await getUserId()
+  const apps = await db
+    .select({ status: application.status })
+    .from(application)
+    .where(eq(application.userId, userId))
+
+  const byStatus: Record<string, number> = {
+    saved: 0,
+    applied: 0,
+    interview: 0,
+    offer: 0,
+    rejected: 0,
+  }
+  for (const a of apps) {
+    byStatus[a.status] = (byStatus[a.status] ?? 0) + 1
+  }
+  return { total: apps.length, byStatus }
+}
+
 export async function getDashboardStats() {
   const userId = await getUserId()
   const apps = await db

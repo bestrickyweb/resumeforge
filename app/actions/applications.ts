@@ -5,16 +5,7 @@ import { application } from '@/lib/db/schema'
 import { getUserId } from '@/lib/session'
 import { and, eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
-
-export const APPLICATION_STATUSES = [
-  'saved',
-  'applied',
-  'interview',
-  'offer',
-  'rejected',
-] as const
-
-export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number]
+import type { ApplicationStatus } from '@/lib/applications'
 
 export async function createApplication(input: {
   company: string
@@ -42,7 +33,7 @@ export async function createApplication(input: {
     cvId: input.cvId ?? null,
     appliedAt: input.status === 'applied' ? new Date() : null,
   })
-  revalidatePath('/dashboard/tracker')
+  revalidatePath('/dashboard/applications')
   revalidatePath('/dashboard')
   return { ok: true }
 }
@@ -60,7 +51,7 @@ export async function updateApplicationStatus(
       ...(status === 'applied' ? { appliedAt: new Date() } : {}),
     })
     .where(and(eq(application.id, id), eq(application.userId, userId)))
-  revalidatePath('/dashboard/tracker')
+  revalidatePath('/dashboard/applications')
   revalidatePath('/dashboard')
 }
 
@@ -90,7 +81,7 @@ export async function updateApplication(
       updatedAt: new Date(),
     })
     .where(and(eq(application.id, id), eq(application.userId, userId)))
-  revalidatePath('/dashboard/tracker')
+  revalidatePath('/dashboard/applications')
   revalidatePath('/dashboard')
   return { ok: true }
 }
@@ -100,6 +91,6 @@ export async function deleteApplication(id: number) {
   await db
     .delete(application)
     .where(and(eq(application.id, id), eq(application.userId, userId)))
-  revalidatePath('/dashboard/tracker')
+  revalidatePath('/dashboard/applications')
   revalidatePath('/dashboard')
 }

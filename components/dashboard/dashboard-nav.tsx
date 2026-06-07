@@ -19,7 +19,7 @@ const nav = [
   { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
   { href: '/dashboard/tailor', label: 'Tailor a CV', icon: Sparkles },
   { href: '/dashboard/cvs', label: 'My CVs', icon: FileText },
-  { href: '/dashboard/tracker', label: 'Applications', icon: KanbanSquare },
+  { href: '/dashboard/applications', label: 'Applications', icon: KanbanSquare },
   { href: '/dashboard/billing', label: 'Billing', icon: CreditCard },
 ]
 
