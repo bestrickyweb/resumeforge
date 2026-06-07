@@ -147,7 +147,9 @@ export function ApplicationDialog({
                 onValueChange={(v) => set("status", v as ApplicationStatus)}
               >
                 <SelectTrigger id="status">
-                  <SelectValue />
+                  <SelectValue>
+                    {(value: ApplicationStatus) => STATUS_LABELS[value]}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {APPLICATION_STATUSES.map((s) => (

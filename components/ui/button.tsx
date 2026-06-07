@@ -54,17 +54,17 @@ function Button({
   }) {
   const classes = cn(buttonVariants({ variant, size, className }))
 
-  // Support `asChild` (Radix-style) by mapping to base-ui's `render` prop.
+  // Support `asChild` (Radix-style): merge button styles onto the single child
+  // element (e.g. a Next.js <Link>) instead of rendering a <button>. We clone
+  // directly rather than routing through base-ui's `render` prop to avoid
+  // SSR/client attribute mismatches (role/type) that cause hydration errors.
   if (asChild && React.isValidElement(children)) {
-    return (
-      <ButtonPrimitive
-        data-slot="button"
-        className={classes}
-        nativeButton={false}
-        render={children as React.ReactElement}
-        {...props}
-      />
-    )
+    const child = children as React.ReactElement<{ className?: string }>
+    return React.cloneElement(child, {
+      "data-slot": "button",
+      className: cn(classes, child.props.className),
+      ...props,
+    } as React.HTMLAttributes<HTMLElement>)
   }
 
   return (

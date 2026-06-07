@@ -49,7 +49,7 @@ export function BillingPlans({ usage }: { usage: UsageInfo }) {
   const order: PlanId[] = ["free", "pro", "unlimited"]
 
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
+    <div className="grid gap-6 pt-5 lg:grid-cols-3">
       {order.map((id) => {
         const plan = PLANS[id]
         const isCurrent = usage.plan === id
