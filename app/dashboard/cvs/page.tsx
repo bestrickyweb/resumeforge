@@ -6,6 +6,7 @@ import { getTailoredCvs } from '@/app/actions/queries'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
+export const metadata = { title: 'My CVs | ResumeForge' }
 
 export default async function CvsPage() {
   const cvs = await getTailoredCvs()
