@@ -8,12 +8,10 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function CvsPage() {
-  try {
-    const cvs = await getTailoredCvs()
-    console.log('[v0] CvsPage: fetched', cvs.length, 'CVs')
+  const cvs = await getTailoredCvs()
 
-    return (
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-8">
+  return (
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-8">
       <PageHeader
         title="My CVs"
         description="Every CV you've tailored, ready to review and reuse."
