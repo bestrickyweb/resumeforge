@@ -118,6 +118,7 @@ export async function tailorCv(input: {
 
     revalidatePath('/dashboard')
     revalidatePath('/dashboard/cvs')
+    revalidatePath(`/dashboard/cvs/${row.id}`)
     return { ok: true, cvId: row.id }
   } catch (err) {
     console.log('[v0] tailorCv error:', err instanceof Error ? err.message : err)

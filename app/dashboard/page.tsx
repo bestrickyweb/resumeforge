@@ -14,6 +14,9 @@ import { getSessionUser } from '@/lib/session'
 import { getDashboardStats, getUsage, getTailoredCvs } from '@/app/actions/queries'
 import { PLANS } from '@/lib/plans'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function DashboardOverview() {
   const [user, stats, usage, cvs] = await Promise.all([
     getSessionUser(),
