@@ -1,19 +1,8 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
-import { Plus_Jakarta_Sans, Inter, Geist_Mono } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
-
-const jakarta = Plus_Jakarta_Sans({
-  variable: '--font-heading',
-  subsets: ['latin'],
-  weight: ['500', '600', '700', '800'],
-})
-const inter = Inter({ variable: '--font-sans', subsets: ['latin'] })
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-})
+import './font.css'
 
 export const metadata: Metadata = {
   title: 'ResumeForge — Beat the ATS, Land the Interview',
@@ -50,10 +39,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${jakarta.variable} ${inter.variable} ${geistMono.variable} bg-background`}
-    >
+    <html lang="en" className="bg-background">
       <body className="font-sans antialiased">
         {children}
         <Toaster />

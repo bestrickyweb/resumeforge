@@ -14,7 +14,14 @@ export default async function CvDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const cv = await getTailoredCvById(Number(id))
+  const cvId = Number(id)
+
+  // Validate that the ID is a valid number
+  if (!id || isNaN(cvId)) {
+    notFound()
+  }
+
+  const cv = await getTailoredCvById(cvId)
 
   if (!cv) {
     notFound()

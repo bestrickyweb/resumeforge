@@ -73,7 +73,12 @@ export async function getTailoredCvs() {
 }
 
 export async function getTailoredCvById(id: number) {
-  const userId = await getUserId()
+  let userId: string
+  try {
+    userId = await getUserId()
+  } catch {
+    return null
+  }
   const rows = await db
     .select()
     .from(tailoredCv)

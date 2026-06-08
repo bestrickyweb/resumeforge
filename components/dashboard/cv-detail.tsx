@@ -117,7 +117,7 @@ export function CvDetail({ cv }: { cv: CvRow }) {
       if (res.ok) {
         toast.success('Added to your application tracker')
         setTrackOpen(false)
-        router.push('/dashboard/tracker')
+        router.push('/dashboard/applications')
       } else {
         toast.error(res.error ?? 'Could not add application')
       }
