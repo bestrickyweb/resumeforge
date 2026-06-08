@@ -1,6 +1,7 @@
 'use server'
 
 import { generateText, Output } from 'ai'
+import { google } from '@ai-sdk/google'
 import { z } from 'zod'
 import { db } from '@/lib/db'
 import { tailoredCv } from '@/lib/db/schema'
@@ -8,6 +9,12 @@ import { getUserId } from '@/lib/session'
 import { getUsage } from '@/app/actions/queries'
 import { revalidatePath } from 'next/cache'
 import { and, eq } from 'drizzle-orm'
+
+// Use a free Gemini key when available (set GOOGLE_GENERATIVE_AI_API_KEY),
+// otherwise fall back to the Vercel AI Gateway model string.
+const tailorModel = process.env.GOOGLE_GENERATIVE_AI_API_KEY
+  ? google('gemini-2.5-flash')
+  : 'openai/gpt-5-mini'
 
 const tailorSchema = z.object({
   jobTitle: z.string().describe('The job title extracted from the posting'),
@@ -74,7 +81,7 @@ export async function tailorCv(input: {
 
   try {
     const { experimental_output } = await generateText({
-      model: 'openai/gpt-5-mini',
+      model: tailorModel,
       system:
         'You are an expert CV writer and career coach for the Nigerian and remote-first job market. ' +
         'You tailor real CVs to specific job descriptions to pass Applicant Tracking Systems (ATS) and impress recruiters. ' +
