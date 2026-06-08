@@ -8,11 +8,15 @@ export const metadata = { title: "Billing & Plans | ResumeForge" }
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-export default async function BillingPage() {
+export default async function BillingPage(props: {
+  searchParams: Promise<{ status?: string }>
+}) {
   const user = await getCurrentUser()
   if (!user) redirect("/sign-in")
 
   const usage = await getUsage()
+  const searchParams = await props.searchParams
+  const status = searchParams.status
 
   return (
     <div className="space-y-8">
@@ -20,7 +24,7 @@ export default async function BillingPage() {
         title="Billing & Plans"
         description="Upgrade to tailor more CVs and land interviews faster."
       />
-      <BillingPlans usage={usage} />
+      <BillingPlans usage={usage} initialStatus={status} />
     </div>
   )
 }

@@ -10,20 +10,20 @@ import { toast } from "sonner"
 import { PLANS, formatNgn, type PlanId } from "@/lib/plans"
 import type { UsageInfo } from "@/app/actions/queries"
 
-export function BillingPlans({ usage }: { usage: UsageInfo }) {
+export function BillingPlans({ usage, initialStatus }: { usage: UsageInfo; initialStatus?: string }) {
   const params = useSearchParams()
   const router = useRouter()
   const [loadingPlan, setLoadingPlan] = useState<PlanId | null>(null)
 
   useEffect(() => {
-    const status = params.get("status")
+    const status = initialStatus || params.get("status")
     if (!status) return
     if (status === "success") toast.success("Payment successful — your plan is active!")
     else if (status === "failed") toast.error("Payment was not completed.")
     else if (status === "error") toast.error("Something went wrong verifying payment.")
     // clean the url
     router.replace("/dashboard/billing")
-  }, [params, router])
+  }, [params, router, initialStatus])
 
   async function upgrade(plan: PlanId) {
     setLoadingPlan(plan)
