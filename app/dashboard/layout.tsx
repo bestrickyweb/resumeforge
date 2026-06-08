@@ -3,6 +3,9 @@ import { getSessionUser } from '@/lib/session'
 import { DashboardNav } from '@/components/dashboard/dashboard-nav'
 import { MobileNav } from '@/components/dashboard/mobile-nav'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function DashboardLayout({
   children,
 }: {
