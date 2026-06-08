@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { tailorCv } from '@/app/actions/tailor'
 import type { UsageInfo } from '@/app/actions/queries'
+import { CvUpload } from '@/components/dashboard/cv-upload'
 
 export function TailorForm({ usage }: { usage: UsageInfo }) {
   const router = useRouter()
@@ -85,12 +86,13 @@ export function TailorForm({ usage }: { usage: UsageInfo }) {
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="originalCv">Your current CV</Label>
+          <CvUpload onExtracted={(text) => setOriginalCv(text)} />
           <Textarea
             id="originalCv"
             required
             value={originalCv}
             onChange={(e) => setOriginalCv(e.target.value)}
-            placeholder="Paste your current CV as plain text..."
+            placeholder="Upload a file above, or paste your current CV as plain text..."
             className="min-h-64 resize-y"
           />
         </div>
