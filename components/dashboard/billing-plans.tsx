@@ -39,7 +39,12 @@ export function BillingPlans({ usage }: { usage: UsageInfo }) {
         setLoadingPlan(null)
         return
       }
-      window.location.href = data.authorization_url
+      // Open Paystack checkout in a new tab to avoid redirect blocking
+      const win = window.open(data.authorization_url, "_blank")
+      if (!win) {
+        toast.error("Popup was blocked. Please allow popups and try again.")
+      }
+      setLoadingPlan(null)
     } catch {
       toast.error("Network error. Please try again.")
       setLoadingPlan(null)
