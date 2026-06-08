@@ -15,7 +15,10 @@ export default async function CvDetailPage({
 }) {
   const { id } = await params
   const cv = await getTailoredCvById(Number(id))
-  if (!cv) notFound()
+
+  if (!cv) {
+    notFound()
+  }
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-8">
