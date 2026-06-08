@@ -78,8 +78,5 @@ export default async function CvsPage() {
         </div>
       )}
     </div>
-  ) } catch (err) {
-    console.log('[v0] CvsPage error:', err instanceof Error ? err.message : String(err))
-    throw err
-  }
+  )
 }
