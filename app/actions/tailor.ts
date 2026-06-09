@@ -4,7 +4,7 @@ import { generateText, Output } from 'ai'
 import { google } from '@ai-sdk/google'
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { tailoredCv } from '@/lib/db/schema'
+import { tailoredCv, user } from '@/lib/db/schema'
 import { getUserId } from '@/lib/session'
 import { getUsage } from '@/app/actions/queries'
 import { revalidatePath } from 'next/cache'
@@ -80,6 +80,13 @@ export async function tailorCv(input: {
   }
 
   try {
+    const [userRow] = await db
+      .select({ name: user.name })
+      .from(user)
+      .where(eq(user.id, userId))
+      .limit(1)
+    const userName = userRow?.name?.trim() || 'User'
+
     const { experimental_output } = await generateText({
       model: tailorModel,
       system:
@@ -103,6 +110,7 @@ export async function tailorCv(input: {
       .insert(tailoredCv)
       .values({
         userId,
+        userName,
         jobTitle: input.jobTitleHint?.trim() || out.jobTitle || 'Untitled role',
         company: out.company ?? null,
         jobDescription,

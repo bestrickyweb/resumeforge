@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Copy, Download, Trash2, Check, KanbanSquare, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { jsPDF } from 'jspdf'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
@@ -14,12 +15,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { deleteTailoredCv } from '@/app/actions/tailor'
 import { createApplication } from '@/app/actions/applications'
 import { cn } from '@/lib/utils'
 
 interface CvRow {
   id: number
+  userName: string
   jobTitle: string
   company: string | null
   summary: string | null
@@ -72,6 +75,7 @@ export function CvDetail({ cv }: { cv: CvRow }) {
   const [trackOpen, setTrackOpen] = useState(false)
   const [deleting, startDelete] = useTransition()
   const [tracking, startTrack] = useTransition()
+  const [downloadFormat, setDownloadFormat] = useState<'txt' | 'pdf'>('txt')
 
   const keywords: string[] = (() => {
     try {
@@ -88,14 +92,55 @@ export function CvDetail({ cv }: { cv: CvRow }) {
     setTimeout(() => setCopied(null), 1500)
   }
 
-  function download(text: string, suffix: string) {
+  function generateFileName(suffix: string, ext: string): string {
+    const namePart = cv.userName.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '')
+    const titlePart = cv.jobTitle.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '')
+    return `${namePart}-${titlePart}-${suffix}.${ext}`
+  }
+
+  function downloadTxt(text: string, fileName: string) {
     const blob = new Blob([text], { type: 'text/plain;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `${cv.jobTitle.replace(/\s+/g, '-').toLowerCase()}-${suffix}.txt`
+    a.download = fileName
     a.click()
     URL.revokeObjectURL(url)
+  }
+
+  function downloadPdf(text: string, fileName: string) {
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' })
+    const pageWidth = doc.internal.pageSize.getWidth()
+    const margin = 15
+    const maxLineWidth = pageWidth - margin * 2
+    const lineHeight = 5
+
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(10)
+
+    const lines = doc.splitTextToSize(text, maxLineWidth)
+    let y = margin
+
+    for (const line of lines) {
+      if (y > 280) {
+        doc.addPage()
+        y = margin
+      }
+      doc.text(line, margin, y)
+      y += lineHeight
+    }
+
+    doc.save(fileName)
+  }
+
+  function download(text: string, suffix: string, format: 'txt' | 'pdf') {
+    const ext = format
+    const fileName = generateFileName(suffix, ext)
+    if (format === 'pdf') {
+      downloadPdf(text, fileName)
+    } else {
+      downloadTxt(text, fileName)
+    }
   }
 
   function onDelete() {
@@ -203,16 +248,20 @@ export function CvDetail({ cv }: { cv: CvRow }) {
             <DocPanel
               text={cv.tailoredCv}
               onCopy={() => copy(cv.tailoredCv, 'tailored')}
-              onDownload={() => download(cv.tailoredCv, 'cv')}
+              onDownload={() => download(cv.tailoredCv, 'cv', downloadFormat)}
               copied={copied === 'tailored'}
+              format={downloadFormat}
+              onFormatChange={setDownloadFormat}
             />
           </TabsContent>
           <TabsContent value="cover">
             <DocPanel
               text={cv.coverLetter || 'No cover letter was generated.'}
               onCopy={() => copy(cv.coverLetter || '', 'cover')}
-              onDownload={() => download(cv.coverLetter || '', 'cover-letter')}
+              onDownload={() => download(cv.coverLetter || '', 'cover-letter', downloadFormat)}
               copied={copied === 'cover'}
+              format={downloadFormat}
+              onFormatChange={setDownloadFormat}
             />
           </TabsContent>
           <TabsContent value="original">
@@ -252,17 +301,32 @@ function DocPanel({
   onDownload,
   copied,
   muted,
+  format,
+  onFormatChange,
 }: {
   text: string
   onCopy?: () => void
   onDownload?: () => void
   copied?: boolean
   muted?: boolean
+  format?: 'txt' | 'pdf'
+  onFormatChange?: (format: 'txt' | 'pdf') => void
 }) {
   return (
     <div className="rounded-xl border border-border bg-card">
       {(onCopy || onDownload) && (
-        <div className="flex justify-end gap-2 border-b border-border px-4 py-2">
+        <div className="flex items-center justify-end gap-2 border-b border-border px-4 py-2">
+          {onFormatChange && (
+            <Select value={format} onValueChange={(v) => onFormatChange(v as 'txt' | 'pdf')}>
+              <SelectTrigger className="h-8 w-[70px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="txt">TXT</SelectItem>
+                <SelectItem value="pdf">PDF</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
           {onCopy && (
             <Button onClick={onCopy} variant="ghost" size="sm">
               {copied ? (

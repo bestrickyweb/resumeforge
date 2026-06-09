@@ -87,6 +87,18 @@ export async function getTailoredCvById(id: number) {
   return rows[0] ?? null
 }
 
+export async function getPreviousCvText(): Promise<string | null> {
+  const userId = await getUserId()
+  const rows = await db
+    .select({ originalCv: tailoredCv.originalCv })
+    .from(tailoredCv)
+    .where(eq(tailoredCv.userId, userId))
+    .orderBy(desc(tailoredCv.createdAt))
+    .limit(1)
+
+  return rows[0]?.originalCv ?? null
+}
+
 export async function getApplications() {
   const userId = await getUserId()
   return db

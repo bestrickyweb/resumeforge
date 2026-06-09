@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Sparkles, Loader2, Lock } from 'lucide-react'
+import { Sparkles, Loader2, Lock, FileText } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,21 +13,36 @@ import { tailorCv } from '@/app/actions/tailor'
 import type { UsageInfo } from '@/app/actions/queries'
 import { CvUpload } from '@/components/dashboard/cv-upload'
 
-export function TailorForm({ usage }: { usage: UsageInfo }) {
+export function TailorForm({
+  usage,
+  previousCvText,
+}: {
+  usage: UsageInfo
+  previousCvText: string | null
+}) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [jobTitle, setJobTitle] = useState('')
   const [jobDescription, setJobDescription] = useState('')
   const [originalCv, setOriginalCv] = useState('')
+  const [usingPrevious, setUsingPrevious] = useState(false)
+
+  useEffect(() => {
+    if (previousCvText) {
+      setOriginalCv(previousCvText)
+      setUsingPrevious(true)
+    }
+  }, [previousCvText])
 
   const locked = usage.remaining !== Infinity && usage.remaining <= 0
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
+    const cvToUse = originalCv || ''
     const result = await tailorCv({
       jobDescription,
-      originalCv,
+      originalCv: cvToUse,
       jobTitleHint: jobTitle,
     })
     if (result.ok && result.cvId) {
@@ -86,7 +101,29 @@ export function TailorForm({ usage }: { usage: UsageInfo }) {
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="originalCv">Your current CV</Label>
-          <CvUpload onExtracted={(text) => setOriginalCv(text)} />
+          {usingPrevious && (
+            <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">
+              <FileText className="h-4 w-4 text-primary" />
+              <span className="flex-1">Using your most recent saved CV</span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setOriginalCv('')
+                  setUsingPrevious(false)
+                }}
+              >
+                Replace
+              </Button>
+            </div>
+          )}
+          <CvUpload
+            onExtracted={(text) => {
+              setOriginalCv(text)
+              setUsingPrevious(false)
+            }}
+          />
           <Textarea
             id="originalCv"
             required
