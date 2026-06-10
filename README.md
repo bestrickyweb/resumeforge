@@ -144,6 +144,10 @@ Create a `.env` file in the project root. Required variables:
 - `PAYSTACK_SECRET_KEY` — Paystack API key for billing
 - `PAYSTACK_PUBLIC_KEY` — Paystack public key for client-side checkout
 
+### Paystack Webhook
+
+Configure your Paystack webhook to point to `/api/paystack/webhook` to receive asynchronous payment events (charge.success, charge.failed). The webhook verifies the signature using `PAYSTACK_SECRET_KEY`.
+
 ### Database Setup
 
 Apply the schema migrations using the configured database connection. The project uses Drizzle ORM with a PostgreSQL adapter. Ensure the database referenced in `DATABASE_URL` exists before running migrations.

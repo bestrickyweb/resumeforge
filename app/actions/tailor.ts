@@ -95,7 +95,14 @@ export async function tailorCv(input: {
         'Rules: never fabricate jobs, degrees, or qualifications the candidate does not have. ' +
         'Reorder and rephrase real experience, weave in the exact keywords from the job description naturally, ' +
         'quantify achievements where the original implies them, and use clean, scannable formatting. ' +
-        'Be honest in the match scores: a generic untailored CV should usually score between 30-55 before tailoring.',
+        'Be honest in the match scores: a generic untailored CV should usually score between 30-55 before tailoring. ' +
+        'CRITICAL FORMATTING RULES: Output the CV as PURE PLAIN TEXT only. ' +
+        'NEVER use markdown symbols: no #, ##, ###, ####, **, *, -, >, or any markdown syntax. ' +
+        'Use ALL CAPS for section headers (e.g., PROFESSIONAL SUMMARY, WORK EXPERIENCE, SKILLS, EDUCATION). ' +
+        'Separate sections with a blank line. ' +
+        'Use simple bullet points with a dash (-) or just plain paragraphs. ' +
+        'The output must look like a professional plain-text resume that an ATS can parse. ' +
+        'Do NOT include any markdown formatting whatsoever.',
       prompt:
         `JOB DESCRIPTION:\n${jobDescription}\n\n` +
         `CANDIDATE'S CURRENT CV:\n${originalCv}\n\n` +

@@ -14,7 +14,14 @@ export interface UsageInfo {
   remaining: number // Infinity allowed
 }
 
-export async function getSubscription(userId: string) {
+export interface SubscriptionInfo {
+  plan: PlanId
+  status: string
+  authorizationCode: string | null
+  paystackCustomerId: string | null
+}
+
+export async function getSubscription(userId: string): Promise<SubscriptionInfo> {
   const rows = await db
     .select()
     .from(subscription)
@@ -23,11 +30,13 @@ export async function getSubscription(userId: string) {
 
   if (rows.length === 0) {
     await db.insert(subscription).values({ userId, plan: 'free' }).onConflictDoNothing()
-    return { plan: 'free' as PlanId, status: 'active' }
+    return { plan: 'free' as PlanId, status: 'active', authorizationCode: null, paystackCustomerId: null }
   }
   return {
     plan: (rows[0].plan as PlanId) ?? 'free',
     status: rows[0].status,
+    authorizationCode: rows[0].authorizationCode,
+    paystackCustomerId: rows[0].paystackCustomerId,
   }
 }
 

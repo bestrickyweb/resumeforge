@@ -31,6 +31,8 @@ export async function GET(req: Request) {
   const meta = data.data.metadata ?? {}
   const userId: string | undefined = meta.userId
   const plan: PlanId = meta.plan === "unlimited" ? "unlimited" : "pro"
+  const authorizationCode = data.data.authorization?.authorization_code
+  const paystackCustomerId = data.data.customer?.id
 
   if (!userId) {
     return NextResponse.redirect(`${origin}/dashboard/billing?status=error`)
@@ -46,6 +48,8 @@ export async function GET(req: Request) {
       plan,
       status: "active",
       paystackReference: reference,
+      authorizationCode,
+      paystackCustomerId,
       currentPeriodEnd: periodEnd,
     })
     .onConflictDoUpdate({
@@ -54,6 +58,8 @@ export async function GET(req: Request) {
         plan,
         status: "active",
         paystackReference: reference,
+        authorizationCode,
+        paystackCustomerId,
         currentPeriodEnd: periodEnd,
         updatedAt: new Date(),
       },

@@ -102,6 +102,8 @@ export const subscription = pgTable('subscription', {
   plan: text('plan').notNull().default('free'),
   status: text('status').notNull().default('active'),
   paystackReference: text('paystackReference'),
+  authorizationCode: text('authorizationCode'),
+  paystackCustomerId: text('paystackCustomerId'),
   currentPeriodEnd: timestamp('currentPeriodEnd'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
