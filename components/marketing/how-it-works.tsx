@@ -27,7 +27,7 @@ export function HowItWorks() {
             How it works
           </p>
           <h2 className="mt-2 text-balance font-heading text-3xl font-extrabold tracking-tight md:text-4xl">
-            From job post to interview-ready in three steps
+            Tailor Your Resume to Any Job Description
           </h2>
         </div>
 

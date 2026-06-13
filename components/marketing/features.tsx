@@ -48,7 +48,7 @@ export function Features() {
           Features
         </p>
         <h2 className="mt-2 text-balance font-heading text-3xl font-extrabold tracking-tight md:text-4xl">
-          Everything you need to get hired faster
+          Professional Resume Builder for Modern Job Seekers
         </h2>
       </div>
 

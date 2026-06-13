@@ -28,12 +28,25 @@ const cols = [
       { label: 'Refund policy', href: '#' },
     ],
   },
+  {
+    title: 'SEO tools',
+    links: [
+      { label: 'ATS Resume Builder', href: '/ats-resume-builder' },
+      { label: 'Resume Tailoring Tool', href: '/resume-tailoring-tool' },
+      { label: 'AI Resume Builder', href: '/ai-resume-builder' },
+      { label: 'Resume Optimizer', href: '/resume-optimizer' },
+      { label: 'Job Description Matcher', href: '/job-description-matcher' },
+      { label: 'ATS Resume Checker', href: '/ats-resume-checker' },
+      { label: 'CV Builder', href: '/cv-builder' },
+      { label: 'Resume Keyword Optimizer', href: '/resume-keyword-optimizer' },
+    ],
+  },
 ]
 
 export function MarketingFooter() {
   return (
     <footer className="border-t border-border bg-card">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 md:grid-cols-[1.5fr_1fr_1fr_1fr_1.2fr]">
         <div>
           <Logo />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">

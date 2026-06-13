@@ -21,7 +21,7 @@ export function BeforeAfter() {
     <section className="mx-auto max-w-6xl px-4 py-20">
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="text-balance font-heading text-3xl font-extrabold tracking-tight md:text-4xl">
-          The same CV, rewritten to win
+          Increase ATS Match Scores Instantly
         </h2>
         <p className="mt-3 text-pretty text-muted-foreground">
           Recruiters in Lagos, Abuja and beyond use ATS software to filter

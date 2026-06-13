@@ -7,7 +7,7 @@ export function FinalCta() {
     <section className="mx-auto max-w-6xl px-4 py-20">
       <div className="overflow-hidden rounded-3xl bg-primary px-6 py-16 text-center text-primary-foreground md:px-12">
         <h2 className="mx-auto max-w-2xl text-balance font-heading text-3xl font-extrabold tracking-tight md:text-4xl">
-          Your next interview starts with the right CV
+          Create Job Specific CVs in Under 60 Seconds
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-pretty text-primary-foreground/80">
           Stop sending CVs into the void. Tailor your first three free — no card

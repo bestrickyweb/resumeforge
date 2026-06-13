@@ -38,9 +38,9 @@ export function Faq() {
     <section id="faq" className="bg-secondary/40 py-20">
       <div className="mx-auto max-w-3xl px-4">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-balance font-heading text-3xl font-extrabold tracking-tight md:text-4xl">
+          <h3 className="text-balance font-heading text-3xl font-extrabold tracking-tight md:text-4xl">
             Questions, answered
-          </h2>
+          </h3>
         </div>
 
         <div className="mt-10 flex flex-col gap-3">

@@ -14,19 +14,20 @@ export function Hero() {
           </div>
 
           <h1 className="text-balance font-heading text-4xl font-extrabold leading-tight tracking-tight md:text-5xl lg:text-6xl">
-            Beat the bots. <span className="text-primary">Land the interview.</span>
+            ATS Optimized Resume Builder Powered by AI
           </h1>
 
           <p className="mt-5 max-w-md text-pretty text-lg leading-relaxed text-muted-foreground">
-            75% of CVs are rejected by applicant tracking systems before a human
-            ever sees them. ResumeForge tailors your CV to any job in seconds so
-            you make the shortlist.
+            ATS Resume Builder That Tailors Your CV to Any Job Description.
+            Upload your resume, paste a job description, and generate an ATS
+            optimized version in less than a minute. Increase keyword matching
+            and improve your chances of landing interviews.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg" className="h-12 px-7 text-base">
               <Link href="/sign-up">
-                Tailor my CV free <ArrowRight className="ml-1 h-4 w-4" />
+                Tailor My Resume Free <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>
             <Button
