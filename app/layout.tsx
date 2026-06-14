@@ -13,6 +13,7 @@ import './globals.css'
 import './font.css'
 
 const jsonLd = JSON.stringify(structuredData)
+const bingSiteVerification = process.env.BING_SITE_VERIFICATION
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -20,7 +21,10 @@ export const metadata: Metadata = {
   description: SEO_DESCRIPTION,
   keywords: SEO_KEYWORDS,
   alternates: { canonical: SITE_URL },
-  verification: { google: GOOGLE_SITE_VERIFICATION },
+  verification: {
+    google: GOOGLE_SITE_VERIFICATION,
+    ...(bingSiteVerification ? { bing: bingSiteVerification } : {}),
+  },
   openGraph: {
     title: 'ResumeForge AI | ATS Resume Builder & Job Tailored CV Generator',
     description:
