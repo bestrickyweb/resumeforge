@@ -16,33 +16,6 @@ const jsonLd = JSON.stringify(structuredData)
 const bingSiteVerification = process.env.BING_SITE_VERIFICATION
 
 export const metadata: Metadata = {
-<<<<<<< HEAD
-  title: 'ResumeForge — Beat the ATS, Land the Interview',
-  description:
-    'ResumeForge tailors your CV to any job description in seconds. Built for Nigerian job seekers to beat applicant tracking systems and get more interviews.',
-  generator: 'v0.app',
-  keywords: [
-    'CV tailoring',
-    'ATS resume',
-    'Nigeria jobs',
-    'resume optimizer',
-    'job application tracker',
-    'cover letter generator',
-  ],
-  openGraph: {
-    title: 'ResumeForge — Beat the ATS, Land the Interview',
-    description:
-      'Tailor your CV to any job in seconds and beat applicant tracking systems. Built for Nigerian job seekers.',
-    type: 'website',
-    images: [
-      {
-        url: '/resumeforge.png',
-        width: 1200,
-        height: 630,
-        alt: 'ResumeForge - Beat the ATS, Land the Interview',
-      },
-    ],
-=======
   metadataBase: new URL(SITE_URL),
   title: SEO_TITLE,
   description: SEO_DESCRIPTION,
@@ -51,29 +24,26 @@ export const metadata: Metadata = {
   verification: {
     google: GOOGLE_SITE_VERIFICATION,
     ...(bingSiteVerification ? { bing: bingSiteVerification } : {}),
->>>>>>> main
   },
   openGraph: {
-    title: 'ResumeForge AI | ATS Resume Builder & Job Tailored CV Generator',
-    description:
-      'Transform any resume into a job specific ATS optimized resume in less than a minute.',
+    title: SEO_TITLE,
+    description: SEO_DESCRIPTION,
     type: 'website',
     url: SITE_URL,
     images: [
       {
-        url: `${SITE_URL}/og-image.png`,
+        url: '/resumeforge.png',
         width: 1200,
         height: 630,
-        alt: 'ResumeForge AI ATS resume builder',
+        alt: 'ResumeForge - Beat the ATS, Land the Interview',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ResumeForge AI | ATS Resume Builder',
-    description:
-      'Generate ATS optimized resumes tailored to any job description in seconds.',
-    images: [`${SITE_URL}/og-image.png`],
+    title: SEO_TITLE,
+    description: SEO_DESCRIPTION,
+    images: ['/resumeforge.png'],
   },
   generator: 'v0.app',
   icons: {
