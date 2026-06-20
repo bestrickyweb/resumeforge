@@ -31,7 +31,7 @@ export function Testimonials() {
       <div className="mx-auto max-w-6xl px-4">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-balance font-heading text-3xl font-extrabold tracking-tight md:text-4xl">
-            Real interviews. Real offers.
+            Get More Interviews With AI Powered Resume Optimization
           </h2>
           <p className="mt-3 text-muted-foreground">
             Job seekers across Nigeria are turning applications into interviews.

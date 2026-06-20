@@ -14,7 +14,14 @@ export interface UsageInfo {
   remaining: number // Infinity allowed
 }
 
-export async function getSubscription(userId: string) {
+export interface SubscriptionInfo {
+  plan: PlanId
+  status: string
+  authorizationCode: string | null
+  paystackCustomerId: string | null
+}
+
+export async function getSubscription(userId: string): Promise<SubscriptionInfo> {
   const rows = await db
     .select()
     .from(subscription)
@@ -23,11 +30,13 @@ export async function getSubscription(userId: string) {
 
   if (rows.length === 0) {
     await db.insert(subscription).values({ userId, plan: 'free' }).onConflictDoNothing()
-    return { plan: 'free' as PlanId, status: 'active' }
+    return { plan: 'free' as PlanId, status: 'active', authorizationCode: null, paystackCustomerId: null }
   }
   return {
     plan: (rows[0].plan as PlanId) ?? 'free',
     status: rows[0].status,
+    authorizationCode: rows[0].authorizationCode,
+    paystackCustomerId: rows[0].paystackCustomerId,
   }
 }
 
@@ -73,13 +82,30 @@ export async function getTailoredCvs() {
 }
 
 export async function getTailoredCvById(id: number) {
-  const userId = await getUserId()
+  let userId: string
+  try {
+    userId = await getUserId()
+  } catch {
+    return null
+  }
   const rows = await db
     .select()
     .from(tailoredCv)
     .where(and(eq(tailoredCv.id, id), eq(tailoredCv.userId, userId)))
     .limit(1)
   return rows[0] ?? null
+}
+
+export async function getPreviousCvText(): Promise<string | null> {
+  const userId = await getUserId()
+  const rows = await db
+    .select({ originalCv: tailoredCv.originalCv })
+    .from(tailoredCv)
+    .where(eq(tailoredCv.userId, userId))
+    .orderBy(desc(tailoredCv.createdAt))
+    .limit(1)
+
+  return rows[0]?.originalCv ?? null
 }
 
 export async function getApplications() {

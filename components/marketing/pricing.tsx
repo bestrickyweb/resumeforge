@@ -13,9 +13,9 @@ export function Pricing() {
         <p className="text-sm font-semibold uppercase tracking-wider text-primary">
           Pricing
         </p>
-        <h2 className="mt-2 text-balance font-heading text-3xl font-extrabold tracking-tight md:text-4xl">
+        <h3 className="mt-2 text-balance font-heading text-3xl font-extrabold tracking-tight md:text-4xl">
           Priced for Nigerian job seekers
-        </h2>
+        </h3>
         <p className="mt-3 text-pretty text-muted-foreground">
           Start free. Upgrade only when you are applying seriously. Pay securely
           with Paystack — card, bank transfer or USSD.
