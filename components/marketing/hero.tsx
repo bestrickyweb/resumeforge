@@ -24,7 +24,7 @@ export function Hero() {
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg" className="h-12 px-7 text-base">
+            <Button asChild size="lg" className="h-12 px-7 text-base sm:h-12">
               <Link href="/sign-up">
                 Tailor my CV free <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
@@ -33,7 +33,7 @@ export function Hero() {
               asChild
               size="lg"
               variant="outline"
-              className="h-12 px-7 text-base"
+              className="h-12 px-7 text-base sm:h-12"
             >
               <a href="#how-it-works">See how it works</a>
             </Button>

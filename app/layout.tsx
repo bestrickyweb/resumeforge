@@ -33,6 +33,14 @@ export const metadata: Metadata = {
     description:
       'Tailor your CV to any job in seconds and beat applicant tracking systems. Built for Nigerian job seekers.',
     type: 'website',
+    images: [
+      {
+        url: '/resumeforge.png',
+        width: 1200,
+        height: 630,
+        alt: 'ResumeForge - Beat the ATS, Land the Interview',
+      },
+    ],
   },
   icons: {
     icon: [

@@ -67,10 +67,10 @@ export function MarketingHeader() {
               </a>
             ))}
             <div className="mt-2 flex flex-col gap-2">
-              <Button asChild variant="outline" size="sm">
+              <Button asChild variant="outline" size="sm" className="h-10">
                 <Link href="/sign-in">Log in</Link>
               </Button>
-              <Button asChild size="sm">
+              <Button asChild size="sm" className="h-10">
                 <Link href="/sign-up">Get started free</Link>
               </Button>
             </div>
