@@ -54,7 +54,7 @@ export function BillingPlans({ usage, initialStatus }: { usage: UsageInfo; initi
   const order: PlanId[] = ["free", "pro", "unlimited"]
 
   return (
-    <div className="grid gap-6 pt-5 lg:grid-cols-3">
+    <div className="grid gap-6 pt-8 lg:grid-cols-3">
       {order.map((id) => {
         const plan = PLANS[id]
         const isCurrent = usage.plan === id
@@ -101,16 +101,16 @@ export function BillingPlans({ usage, initialStatus }: { usage: UsageInfo; initi
               </ul>
 
               {id === "free" ? (
-                <Button variant="outline" className="w-full" disabled>
+                <Button variant="outline" className="h-11 w-full" disabled>
                   {isCurrent ? "Your current plan" : "Free forever"}
                 </Button>
               ) : isCurrent ? (
-                <Button variant="outline" className="w-full" disabled>
+                <Button variant="outline" className="h-11 w-full" disabled>
                   Active plan
                 </Button>
               ) : (
                 <Button
-                  className="w-full"
+                  className="h-11 w-full"
                   variant={plan.highlight ? "default" : "outline"}
                   onClick={() => upgrade(id)}
                   disabled={loadingPlan !== null}
