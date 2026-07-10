@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Copy, Download, Trash2, Check, KanbanSquare, Loader2 } from 'lucide-react'
+import { Copy, Download, Trash2, Check, KanbanSquare, Loader2, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 import { jsPDF } from 'jspdf'
 import { Button } from '@/components/ui/button'
@@ -18,6 +18,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { deleteTailoredCv } from '@/app/actions/tailor'
 import { createApplication } from '@/app/actions/applications'
+import { scanAchievements } from '@/app/actions/scan'
 import { cn } from '@/lib/utils'
 
 interface CvRow {
@@ -76,6 +77,10 @@ export function CvDetail({ cv }: { cv: CvRow }) {
   const [deleting, startDelete] = useTransition()
   const [tracking, startTrack] = useTransition()
   const [downloadFormat, setDownloadFormat] = useState<'txt' | 'pdf'>('txt')
+  const [achievementsOpen, setAchievementsOpen] = useState(false)
+  const [achievementsLoading, setAchievementsLoading] = useState(false)
+  const [achievements, setAchievements] = useState<{ originalBullet: string; hasMetric: boolean; suggestion: string; metricType: string }[]>([])
+  const [coverageScore, setCoverageScore] = useState<number | null>(null)
 
   const keywords: string[] = (() => {
     try {
@@ -169,6 +174,21 @@ export function CvDetail({ cv }: { cv: CvRow }) {
     })
   }
 
+  async function onScanAchievements() {
+    setAchievementsLoading(true)
+    setAchievements([])
+    setCoverageScore(null)
+    const res = await scanAchievements({ cvText: cv.tailoredCv || cv.originalCv })
+    setAchievementsLoading(false)
+    if (res.ok && res.achievements) {
+      setAchievements(res.achievements)
+      setCoverageScore(res.coverageScore ?? null)
+      setAchievementsOpen(true)
+    } else {
+      toast.error(res.error || 'Could not scan achievements')
+    }
+  }
+
   const delta = cv.matchAfter - cv.matchBefore
 
   return (
@@ -199,6 +219,9 @@ export function CvDetail({ cv }: { cv: CvRow }) {
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button onClick={onScanAchievements} variant="outline" size="sm">
+            <Sparkles className="mr-2 h-4 w-4" /> Achievements scanner
+          </Button>
           <Button onClick={() => setTrackOpen(true)} variant="outline" size="sm">
             <KanbanSquare className="mr-2 h-4 w-4" /> Track application
           </Button>
@@ -289,6 +312,42 @@ export function CvDetail({ cv }: { cv: CvRow }) {
               Add to tracker
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={achievementsOpen} onOpenChange={setAchievementsOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Achievements scanner</DialogTitle>
+            <DialogDescription>
+              {coverageScore !== null
+                ? `Metric coverage: ${coverageScore}%`
+                : 'Scanning your CV for achievement metrics...'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-[70vh] space-y-3 overflow-y-auto">
+            {achievements.map((item, idx) => (
+              <div
+                key={idx}
+                className="rounded-xl border border-border bg-card p-4"
+              >
+                <p className="text-sm font-medium">{item.originalBullet}</p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Status:{' '}
+                  <span className={item.hasMetric ? 'text-primary' : 'text-destructive'}>
+                    {item.hasMetric ? 'Metric present' : 'Needs metric'}
+                  </span>
+                </p>
+                {!item.hasMetric && (
+                  <div className="mt-2 rounded-lg bg-muted/60 p-3 text-xs">
+                    <p className="font-semibold">Suggested rewrite</p>
+                    <p className="mt-1">{item.suggestion}</p>
+                    <p className="mt-1 text-muted-foreground">Metric type: {item.metricType}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </DialogContent>
       </Dialog>
     </div>

@@ -34,7 +34,8 @@ export function TailorForm({
     }
   }, [previousCvText])
 
-  const locked = usage.remaining !== Infinity && usage.remaining <= 0
+  const cvRemaining = usage.features.cvTailoring.remaining
+  const locked = cvRemaining !== Infinity && cvRemaining <= 0
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -137,9 +138,9 @@ export function TailorForm({
 
       <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-muted-foreground">
-          {usage.remaining === Infinity
+          {cvRemaining === Infinity
             ? 'Unlimited tailoring on your plan.'
-            : `${usage.remaining} ${usage.remaining === 1 ? 'CV' : 'CVs'} remaining.`}
+            : `${cvRemaining} ${cvRemaining === 1 ? 'CV' : 'CVs'} remaining.`}
         </p>
         <Button type="submit" size="lg" disabled={loading} className="w-full sm:w-auto">
           {loading ? (

@@ -92,6 +92,15 @@ export const application = pgTable('application', {
   notes: text('notes'),
   cvId: integer('cvId'),
   appliedAt: timestamp('appliedAt'),
+  nextReminderAt: timestamp('nextReminderAt'),
+  lastContactAt: timestamp('lastContactAt'),
+  followUpCount: integer('followUpCount').default(0),
+  salaryOffered: text('salaryOffered'),
+  salaryExpected: text('salaryExpected'),
+  offerExpiresAt: timestamp('offerExpiresAt'),
+  lastRecruiterReplyAt: timestamp('lastRecruiterReplyAt'),
+  jobSource: text('jobSource'),
+  jobBoardId: text('jobBoardId'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 })
@@ -107,4 +116,68 @@ export const subscription = pgTable('subscription', {
   currentPeriodEnd: timestamp('currentPeriodEnd'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+})
+
+export const interviewSession = pgTable('interview_session', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  applicationId: integer('applicationId'),
+  jobTitle: text('jobTitle').notNull(),
+  company: text('company'),
+  questions: text('questions').notNull().default('[]'),
+  userAnswers: text('userAnswers').notNull().default('[]'),
+  aiFeedback: text('aiFeedback').notNull().default('[]'),
+  overallScore: integer('overallScore'),
+  mode: text('mode').notNull().default('mock'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+})
+
+export const linkedinProfile = pgTable('linkedin_profile', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull().unique(),
+  rawText: text('rawText').notNull(),
+  parsed: text('parsed').notNull().default('{}'),
+  optimizedHeadline: text('optimizedHeadline'),
+  optimizedAbout: text('optimizedAbout'),
+  optimizedSkills: text('optimizedSkills').notNull().default('[]'),
+  scanScore: integer('scanScore'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+})
+
+export const jobPosting = pgTable('job_posting', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  title: text('title').notNull(),
+  company: text('company').notNull(),
+  location: text('location'),
+  salary: text('salary'),
+  url: text('url').notNull(),
+  description: text('description'),
+  source: text('source').notNull().default('manual'),
+  boardId: text('boardId'),
+  fitScore: integer('fitScore'),
+  applied: boolean('applied').default(false),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+})
+
+export const reminder = pgTable('reminder', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  applicationId: integer('applicationId').notNull(),
+  type: text('type').notNull(),
+  scheduledAt: timestamp('scheduledAt').notNull(),
+  sentAt: timestamp('sentAt'),
+  status: text('status').notNull().default('pending'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+})
+
+export const skillsGapAnalysis = pgTable('skills_gap_analysis', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  targetRole: text('targetRole').notNull(),
+  targetIndustry: text('targetIndustry'),
+  gaps: text('gaps').notNull().default('[]'),
+  recommendedLearning: text('recommendedLearning').notNull().default('[]'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
 })

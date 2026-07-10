@@ -11,14 +11,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu"
-import { Plus, MoreVertical, MapPin, ExternalLink, Briefcase } from "lucide-react"
+import { Plus, MoreVertical, MapPin, ExternalLink, Briefcase, Bell, Clock } from "lucide-react"
 import { toast } from "sonner"
 import {
   updateApplicationStatus,
   deleteApplication,
 } from "@/app/actions/applications"
+import { setReminder } from "@/app/actions/reminders"
 import { type ApplicationStatus } from "@/lib/applications"
+import { ReminderBadge } from "./reminder-badge"
 import { ApplicationDialog } from "./application-dialog"
 
 type Application = {
@@ -32,6 +37,8 @@ type Application = {
   notes: string | null
   cvId: number | null
   appliedAt: Date | null
+  nextReminderAt: Date | null
+  followUpCount: number | null
 }
 
 type Stats = { total: number; byStatus: Record<string, number> }
@@ -40,8 +47,12 @@ type CvOption = { id: number; jobTitle: string; company: string | null }
 const COLUMNS: { id: ApplicationStatus; label: string; tone: string }[] = [
   { id: "saved", label: "Saved", tone: "bg-muted text-muted-foreground" },
   { id: "applied", label: "Applied", tone: "bg-secondary text-secondary-foreground" },
-  { id: "interview", label: "Interview", tone: "bg-accent/15 text-accent-foreground" },
+  { id: "screen", label: "Screening", tone: "bg-accent/15 text-accent-foreground" },
+  { id: "assessment", label: "Assessment", tone: "bg-accent/15 text-accent-foreground" },
+  { id: "interview", label: "Interview", tone: "bg-primary/15 text-primary" },
   { id: "offer", label: "Offer", tone: "bg-primary/15 text-primary" },
+  { id: "accepted", label: "Accepted", tone: "bg-success/15 text-success" },
+  { id: "declined", label: "Declined", tone: "bg-muted text-muted-foreground" },
   { id: "rejected", label: "Rejected", tone: "bg-destructive/10 text-destructive" },
 ]
 
@@ -80,10 +91,27 @@ export function ApplicationsBoard({
     router.refresh()
   }
 
+  async function scheduleFollowUp(app: Application, days: number) {
+    const when = new Date()
+    when.setDate(when.getDate() + days)
+    const res = await setReminder({
+      applicationId: app.id,
+      type: "follow_up",
+      scheduledAt: when.toISOString(),
+    })
+    if (res.ok) {
+      toast.success(`Reminder set for ${when.toLocaleDateString()}`)
+      router.refresh()
+    } else {
+      toast.error("Could not set reminder")
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <ReminderBadge />
           {COLUMNS.map((c) => (
             <Badge key={c.id} variant="outline" className="gap-1.5 font-normal">
               <span className="font-semibold text-foreground">
@@ -149,23 +177,39 @@ export function ApplicationsBoard({
                             }
                           />
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => openEdit(app)}>
-                              Edit details
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            {COLUMNS.filter((c) => c.id !== app.status).map((c) => (
-                              <DropdownMenuItem
-                                key={c.id}
-                                onClick={() => move(app, c.id)}
-                              >
-                                Move to {c.label}
+                              <DropdownMenuItem onClick={() => openEdit(app)}>
+                                Edit details
                               </DropdownMenuItem>
-                            ))}
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              className="text-destructive focus:text-destructive"
-                              onClick={() => remove(app)}
-                            >
+                              <DropdownMenuSeparator />
+                              <DropdownMenuSub>
+                                <DropdownMenuSubTrigger>
+                                  <Bell className="mr-2 size-4" /> Set follow-up reminder
+                                </DropdownMenuSubTrigger>
+                                <DropdownMenuSubContent>
+                                  <DropdownMenuItem onClick={() => scheduleFollowUp(app, 3)}>
+                                    In 3 days
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => scheduleFollowUp(app, 7)}>
+                                    In 7 days
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => scheduleFollowUp(app, 14)}>
+                                    In 14 days
+                                  </DropdownMenuItem>
+                                </DropdownMenuSubContent>
+                              </DropdownMenuSub>
+                              {COLUMNS.filter((c) => c.id !== app.status).map((c) => (
+                                <DropdownMenuItem
+                                  key={c.id}
+                                  onClick={() => move(app, c.id)}
+                                >
+                                  Move to {c.label}
+                                </DropdownMenuItem>
+                              ))}
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
+                                onClick={() => remove(app)}
+                              >
                               Delete
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -194,6 +238,13 @@ export function ApplicationsBoard({
                           View posting
                           <ExternalLink className="size-3" />
                         </a>
+                      )}
+
+                      {app.nextReminderAt && new Date(app.nextReminderAt) > new Date() && (
+                        <div className="mt-3 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                          <Clock className="size-3" />
+                          Reminder {new Date(app.nextReminderAt).toLocaleDateString()}
+                        </div>
                       )}
                     </Card>
                   ))}

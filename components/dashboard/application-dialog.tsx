@@ -25,6 +25,7 @@ import {
   createApplication,
   updateApplication,
 } from "@/app/actions/applications"
+import { benchmarkSalary } from "@/app/actions/salary"
 import {
   APPLICATION_STATUSES,
   STATUS_LABELS,
@@ -55,6 +56,14 @@ export function ApplicationDialog({
 }) {
   const router = useRouter()
   const [pending, setPending] = useState(false)
+  const [salaryLoading, setSalaryLoading] = useState(false)
+  const [salaryResult, setSalaryResult] = useState<{
+    rangeLow?: number
+    rangeHigh?: number
+    median?: number
+    confidence?: number
+    factors?: string[]
+  } | null>(null)
   const [form, setForm] = useState({
     company: "",
     role: "",
@@ -105,6 +114,27 @@ export function ApplicationDialog({
     toast.success(application ? "Application updated" : "Application added")
     onOpenChange(false)
     router.refresh()
+  }
+
+  async function onBenchmark() {
+    setSalaryLoading(true)
+    setSalaryResult(null)
+    const res = await benchmarkSalary({
+      jobTitle: form.role || "Unknown role",
+      location: form.location || "Nigeria",
+    })
+    setSalaryLoading(false)
+    if (res.ok && res.rangeLow !== undefined) {
+      setSalaryResult({
+        rangeLow: res.rangeLow,
+        rangeHigh: res.rangeHigh,
+        median: res.median,
+        confidence: res.confidence,
+        factors: res.factors,
+      })
+    } else {
+      toast.error(res.error || "Failed to benchmark salary")
+    }
   }
 
   return (
@@ -202,6 +232,45 @@ export function ApplicationDialog({
               placeholder="Referral from Ada, interview scheduled for Friday..."
               rows={3}
             />
+          </div>
+
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold">Salary Benchmark</p>
+                <p className="text-xs text-muted-foreground">
+                  AI-estimated range for this role and location
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onBenchmark}
+                disabled={salaryLoading}
+              >
+                {salaryLoading ? "Estimating..." : "Estimate"}
+              </Button>
+            </div>
+            {salaryResult && (
+              <div className="mt-3 space-y-1 text-sm">
+                <p className="font-medium">
+                  ₦{salaryResult.rangeLow?.toLocaleString()} – ₦{salaryResult.rangeHigh?.toLocaleString()}
+                </p>
+                {salaryResult.median !== undefined && (
+                  <p className="text-xs text-muted-foreground">
+                    Median ₦{salaryResult.median?.toLocaleString()} · Confidence {salaryResult.confidence}%
+                  </p>
+                )}
+                {salaryResult.factors && salaryResult.factors.length > 0 && (
+                  <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-muted-foreground">
+                    {salaryResult.factors.map((f, i) => (
+                      <li key={i}>{f}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
           </div>
 
           <DialogFooter>

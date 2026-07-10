@@ -4,14 +4,24 @@ import { db } from '@/lib/db'
 import { tailoredCv, application, subscription } from '@/lib/db/schema'
 import { getUserId } from '@/lib/session'
 import { and, desc, eq, gte, sql } from 'drizzle-orm'
-import { PLANS, type PlanId, planCvLimit } from '@/lib/plans'
+import { unstable_cache } from 'next/cache'
+import {
+  PLANS,
+  PLAN_FEATURE_LIMITS,
+  type PlanId,
+  type PlanFeatureKey,
+  type PlanFeatureLimit,
+  type PlanFeatureMap,
+  planCvLimit,
+} from '@/lib/plans'
 
 export interface UsageInfo {
   plan: PlanId
   status: string
-  limit: number // Infinity allowed
+  limit: number
   used: number
-  remaining: number // Infinity allowed
+  remaining: number
+  features: PlanFeatureMap
 }
 
 export interface SubscriptionInfo {
@@ -43,9 +53,30 @@ export async function getSubscription(userId: string): Promise<SubscriptionInfo>
 export async function getUsage(): Promise<UsageInfo> {
   const userId = await getUserId()
   const sub = await getSubscription(userId)
-  const limit = planCvLimit(sub.plan)
+  const plan = (sub.plan as PlanId) ?? 'free'
 
-  // Count CVs generated in the current calendar month
+  const features = await buildFeatureUsage(plan, userId)
+
+  const cv = features.cvTailoring
+  return {
+    plan,
+    status: sub.status,
+    limit: cv.limit,
+    used: cv.used,
+    remaining: cv.remaining,
+    features,
+  }
+}
+
+async function countMonthlyCvs(userId: string, plan: PlanId): Promise<number> {
+  if (plan === 'free') {
+    const [{ count }] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(tailoredCv)
+      .where(eq(tailoredCv.userId, userId))
+    return Number(count)
+  }
+
   const startOfMonth = new Date()
   startOfMonth.setDate(1)
   startOfMonth.setHours(0, 0, 0, 0)
@@ -56,20 +87,62 @@ export async function getUsage(): Promise<UsageInfo> {
     .where(
       and(
         eq(tailoredCv.userId, userId),
-        sub.plan === 'free'
-          ? sql`true`
-          : gte(tailoredCv.createdAt, startOfMonth),
+        gte(tailoredCv.createdAt, startOfMonth),
       ),
     )
+  return Number(count)
+}
 
-  const used = Number(count)
-  return {
-    plan: sub.plan,
-    status: sub.status,
-    limit,
-    used,
-    remaining: limit === Infinity ? Infinity : Math.max(0, limit - used),
+async function countApplications(userId: string): Promise<number> {
+  const [{ count }] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(application)
+    .where(eq(application.userId, userId))
+  return Number(count)
+}
+
+async function buildFeatureUsage(
+  plan: PlanId,
+  userId: string,
+): Promise<PlanFeatureMap> {
+  const plans = PLAN_FEATURE_LIMITS
+  const [
+    cvCount,
+    appCount,
+  ] = await Promise.all([
+    countMonthlyCvs(userId, plan),
+    countApplications(userId),
+  ])
+
+  const keys = [
+    'cvTailoring',
+    'coverLetter',
+    'applicationTracker',
+    'mockInterview',
+    'linkedInOptimizer',
+    'achievementsScanner',
+    'salaryBenchmarking',
+    'followUpReminder',
+    'jobFitAnalyzer',
+    'jobImport',
+    'chromeExtension',
+    'skillsGap',
+    'interviewCopilot',
+    'autoApply',
+  ] as const satisfies readonly PlanFeatureKey[]
+
+  const map = {} as PlanFeatureMap
+  for (const key of keys) {
+    const limit = plans[plan]?.[key] ?? 0
+    const used = key === 'cvTailoring'
+      ? cvCount
+      : key === 'applicationTracker'
+        ? appCount
+        : 0
+    const remaining = limit === Infinity ? Infinity : Math.max(0, limit - used)
+    map[key] = { used, limit, remaining }
   }
+  return map
 }
 
 export async function getTailoredCvs() {
@@ -119,48 +192,67 @@ export async function getApplications() {
 
 export async function getApplicationStats() {
   const userId = await getUserId()
-  const apps = await db
-    .select({ status: application.status })
-    .from(application)
-    .where(eq(application.userId, userId))
+  return unstable_cache(
+    async () => {
+      const apps = await db
+        .select({ status: application.status })
+        .from(application)
+        .where(eq(application.userId, userId))
 
-  const byStatus: Record<string, number> = {
-    saved: 0,
-    applied: 0,
-    interview: 0,
-    offer: 0,
-    rejected: 0,
-  }
-  for (const a of apps) {
-    byStatus[a.status] = (byStatus[a.status] ?? 0) + 1
-  }
-  return { total: apps.length, byStatus }
+      const byStatus: Record<string, number> = {
+        saved: 0,
+        applied: 0,
+        screen: 0,
+        assessment: 0,
+        interview: 0,
+        offer: 0,
+        accepted: 0,
+        declined: 0,
+        rejected: 0,
+      }
+      for (const a of apps) {
+        byStatus[a.status] = (byStatus[a.status] ?? 0) + 1
+      }
+      return { total: apps.length, byStatus }
+    },
+    ['application-stats', userId],
+    { revalidate: 60 },
+  )()
 }
 
 export async function getDashboardStats() {
   const userId = await getUserId()
-  const apps = await db
-    .select()
-    .from(application)
-    .where(eq(application.userId, userId))
+  return unstable_cache(
+    async () => {
+      const apps = await db
+        .select()
+        .from(application)
+        .where(eq(application.userId, userId))
 
-  const cvs = await db
-    .select({ id: tailoredCv.id })
-    .from(tailoredCv)
-    .where(eq(tailoredCv.userId, userId))
+      const cvs = await db
+        .select({ id: tailoredCv.id })
+        .from(tailoredCv)
+        .where(eq(tailoredCv.userId, userId))
 
-  const byStatus = apps.reduce<Record<string, number>>((acc, a) => {
-    acc[a.status] = (acc[a.status] ?? 0) + 1
-    return acc
-  }, {})
+      const byStatus = apps.reduce<Record<string, number>>((acc, a) => {
+        acc[a.status] = (acc[a.status] ?? 0) + 1
+        return acc
+      }, {})
 
-  const interviews = (byStatus['interview'] ?? 0) + (byStatus['offer'] ?? 0)
+      const interviews = (byStatus['interview'] ?? 0) + (byStatus['offer'] ?? 0)
 
-  return {
-    totalCvs: cvs.length,
-    totalApplications: apps.length,
-    interviews,
-    inProgress:
-      (byStatus['saved'] ?? 0) + (byStatus['applied'] ?? 0),
-  }
+      return {
+        totalCvs: cvs.length,
+        totalApplications: apps.length,
+        interviews,
+        inProgress:
+          (byStatus['saved'] ?? 0) +
+          (byStatus['applied'] ?? 0) +
+          (byStatus['screen'] ?? 0) +
+          (byStatus['assessment'] ?? 0),
+      }
+    },
+    ['dashboard-stats', userId],
+    { revalidate: 60 },
+  )()
 }

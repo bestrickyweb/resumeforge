@@ -59,7 +59,8 @@ export async function tailorCv(input: {
 
   // Enforce usage limits
   const usage = await getUsage()
-  if (usage.remaining !== Infinity && usage.remaining <= 0) {
+  const cvRemaining = usage.features.cvTailoring.remaining
+  if (cvRemaining !== Infinity && cvRemaining <= 0) {
     return {
       ok: false,
       error:
