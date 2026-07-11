@@ -6,17 +6,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Keep large server-only packages out of the Turbopack bundle so compilation
-  // is faster and native deps aren't re-transpiled. They're required at runtime.
-  serverExternalPackages: [
-    'better-auth',
-    '@ai-sdk/google',
-    'ai',
-    'pg',
-    'drizzle-orm',
-    'drizzle-orm/node-postgres',
-    'jspdf',
-  ],
+  // Keep large native/CJS server packages external so they aren't re-bundled.
+  // (ESM-only packages like ai/@ai-sdk/google are left bundled on purpose.)
+  serverExternalPackages: ['better-auth', 'pg', 'drizzle-orm', 'drizzle-orm/node-postgres'],
 }
 
 export default nextConfig
