@@ -25,6 +25,7 @@ export function TailorForm({
   const [jobTitle, setJobTitle] = useState('')
   const [jobDescription, setJobDescription] = useState('')
   const [originalCv, setOriginalCv] = useState('')
+  const [linkedinUrl, setLinkedinUrl] = useState('')
   const [usingPrevious, setUsingPrevious] = useState(false)
 
   useEffect(() => {
@@ -45,6 +46,7 @@ export function TailorForm({
       jobDescription,
       originalCv: cvToUse,
       jobTitleHint: jobTitle,
+      linkedinUrl: linkedinUrl.trim() || undefined,
     })
     if (result.ok && result.cvId) {
       toast.success('Your CV has been tailored!')
@@ -86,6 +88,19 @@ export function TailorForm({
           onChange={(e) => setJobTitle(e.target.value)}
           placeholder="e.g. Product Manager"
         />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="linkedinUrl">LinkedIn URL (optional)</Label>
+        <Input
+          id="linkedinUrl"
+          value={linkedinUrl}
+          onChange={(e) => setLinkedinUrl(e.target.value)}
+          placeholder="https://linkedin.com/in/your-name"
+        />
+        <p className="text-xs text-muted-foreground">
+          Adds a LinkedIn link to your CV. Resumes with one get more callbacks.
+        </p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">

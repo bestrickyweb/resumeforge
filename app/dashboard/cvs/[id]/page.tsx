@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { getTailoredCvById } from '@/app/actions/queries'
+import { getTailoredCvById, getPipelineConversion } from '@/app/actions/queries'
 import { CvDetail } from '@/components/dashboard/cv-detail'
 
 export const dynamic = 'force-dynamic'
@@ -27,6 +27,8 @@ export default async function CvDetailPage({
     notFound()
   }
 
+  const conversion = await getPipelineConversion()
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-8">
       <Button asChild variant="ghost" size="sm" className="mb-4 -ml-2">
@@ -34,7 +36,7 @@ export default async function CvDetailPage({
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to my CVs
         </Link>
       </Button>
-      <CvDetail cv={cv} />
+      <CvDetail cv={cv} conversion={conversion} />
     </div>
   )
 }

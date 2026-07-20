@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { Sparkles, Loader2 } from 'lucide-react'
@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { analyzeJobFit } from '@/app/actions/fit'
+import { bandBadgeClass } from '@/lib/utils'
 
 export function JobFitPanel() {
   const [jobDescription, setJobDescription] = useState('')
@@ -13,9 +14,15 @@ export function JobFitPanel() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<{
     matchScore?: number
+    keywordMatchPct?: number
     matchedSkills?: string[]
     missingSkills?: string[]
-    sectionScores?: { experience: number; skills: number; education: number; keywords: number }
+    sectionScores?: { experience: number; skills: number; education: number; keywords: number; formatting: number; quantification: number }
+    formatFlags?: string[]
+    quantification?: { metricBullets: number; totalBullets: number; coveragePct: number }
+    titleMatch?: boolean
+    interviewReadinessBand?: 'below-cliff' | 'competitive' | 'strong'
+    recommendations?: string[]
     summary?: string
   } | null>(null)
 
@@ -27,9 +34,15 @@ export function JobFitPanel() {
     if (res.ok) {
       setResult({
         matchScore: res.matchScore,
+        keywordMatchPct: res.keywordMatchPct,
         matchedSkills: res.matchedSkills,
         missingSkills: res.missingSkills,
         sectionScores: res.sectionScores,
+        formatFlags: res.formatFlags,
+        quantification: res.quantification,
+        titleMatch: res.titleMatch,
+        interviewReadinessBand: res.interviewReadinessBand,
+        recommendations: res.recommendations,
         summary: res.summary,
       })
     } else {
@@ -95,21 +108,87 @@ export function JobFitPanel() {
       {result && (
         <div className="space-y-4 rounded-2xl border border-border bg-card p-6">
           <div className="flex items-center gap-4">
-            <ScoreRing value={result.matchScore ?? 0} />
+            <ScoreRing value={result.keywordMatchPct ?? result.matchScore ?? 0} />
             <div>
-              <p className="font-heading text-lg font-bold">Overall match</p>
-              <p className="text-sm text-muted-foreground">{result.summary}</p>
+              <p className="font-heading text-lg font-bold">Keyword match</p>
+              {result.interviewReadinessBand && (
+                <span
+                  className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${bandBadgeClass[result.interviewReadinessBand]}`}
+                >
+                  {result.interviewReadinessBand === 'strong'
+                    ? '85%+ — strong'
+                    : result.interviewReadinessBand === 'competitive'
+                      ? '70–84% — competitive'
+                      : 'Below 70% — likely filtered'}
+                </span>
+              )}
             </div>
           </div>
 
+          {/* Interview-cliff meter */}
+          <div className="relative h-3 w-full rounded-full bg-muted">
+            <div className="absolute top-[-4px] h-5 w-0.5 bg-foreground/40" style={{ left: '70%' }} />
+            <div
+              className={`h-3 rounded-full ${
+                (result.keywordMatchPct ?? 0) >= 85
+                  ? 'bg-primary'
+                  : (result.keywordMatchPct ?? 0) >= 70
+                    ? 'bg-amber-500'
+                    : 'bg-destructive'
+              }`}
+              style={{ width: `${Math.min(100, result.keywordMatchPct ?? 0)}%` }}
+            />
+          </div>
+          <div className="flex justify-between text-[11px] text-muted-foreground">
+            <span>0%</span>
+            <span>70% â€” interview cliff</span>
+            <span>100%</span>
+          </div>
+
           {result.sectionScores && (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {Object.entries(result.sectionScores).map(([key, value]) => (
                 <div key={key} className="rounded-xl border border-border bg-background p-3 text-center">
                   <p className="text-xs text-muted-foreground capitalize">{key}</p>
                   <p className="mt-1 font-heading text-xl font-extrabold">{value}%</p>
                 </div>
               ))}
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-2">
+            {result.titleMatch !== undefined && (
+              <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${result.titleMatch ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                Job title {result.titleMatch ? 'matched' : 'not mirrored'}
+              </span>
+            )}
+          </div>
+
+          {result.formatFlags && result.formatFlags.length > 0 && (
+            <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-3">
+              <p className="text-xs font-semibold text-destructive">ATS parse issues</p>
+              <ul className="mt-1 list-inside list-disc text-xs text-muted-foreground">
+                {result.formatFlags.map((f) => (
+                  <li key={f}>{f}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {result.quantification && (
+            <p className="text-xs text-muted-foreground">
+              Quantification: {result.quantification.metricBullets}/{result.quantification.totalBullets} bullets carry a metric ({result.quantification.coveragePct}%).
+            </p>
+          )}
+
+          {result.recommendations && result.recommendations.length > 0 && (
+            <div className="rounded-xl border border-border bg-background p-3">
+              <p className="text-xs font-semibold">Top fixes to get more interviews</p>
+              <ol className="mt-1 list-inside list-decimal space-y-1 text-xs text-muted-foreground">
+                {result.recommendations.map((r, i) => (
+                  <li key={i}>{r}</li>
+                ))}
+              </ol>
             </div>
           )}
 
@@ -136,3 +215,4 @@ export function JobFitPanel() {
     </form>
   )
 }
+

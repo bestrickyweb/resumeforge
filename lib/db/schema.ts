@@ -77,6 +77,11 @@ export const tailoredCv = pgTable('tailored_cv', {
   keywords: text('keywords'),
   matchBefore: integer('matchBefore').notNull().default(0),
   matchAfter: integer('matchAfter').notNull().default(0),
+  keywordMatchPct: integer('keywordMatchPct').notNull().default(0),
+  formatScore: integer('formatScore').notNull().default(0),
+  quantScore: integer('quantScore').notNull().default(0),
+  titleMatch: boolean('titleMatch').notNull().default(false),
+  interviewBand: text('interviewBand'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
 })
 

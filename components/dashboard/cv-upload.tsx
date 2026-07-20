@@ -27,6 +27,9 @@ export function CvUpload({
     if (result.ok && result.text) {
       onExtracted(result.text)
       toast.success(`Imported text from ${file.name}`)
+      if (result.parseWarnings && result.parseWarnings.length > 0) {
+        result.parseWarnings.forEach((w) => toast.warning(w))
+      }
     } else {
       setFileName(null)
       toast.error(result.error ?? 'Could not read that file.')

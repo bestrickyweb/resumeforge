@@ -5,6 +5,7 @@ import { tailoredCv, application, subscription } from '@/lib/db/schema'
 import { getUserId } from '@/lib/session'
 import { and, desc, eq, gte, sql } from 'drizzle-orm'
 import { unstable_cache } from 'next/cache'
+import { type InterviewBand } from '@/lib/utils'
 import {
   PLANS,
   PLAN_FEATURE_LIMITS,
@@ -254,5 +255,46 @@ export async function getDashboardStats() {
     },
     ['dashboard-stats', userId],
     { revalidate: 60 },
+  )()
+}
+
+export interface PipelineConversion {
+  band: InterviewBand
+  totalApps: number
+  interviews: number
+  interviewRate: number
+}
+
+export async function getPipelineConversion(): Promise<PipelineConversion[]> {
+  const userId = await getUserId()
+  return unstable_cache(
+    async () => {
+      const rows = await db
+        .select({
+          band: sql<string>`COALESCE(${tailoredCv.interviewBand}, 'below-cliff')`,
+          totalApps: sql<number>`COUNT(*)`,
+          interviews: sql<number>`COUNT(*) FILTER (WHERE ${application.status} IN ('interview', 'offer', 'accepted'))`,
+        })
+        .from(tailoredCv)
+        .innerJoin(
+          application,
+          and(eq(application.cvId, tailoredCv.id), eq(application.userId, userId)),
+        )
+        .where(eq(tailoredCv.userId, userId))
+        .groupBy(sql`COALESCE(${tailoredCv.interviewBand}, 'below-cliff')`)
+        .orderBy(
+          sql`CASE WHEN COALESCE(${tailoredCv.interviewBand}, 'below-cliff') = 'strong' THEN 1 WHEN COALESCE(${tailoredCv.interviewBand}, 'below-cliff') = 'competitive' THEN 2 ELSE 3 END`,
+        )
+
+      return rows.map((r) => ({
+        band: r.band as InterviewBand,
+        totalApps: Number(r.totalApps),
+        interviews: Number(r.interviews),
+        interviewRate:
+          r.totalApps > 0 ? Math.round((Number(r.interviews) / Number(r.totalApps)) * 100) : 0,
+      }))
+    },
+    ['pipeline-conversion', userId],
+    { revalidate: 300 },
   )()
 }

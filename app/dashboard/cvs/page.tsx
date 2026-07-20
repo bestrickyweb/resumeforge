@@ -1,8 +1,9 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { FileText, Plus, Sparkles } from 'lucide-react'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { Button } from '@/components/ui/button'
 import { getTailoredCvs } from '@/app/actions/queries'
+import { interviewBand, bandBadgeClass, bandLabel } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -57,8 +58,15 @@ export default async function CvsPage() {
                     {cv.company || 'Tailored CV'}
                   </p>
                 </div>
-                <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
-                  {cv.matchAfter}%
+                <span className="flex shrink-0 flex-col items-end gap-1">
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${bandBadgeClass[interviewBand(cv.keywordMatchPct ?? cv.matchAfter)]}`}
+                  >
+                    {bandLabel[interviewBand(cv.keywordMatchPct ?? cv.matchAfter)]}
+                  </span>
+                  <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+                    {cv.matchAfter}%
+                  </span>
                 </span>
               </div>
               <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
@@ -79,3 +87,4 @@ export default async function CvsPage() {
     </div>
   )
 }
+

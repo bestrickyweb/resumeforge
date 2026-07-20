@@ -11,7 +11,7 @@ export type ReminderRow = {
   id: number
   applicationId: number
   type: string
-  scheduledAt: string
+  scheduledAt: Date
   status: string
 }
 

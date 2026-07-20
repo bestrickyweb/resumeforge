@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
@@ -19,7 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { deleteTailoredCv } from '@/app/actions/tailor'
 import { createApplication } from '@/app/actions/applications'
 import { scanAchievements } from '@/app/actions/scan'
-import { cn } from '@/lib/utils'
+import { cn, interviewBand, bandBadgeClass, bandBarClass, bandLabel, type InterviewBand } from '@/lib/utils'
 
 interface CvRow {
   id: number
@@ -33,7 +33,19 @@ interface CvRow {
   keywords: string | null
   matchBefore: number
   matchAfter: number
+  keywordMatchPct: number
+  formatScore: number
+  quantScore: number
+  titleMatch: boolean
+  interviewBand: string | null
   createdAt: Date
+}
+
+interface PipelineConversion {
+  band: string
+  totalApps: number
+  interviews: number
+  interviewRate: number
 }
 
 function ScoreRing({ value }: { value: number }) {
@@ -70,7 +82,41 @@ function ScoreRing({ value }: { value: number }) {
   )
 }
 
-export function CvDetail({ cv }: { cv: CvRow }) {
+function InterviewCliffMeter({ pct }: { pct: number }) {
+  const clamped = Math.max(0, Math.min(100, pct))
+  const fill = bandBarClass[interviewBand(clamped)]
+  return (
+    <div className="rounded-2xl border border-border bg-card p-5">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold">Interview-cliff meter</p>
+        <p className="text-xs text-muted-foreground">
+          Keyword match vs. job description
+        </p>
+      </div>
+      <div className="relative mt-3 h-3 w-full rounded-full bg-muted">
+        <div className="absolute top-[-4px] h-5 w-0.5 bg-foreground/40" style={{ left: '70%' }} />
+        <div
+          className={`h-3 rounded-full transition-all ${fill}`}
+          style={{ width: `${clamped}%` }}
+        />
+      </div>
+      <div className="mt-2 flex justify-between text-[11px] text-muted-foreground">
+        <span>0%</span>
+        <span>70% â€” interview cliff</span>
+        <span>100%</span>
+      </div>
+      <p className="mt-2 text-xs text-muted-foreground">
+        {clamped < 70
+          ? 'Below the 70% cliff: most ATS filter this before a recruiter sees it. Add more exact keywords from the posting.'
+          : clamped < 85
+            ? 'Competitive. Crossing 85% can roughly double callback rates â€” weave in any remaining required keywords.'
+            : 'Strong match. You are in the top tier most recruiters actually review.'}
+      </p>
+    </div>
+  )
+}
+
+export function CvDetail({ cv, conversion }: { cv: CvRow; conversion: PipelineConversion[] }) {
   const router = useRouter()
   const [copied, setCopied] = useState<string | null>(null)
   const [trackOpen, setTrackOpen] = useState(false)
@@ -88,6 +134,18 @@ export function CvDetail({ cv }: { cv: CvRow }) {
     } catch {
       return []
     }
+  })()
+
+  const band: InterviewBand =
+    (cv.interviewBand as InterviewBand) ||
+    interviewBand(cv.keywordMatchPct ?? 0)
+  // Best-time-to-apply nudge (research: Mon-Wed >> Thu-Sun).
+  const day = new Date().getDay() // 0 Sun ... 6 Sat
+  const showApplyNudge = day >= 4 // Thu, Fri, Sat, Sun
+  const nextMondayLabel = (() => {
+    const d = new Date()
+    d.setDate(d.getDate() + ((8 - day) % 7 || 7))
+    return d.toLocaleDateString('en-NG', { weekday: 'long', month: 'short', day: 'numeric' })
   })()
 
   function copy(text: string, key: string) {
@@ -195,7 +253,7 @@ export function CvDetail({ cv }: { cv: CvRow }) {
     <div>
       <div className="flex flex-col gap-6 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-5">
-          <ScoreRing value={cv.matchAfter} />
+          <ScoreRing value={cv.keywordMatchPct ?? cv.matchAfter} />
           <div>
             <h1 className="font-heading text-2xl font-extrabold tracking-tight">
               {cv.jobTitle}
@@ -205,7 +263,7 @@ export function CvDetail({ cv }: { cv: CvRow }) {
             </p>
             <p className="mt-1 text-sm">
               <span className="text-muted-foreground">
-                ATS match {cv.matchBefore}% →{' '}
+                ATS match {cv.matchBefore}% â†’{' '}
               </span>
               <span className="font-semibold text-primary">
                 {cv.matchAfter}%
@@ -216,6 +274,9 @@ export function CvDetail({ cv }: { cv: CvRow }) {
                 </span>
               )}
             </p>
+            <span className={`mt-2 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${bandBadgeClass[band]}`}>
+              {bandLabel[band]}
+            </span>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -258,6 +319,45 @@ export function CvDetail({ cv }: { cv: CvRow }) {
           </div>
         </div>
       )}
+
+      <InterviewCliffMeter pct={cv.keywordMatchPct ?? cv.matchAfter} />
+
+      {(() => {
+        const band = cv.interviewBand || interviewBand(cv.keywordMatchPct ?? 0)
+        const row = conversion.find((c) => c.band === band)
+        if (!row || row.totalApps === 0) {
+          return (
+            <p className="mt-3 text-xs text-muted-foreground">
+              No tracked outcomes yet for this band — track applications from your CVs to build your forecast.
+            </p>
+          )
+        }
+        return (
+          <p className="mt-3 text-xs text-muted-foreground">
+            CVs at your band (<strong>{bandLabel[band as 'below-cliff' | 'competitive' | 'strong']}</strong>) got interviews{' '}
+            <span className="font-semibold text-foreground">{row.interviewRate}%</span> of the time (
+            {row.interviews}/{row.totalApps} tracked apps).
+          </p>
+        )
+      })()}
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="rounded-xl border border-border bg-card p-4">
+          <p className="text-xs text-muted-foreground">ATS parse-safety</p>
+          <p className="mt-1 font-heading text-2xl font-extrabold">{cv.formatScore}%</p>
+          <p className="mt-1 text-[11px] text-muted-foreground">Single column, standard headings</p>
+        </div>
+        <div className="rounded-xl border border-border bg-card p-4">
+          <p className="text-xs text-muted-foreground">Quantification</p>
+          <p className="mt-1 font-heading text-2xl font-extrabold">{cv.quantScore}%</p>
+          <p className="mt-1 text-[11px] text-muted-foreground">Achievement bullets with metrics</p>
+        </div>
+        <div className="rounded-xl border border-border bg-card p-4">
+          <p className="text-xs text-muted-foreground">Job title match</p>
+          <p className="mt-1 font-heading text-2xl font-extrabold">{cv.titleMatch ? 'Yes' : 'No'}</p>
+          <p className="mt-1 text-[11px] text-muted-foreground">Mirrors the posting title</p>
+        </div>
+      </div>
 
       <div className="mt-6">
         <Tabs defaultValue="tailored">
@@ -303,6 +403,13 @@ export function CvDetail({ cv }: { cv: CvRow }) {
               tracker so you can follow its progress.
             </DialogDescription>
           </DialogHeader>
+          {showApplyNudge && (
+            <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-300">
+              Tip: applying early in the week (Monâ€“Wed) can roughly double your
+              callback rate versus weekends. Consider submitting around{' '}
+              <strong>{nextMondayLabel}</strong>.
+            </div>
+          )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setTrackOpen(false)}>
               Cancel
@@ -413,4 +520,4 @@ function DocPanel({
       </pre>
     </div>
   )
-}
+}

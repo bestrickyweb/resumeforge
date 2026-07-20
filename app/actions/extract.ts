@@ -8,6 +8,39 @@ export type ExtractResult = {
   ok: boolean
   text?: string
   error?: string
+  parseWarnings?: string[]
+}
+
+// Best-effort, deterministic ATS parse-safety heuristics on extracted text.
+// Non-blocking: extraction still succeeds; warnings are advisory.
+function detectParseWarnings(text: string, isPdf: boolean): string[] {
+  const warnings: string[] = []
+
+  if (isPdf && text.length < 60) {
+    warnings.push(
+      'This looks like a scanned/image PDF — an ATS may see a blank page. Use a text-based PDF or DOCX.',
+    )
+  }
+
+  // Multi-column heuristic: many short lines with 2+ tab/space gaps or pipe separators.
+  const lines = text.split('\n')
+  const pipeHeavy = lines.filter((l) => (l.match(/\|/g) || []).length >= 2).length
+  const tabHeavy = lines.filter((l) => l.includes('\t')).length
+  if (pipeHeavy > 3 || tabHeavy > lines.length * 0.4) {
+    warnings.push(
+      'Possible multi-column or table layout detected — ATS parsers often scramble these. Use a single column.',
+    )
+  }
+
+  // Header/footer contact heuristic: email appears only after many blank-ish lines.
+  const emailIdx = lines.findIndex((l) => /[\w.+-]+@[\w-]+\.[\w.-]+/.test(l))
+  if (emailIdx > lines.length * 0.85 && emailIdx !== -1) {
+    warnings.push(
+      'Contact info appears near the end — keep name/email/phone in the document body, not the header/footer.',
+    )
+  }
+
+  return warnings
 }
 
 const MAX_BYTES = 8 * 1024 * 1024 // 8MB
@@ -70,7 +103,11 @@ export async function extractCvText(formData: FormData): Promise<ExtractResult> 
       }
     }
 
-    return { ok: true, text }
+    const isPdf =
+      name.endsWith('.pdf') || file.type === 'application/pdf'
+    const parseWarnings = detectParseWarnings(text, isPdf)
+
+    return { ok: true, text, parseWarnings }
   } catch (err) {
     console.log(
       '[v0] extractCvText error:',
