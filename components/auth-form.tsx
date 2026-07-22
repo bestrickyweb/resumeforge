@@ -71,6 +71,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
                 required
                 placeholder="Ada Eze"
                 autoComplete="name"
+                disabled={loading}
               />
             </div>
           )}
@@ -83,6 +84,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
               required
               placeholder="you@example.com"
               autoComplete="email"
+              disabled={loading}
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -95,6 +97,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
               minLength={8}
               placeholder="At least 8 characters"
               autoComplete={isSignUp ? 'new-password' : 'current-password'}
+              disabled={loading}
             />
           </div>
 
@@ -106,7 +109,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
 
           <Button type="submit" className="mt-1 h-11" disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isSignUp ? 'Create account' : 'Log in'}
+            {isSignUp ? (loading ? 'Creating account...' : 'Create account') : loading ? 'Logging in...' : 'Log in'}
           </Button>
         </form>
 
