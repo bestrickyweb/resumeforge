@@ -1,4 +1,5 @@
 ﻿import Link from 'next/link'
+import { Suspense } from 'react'
 import { interviewBand, bandBadgeClass, bandLabel } from '@/lib/utils'
 import {
   Sparkles,
@@ -7,69 +8,22 @@ import {
   Trophy,
   ArrowRight,
   Plus,
-  BarChart3,
 } from 'lucide-react'
 import { PageHeader } from '@/components/dashboard/page-header'
-import { UsageCard } from '@/components/dashboard/usage-card'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { getSessionUser } from '@/lib/session'
-import { getDashboardStats, getUsage, getTailoredCvs, getPipelineConversion } from '@/app/actions/queries'
-import { PLANS } from '@/lib/plans'
+import { getDashboardStats, getTailoredCvs } from '@/app/actions/queries'
+import { OverviewSidebar } from './_sidebars/overview-sidebar'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-function PipelineConversionCard({
-  conversion,
-}: {
-  conversion: { band: string; totalApps: number; interviews: number; interviewRate: number }[]
-}) {
-  const hasData = conversion.length > 0
-  return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <div className="flex items-center gap-2">
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-          <BarChart3 className="h-4 w-4" />
-        </span>
-        <div>
-          <h3 className="font-heading font-bold">Your interview forecast</h3>
-          <p className="text-[11px] text-muted-foreground">
-            Based on CV-linked tracked applications only
-          </p>
-        </div>
-      </div>
-      {hasData ? (
-        <div className="mt-4 space-y-2.5">
-          {conversion.map((row) => (
-            <div key={row.band} className="flex items-center justify-between gap-2">
-              <span
-                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${bandBadgeClass[row.band as 'below-cliff' | 'competitive' | 'strong']}`}
-              >
-                {bandLabel[row.band as 'below-cliff' | 'competitive' | 'strong']}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                {row.totalApps} app{row.totalApps === 1 ? '' : 's'} → {row.interviews} interview
-                {row.interviews === 1 ? '' : 's'} ({row.interviewRate}%)
-              </span>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="mt-3 text-xs text-muted-foreground">
-          No tracked outcomes yet — track applications from your CVs to build your forecast.
-        </p>
-      )}
-    </div>
-  )
-}
-
 export default async function DashboardOverview() {
-  const [user, stats, usage, cvs, conversion] = await Promise.all([
+  const [user, stats, cvs] = await Promise.all([
     getSessionUser(),
     getDashboardStats(),
-    getUsage(),
     getTailoredCvs(),
-    getPipelineConversion(),
   ])
 
   const firstName = user?.name?.split(' ')[0] ?? 'there'
@@ -179,23 +133,37 @@ export default async function DashboardOverview() {
         </div>
 
         <div className="flex flex-col gap-6">
-          <UsageCard usage={usage} />
-          <PipelineConversionCard conversion={conversion} />
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-heading font-bold">Your plan</h3>
-            <p className="mt-1 text-2xl font-extrabold text-primary">
-              {PLANS[usage.plan].name}
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {usage.plan === 'free'
-                ? 'Upgrade for monthly CVs and cover letters.'
-                : 'Thanks for being a subscriber.'}
-            </p>
-            <Button asChild variant="outline" size="sm" className="mt-4 w-full">
-              <Link href="/dashboard/billing">Manage billing</Link>
-            </Button>
-          </div>
+          <Suspense fallback={<SidebarSkeleton />}>
+            <OverviewSidebar />
+          </Suspense>
         </div>
+      </div>
+    </div>
+  )
+}
+
+function SidebarSkeleton() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="rounded-xl border border-border bg-card p-5">
+        <Skeleton className="h-4 w-40" />
+        <Skeleton className="mt-2 h-3 w-56" />
+        <Skeleton className="mt-3 h-8 w-24" />
+      </div>
+      <div className="rounded-xl border border-border bg-card p-5">
+        <Skeleton className="h-4 w-20" />
+        <Skeleton className="mt-3 h-8 w-12" />
+        <Skeleton className="mt-3 h-2 w-full" />
+      </div>
+      <div className="rounded-xl border border-border bg-card p-5">
+        <Skeleton className="h-4 w-32" />
+        <Skeleton className="mt-3 h-2 w-full" />
+        <Skeleton className="mt-2 h-2 w-3/4" />
+      </div>
+      <div className="rounded-xl border border-border bg-card p-5">
+        <Skeleton className="h-5 w-16" />
+        <Skeleton className="mt-2 h-3 w-40" />
+        <Skeleton className="mt-1 h-3 w-32" />
       </div>
     </div>
   )

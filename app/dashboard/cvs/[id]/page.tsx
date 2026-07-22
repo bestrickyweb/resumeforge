@@ -6,7 +6,6 @@ import { getTailoredCvById, getPipelineConversion } from '@/app/actions/queries'
 import { CvDetail } from '@/components/dashboard/cv-detail'
 
 export const dynamic = 'force-dynamic'
-export const revalidate = 0 // No caching for user-specific data
 
 export default async function CvDetailPage({
   params,

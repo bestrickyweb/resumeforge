@@ -16,7 +16,7 @@ export function UsageCard({ usage }: { usage: UsageInfo }) {
       <div className="flex items-center justify-between">
         <h3 className="font-heading font-bold">CV usage</h3>
         <span className="text-xs text-muted-foreground">
-          {usage.plan === 'free' ? 'Lifetime' : 'This month'}
+          {usage.plan === 'free' ? 'This week' : 'This month'}
         </span>
       </div>
 

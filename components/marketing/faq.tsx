@@ -23,7 +23,7 @@ const faqs = [
   },
   {
     q: 'Do the free CVs expire?',
-    a: 'No. Your 3 free tailored CVs are yours to use whenever you are ready. Upgrade only when you need more.',
+    a: 'Your 3 free tailored CVs reset every week. Upgrade to Pro for 30 CVs per month and unlimited cover letters.',
   },
   {
     q: 'Does it work for remote and international roles?',

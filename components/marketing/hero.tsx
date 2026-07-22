@@ -41,7 +41,7 @@ export function Hero() {
           </div>
 
           <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2">
-            {['3 free tailored CVs', 'No card required', 'Paystack secure'].map(
+            {['3 tailored CVs per week', 'No card required', 'Paystack secure'].map(
               (item) => (
                 <li
                   key={item}

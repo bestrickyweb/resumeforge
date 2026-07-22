@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { tailoredCv, application, subscription } from '@/lib/db/schema'
+import { tailoredCv, application, subscription, user, feedback } from '@/lib/db/schema'
 import { getUserId } from '@/lib/session'
 import { and, desc, eq, gte, sql } from 'drizzle-orm'
 import { unstable_cache } from 'next/cache'
@@ -23,6 +23,7 @@ export interface UsageInfo {
   used: number
   remaining: number
   features: PlanFeatureMap
+  feedbackSubmittedAt: Date | null
 }
 
 export interface SubscriptionInfo {
@@ -33,54 +34,69 @@ export interface SubscriptionInfo {
 }
 
 export async function getSubscription(userId: string): Promise<SubscriptionInfo> {
-  const rows = await db
-    .select()
-    .from(subscription)
-    .where(eq(subscription.userId, userId))
-    .limit(1)
+  return unstable_cache(
+    async () => {
+      const rows = await db
+        .select()
+        .from(subscription)
+        .where(eq(subscription.userId, userId))
+        .limit(1)
 
-  if (rows.length === 0) {
-    await db.insert(subscription).values({ userId, plan: 'free' }).onConflictDoNothing()
-    return { plan: 'free' as PlanId, status: 'active', authorizationCode: null, paystackCustomerId: null }
-  }
-  return {
-    plan: (rows[0].plan as PlanId) ?? 'free',
-    status: rows[0].status,
-    authorizationCode: rows[0].authorizationCode,
-    paystackCustomerId: rows[0].paystackCustomerId,
-  }
+      if (rows.length === 0) {
+        await db.insert(subscription).values({ userId, plan: 'free' }).onConflictDoNothing()
+        return { plan: 'free' as PlanId, status: 'active', authorizationCode: null, paystackCustomerId: null }
+      }
+      return {
+        plan: (rows[0].plan as PlanId) ?? 'free',
+        status: rows[0].status,
+        authorizationCode: rows[0].authorizationCode,
+        paystackCustomerId: rows[0].paystackCustomerId,
+      }
+    },
+    ['subscription', userId],
+    { revalidate: 30 },
+  )()
 }
 
 export async function getUsage(): Promise<UsageInfo> {
   const userId = await getUserId()
-  const sub = await getSubscription(userId)
-  const plan = (sub.plan as PlanId) ?? 'free'
+  
+  return unstable_cache(
+    async () => {
+      const sub = await getSubscription(userId)
+      const plan = (sub.plan as PlanId) ?? 'free'
 
-  const features = await buildFeatureUsage(plan, userId)
+      const [userRow] = await db
+        .select({ feedbackSubmittedAt: user.feedbackSubmittedAt })
+        .from(user)
+        .where(eq(user.id, userId))
+        .limit(1)
 
-  const cv = features.cvTailoring
-  return {
-    plan,
-    status: sub.status,
-    limit: cv.limit,
-    used: cv.used,
-    remaining: cv.remaining,
-    features,
-  }
+      const features = await buildFeatureUsage(plan, userId)
+
+      const cv = features.cvTailoring
+      return {
+        plan,
+        status: sub.status,
+        limit: cv.limit,
+        used: cv.used,
+        remaining: cv.remaining,
+        features,
+        feedbackSubmittedAt: userRow?.feedbackSubmittedAt ?? null,
+      }
+    },
+    ['usage', userId],
+    { revalidate: 30 },
+  )()
 }
 
-async function countMonthlyCvs(userId: string, plan: PlanId): Promise<number> {
-  if (plan === 'free') {
-    const [{ count }] = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(tailoredCv)
-      .where(eq(tailoredCv.userId, userId))
-    return Number(count)
-  }
-
-  const startOfMonth = new Date()
-  startOfMonth.setDate(1)
-  startOfMonth.setHours(0, 0, 0, 0)
+async function countWeeklyCvs(userId: string, plan: PlanId): Promise<number> {
+  const now = new Date()
+  const day = now.getDay()
+  const diffToMonday = day === 0 ? -6 : 1 - day
+  const startOfWeek = new Date(now)
+  startOfWeek.setHours(0, 0, 0, 0)
+  startOfWeek.setDate(startOfWeek.getDate() + diffToMonday)
 
   const [{ count }] = await db
     .select({ count: sql<number>`count(*)::int` })
@@ -88,7 +104,7 @@ async function countMonthlyCvs(userId: string, plan: PlanId): Promise<number> {
     .where(
       and(
         eq(tailoredCv.userId, userId),
-        gte(tailoredCv.createdAt, startOfMonth),
+        gte(tailoredCv.createdAt, startOfWeek),
       ),
     )
   return Number(count)
@@ -111,7 +127,7 @@ async function buildFeatureUsage(
     cvCount,
     appCount,
   ] = await Promise.all([
-    countMonthlyCvs(userId, plan),
+    countWeeklyCvs(userId, plan),
     countApplications(userId),
   ])
 
@@ -148,11 +164,26 @@ async function buildFeatureUsage(
 
 export async function getTailoredCvs() {
   const userId = await getUserId()
-  return db
-    .select()
-    .from(tailoredCv)
-    .where(eq(tailoredCv.userId, userId))
-    .orderBy(desc(tailoredCv.createdAt))
+  return unstable_cache(
+    async () => {
+      return db
+        .select({
+          id: tailoredCv.id,
+          jobTitle: tailoredCv.jobTitle,
+          company: tailoredCv.company,
+          summary: tailoredCv.summary,
+          createdAt: tailoredCv.createdAt,
+          keywordMatchPct: tailoredCv.keywordMatchPct,
+          matchAfter: tailoredCv.matchAfter,
+          interviewBand: tailoredCv.interviewBand,
+        })
+        .from(tailoredCv)
+        .where(eq(tailoredCv.userId, userId))
+        .orderBy(desc(tailoredCv.createdAt))
+    },
+    ['tailored-cvs', userId],
+    { revalidate: 15 },
+  )()
 }
 
 export async function getTailoredCvById(id: number) {
@@ -225,32 +256,36 @@ export async function getDashboardStats() {
   const userId = await getUserId()
   return unstable_cache(
     async () => {
-      const apps = await db
-        .select()
+      const byStatus = await db
+        .select({
+          status: application.status,
+          total: sql<number>`count(*)::int`,
+        })
         .from(application)
         .where(eq(application.userId, userId))
+        .groupBy(application.status)
 
-      const cvs = await db
-        .select({ id: tailoredCv.id })
+      const counts: Record<string, number> = {}
+      for (const row of byStatus) {
+        counts[row.status] = row.total
+      }
+
+      const [{ totalCvs }] = await db
+        .select({ totalCvs: sql<number>`count(*)::int` })
         .from(tailoredCv)
         .where(eq(tailoredCv.userId, userId))
 
-      const byStatus = apps.reduce<Record<string, number>>((acc, a) => {
-        acc[a.status] = (acc[a.status] ?? 0) + 1
-        return acc
-      }, {})
-
-      const interviews = (byStatus['interview'] ?? 0) + (byStatus['offer'] ?? 0)
+      const interviews = (counts['interview'] ?? 0) + (counts['offer'] ?? 0) + (counts['accepted'] ?? 0)
 
       return {
-        totalCvs: cvs.length,
-        totalApplications: apps.length,
+        totalCvs,
+        totalApplications: Object.values(counts).reduce((a, b) => a + b, 0),
         interviews,
         inProgress:
-          (byStatus['saved'] ?? 0) +
-          (byStatus['applied'] ?? 0) +
-          (byStatus['screen'] ?? 0) +
-          (byStatus['assessment'] ?? 0),
+          (counts['saved'] ?? 0) +
+          (counts['applied'] ?? 0) +
+          (counts['screen'] ?? 0) +
+          (counts['assessment'] ?? 0),
       }
     },
     ['dashboard-stats', userId],

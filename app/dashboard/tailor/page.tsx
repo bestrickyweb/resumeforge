@@ -3,6 +3,9 @@ import { PageHeader } from '@/components/dashboard/page-header'
 import { TailorForm } from '@/components/dashboard/tailor-form'
 import { getUsage, getPreviousCvText } from '@/app/actions/queries'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function TailorPage() {
   const usage = await getUsage()
   const previousCvText = await getPreviousCvText()

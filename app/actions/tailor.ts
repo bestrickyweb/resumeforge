@@ -137,7 +137,7 @@ export async function tailorCv(input: {
       ok: false,
       error:
         usage.plan === 'free'
-          ? 'You have used all 3 free tailored CVs. Upgrade to keep going.'
+          ? 'You have used all 3 free tailored CVs this week. Upgrade to keep going.'
           : 'You have reached your monthly limit. Upgrade your plan for more.',
     }
   }

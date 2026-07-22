@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button'
 import { getTailoredCvs } from '@/app/actions/queries'
 import { interviewBand, bandBadgeClass, bandLabel } from '@/lib/utils'
 
+export const metadata = { title: 'My CVs | ResumeForge' }
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
-export const metadata = { title: 'My CVs | ResumeForge' }
 
 export default async function CvsPage() {
   const cvs = await getTailoredCvs()

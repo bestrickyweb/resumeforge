@@ -1,0 +1,25 @@
+CREATE TABLE IF NOT EXISTS "resume_profile" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"userId" text NOT NULL,
+	"fullName" text NOT NULL,
+	"email" text NOT NULL,
+	"phone" text,
+	"location" text,
+	"linkedinUrl" text,
+	"portfolioUrl" text,
+	"githubUrl" text,
+	"summary" text,
+	"workExperience" text NOT NULL DEFAULT '[]',
+	"education" text NOT NULL DEFAULT '[]',
+	"skills" text NOT NULL DEFAULT '[]',
+	"certifications" text NOT NULL DEFAULT '[]',
+	"projects" text NOT NULL DEFAULT '[]',
+	"languages" text NOT NULL DEFAULT '[]',
+	"awards" text NOT NULL DEFAULT '[]',
+	"volunteering" text NOT NULL DEFAULT '[]',
+	"references" text NOT NULL DEFAULT '[]',
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "resume_profile_userId_unique" UNIQUE("userId")
+);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "resume_profile_userId_idx" ON "resume_profile" ("userId");

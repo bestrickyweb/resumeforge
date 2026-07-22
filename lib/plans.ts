@@ -99,7 +99,7 @@ export const PLANS: Record<PlanId, Plan> = {
     tagline: 'Try it on your next application',
     cvLimit: 3,
     features: [
-      '3 tailored CVs total',
+      '3 tailored CVs per week',
       'ATS match score',
       'Keyword suggestions',
       'Application tracker (5 active)',

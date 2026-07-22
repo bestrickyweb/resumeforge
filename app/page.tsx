@@ -1,6 +1,3 @@
-import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
-import { auth } from '@/lib/auth'
 import { MarketingHeader } from '@/components/marketing/marketing-header'
 import { Hero } from '@/components/marketing/hero'
 import { Stats } from '@/components/marketing/stats'
@@ -14,9 +11,6 @@ import { FinalCta } from '@/components/marketing/final-cta'
 import { MarketingFooter } from '@/components/marketing/marketing-footer'
 
 export default async function HomePage() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (session?.user) redirect('/dashboard')
-
   return (
     <div className="flex min-h-screen flex-col">
       <MarketingHeader />

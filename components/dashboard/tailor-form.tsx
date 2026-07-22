@@ -68,7 +68,7 @@ export function TailorForm({
         </h2>
         <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
           {usage.plan === 'free'
-            ? 'You have used all 3 free tailored CVs. Upgrade to keep tailoring and unlock cover letters.'
+            ? 'You have used all 3 free tailored CVs this week. Upgrade to keep tailoring and unlock cover letters.'
             : 'You have reached your monthly limit. Upgrade for more tailored CVs.'}
         </p>
         <Button asChild className="mt-6">

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
@@ -12,6 +13,7 @@ import {
   Mic,
   Crosshair,
   User,
+  Loader2,
 } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import { Logo } from '@/components/logo'
@@ -36,11 +38,17 @@ export function DashboardNav({
 }) {
   const pathname = usePathname()
   const router = useRouter()
+  const [signingOut, setSigningOut] = useState(false)
 
-  async function signOut() {
-    await authClient.signOut()
-    router.push('/')
-    router.refresh()
+  async function onSignOut() {
+    setSigningOut(true)
+    try {
+      await authClient.signOut()
+      router.push('/')
+      router.refresh()
+    } finally {
+      setSigningOut(false)
+    }
   }
 
   return (
@@ -90,10 +98,19 @@ export function DashboardNav({
         <Button
           variant="ghost"
           size="sm"
-          onClick={signOut}
+          onClick={onSignOut}
+          disabled={signingOut}
           className="mt-1 w-full justify-start text-muted-foreground"
         >
-          <LogOut className="mr-2 h-4 w-4" /> Sign out
+          {signingOut ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing out...
+            </>
+          ) : (
+            <>
+              <LogOut className="mr-2 h-4 w-4" /> Sign out
+            </>
+          )}
         </Button>
       </div>
     </aside>

@@ -16,6 +16,7 @@ export const user = pgTable('user', {
   email: text('email').notNull().unique(),
   emailVerified: boolean('emailVerified').notNull().default(false),
   image: text('image'),
+  feedbackSubmittedAt: timestamp('feedbackSubmittedAt'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 })
@@ -185,4 +186,36 @@ export const skillsGapAnalysis = pgTable('skills_gap_analysis', {
   gaps: text('gaps').notNull().default('[]'),
   recommendedLearning: text('recommendedLearning').notNull().default('[]'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
+})
+
+export const resumeProfile = pgTable('resume_profile', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull().unique(),
+  fullName: text('fullName').notNull(),
+  email: text('email').notNull(),
+  phone: text('phone'),
+  location: text('location'),
+  linkedinUrl: text('linkedinUrl'),
+  portfolioUrl: text('portfolioUrl'),
+  githubUrl: text('githubUrl'),
+  summary: text('summary'),
+  workExperience: text('workExperience').notNull().default('[]'),
+  education: text('education').notNull().default('[]'),
+  skills: text('skills').notNull().default('[]'),
+  certifications: text('certifications').notNull().default('[]'),
+  projects: text('projects').notNull().default('[]'),
+  languages: text('languages').notNull().default('[]'),
+  awards: text('awards').notNull().default('[]'),
+  volunteering: text('volunteering').notNull().default('[]'),
+  references: text('references').notNull().default('[]'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+})
+
+export const feedback = pgTable('feedback', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  rating: integer('rating').notNull(),
+  comment: text('comment').notNull(),
+  submittedAt: timestamp('submittedAt').notNull().defaultNow(),
 })
