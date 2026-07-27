@@ -14,6 +14,7 @@ import {
   Crosshair,
   User,
   Loader2,
+  Map,
 } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import { Logo } from '@/components/logo'
@@ -27,6 +28,7 @@ const nav = [
   { href: '/dashboard/applications', label: 'Applications', icon: KanbanSquare },
   { href: '/dashboard/interview', label: 'Interview Studio', icon: Mic },
   { href: '/dashboard/fit', label: 'Job Fit', icon: Crosshair },
+  { href: '/dashboard/roadmap', label: 'Career Roadmap', icon: Map },
   { href: '/dashboard/profile', label: 'LinkedIn', icon: User },
   { href: '/dashboard/billing', label: 'Billing', icon: CreditCard },
 ]

@@ -219,3 +219,35 @@ export const feedback = pgTable('feedback', {
   comment: text('comment').notNull(),
   submittedAt: timestamp('submittedAt').notNull().defaultNow(),
 })
+
+export const careerRoadmap = pgTable('career_roadmap', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  jobFitId: integer('jobFitId'),
+  targetRole: text('targetRole').notNull(),
+  targetCompany: text('targetCompany'),
+  readinessScore: integer('readinessScore').notNull().default(0),
+  hoursPerWeek: integer('hoursPerWeek').notNull().default(5),
+  estimatedWeeks: integer('estimatedWeeks'),
+  projectedFitScore: integer('projectedFitScore'),
+  completionDate: timestamp('completionDate'),
+  phases: text('phases').notNull().default('[]'),
+  missingSkills: text('missingSkills').notNull().default('[]'),
+  learningPlan: text('learningPlan').notNull().default('[]'),
+  portfolioProjects: text('portfolioProjects').notNull().default('[]'),
+  status: text('status').notNull().default('active'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+})
+
+export const roadmapProgress = pgTable('roadmap_progress', {
+  id: serial('id').primaryKey(),
+  roadmapId: integer('roadmapId').notNull(),
+  userId: text('userId').notNull(),
+  skillName: text('skillName').notNull(),
+  status: text('status').notNull().default('not_started'),
+  hoursSpent: integer('hoursSpent').default(0),
+  startedAt: timestamp('startedAt'),
+  completedAt: timestamp('completedAt'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+})

@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { tailoredCv, application, subscription, user, feedback } from '@/lib/db/schema'
+import { tailoredCv, application, subscription, user, feedback, careerRoadmap } from '@/lib/db/schema'
 import { getUserId } from '@/lib/session'
 import { and, desc, eq, gte, sql } from 'drizzle-orm'
 import { unstable_cache } from 'next/cache'
@@ -118,6 +118,14 @@ async function countApplications(userId: string): Promise<number> {
   return Number(count)
 }
 
+async function countRoadmaps(userId: string): Promise<number> {
+  const [{ count }] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(careerRoadmap)
+    .where(eq(careerRoadmap.userId, userId))
+  return Number(count)
+}
+
 async function buildFeatureUsage(
   plan: PlanId,
   userId: string,
@@ -126,9 +134,11 @@ async function buildFeatureUsage(
   const [
     cvCount,
     appCount,
+    roadmapCount,
   ] = await Promise.all([
     countWeeklyCvs(userId, plan),
     countApplications(userId),
+    countRoadmaps(userId),
   ])
 
   const keys = [
@@ -155,7 +165,9 @@ async function buildFeatureUsage(
       ? cvCount
       : key === 'applicationTracker'
         ? appCount
-        : 0
+        : key === 'skillsGap'
+          ? roadmapCount
+          : 0
     const remaining = limit === Infinity ? Infinity : Math.max(0, limit - used)
     map[key] = { used, limit, remaining }
   }
@@ -332,4 +344,13 @@ export async function getPipelineConversion(): Promise<PipelineConversion[]> {
     ['pipeline-conversion', userId],
     { revalidate: 300 },
   )()
+}
+
+export async function getCareerRoadmaps() {
+  const userId = await getUserId()
+  return db
+    .select()
+    .from(careerRoadmap)
+    .where(eq(careerRoadmap.userId, userId))
+    .orderBy(desc(careerRoadmap.createdAt))
 }
