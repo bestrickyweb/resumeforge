@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar, Clock, BookOpen, AlertCircle, TrendingUp } from 'lucide-react'
+import { Calendar, Clock, BookOpen, AlertCircle, TrendingUp, FileText } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 import { bandBadgeClass, bandLabel, interviewBand } from '@/lib/utils'
+import { exportRoadmapToPdf } from '@/lib/roadmap-pdf'
 import type { CareerRoadmap } from '@/app/actions/roadmap'
 
 type TabKey = 'overview' | 'gaps' | 'timeline' | 'projects'
@@ -30,13 +32,31 @@ export function RoadmapTabs({ roadmap, hoursPerWeek, showProgress = false, initi
 
   return (
     <div className="space-y-6 rounded-2xl border border-border bg-card p-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="font-heading text-lg font-bold">Your Career Roadmap</h3>
           <p className="text-sm text-muted-foreground">
             {roadmap.summary}
           </p>
         </div>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => exportRoadmapToPdf(roadmap, hoursPerWeek)}
+          >
+            <FileText className="mr-2 h-4 w-4" /> Export PDF
+          </Button>
+          <Button asChild variant="outline" size="sm">
+            <Link href={`/dashboard/tailor?jobTitle=${encodeURIComponent(roadmap.targetRole ?? '')}`}>
+              <FileText className="mr-2 h-4 w-4" /> Tailor my CV for this role
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between">
         <Badge className={`${bandBadgeClass[band]} text-sm`}>
           {bandLabel[band]}
         </Badge>

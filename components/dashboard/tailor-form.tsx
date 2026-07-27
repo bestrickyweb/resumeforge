@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Sparkles, Loader2, Lock, FileText } from 'lucide-react'
 import { toast } from 'sonner'
@@ -16,14 +16,19 @@ import { CvUpload } from '@/components/dashboard/cv-upload'
 export function TailorForm({
   usage,
   previousCvText,
+  initialJobTitle,
+  initialJobDescription,
 }: {
   usage: UsageInfo
   previousCvText: string | null
+  initialJobTitle?: string
+  initialJobDescription?: string
 }) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(false)
-  const [jobTitle, setJobTitle] = useState('')
-  const [jobDescription, setJobDescription] = useState('')
+  const [jobTitle, setJobTitle] = useState(() => initialJobTitle || searchParams.get('jobTitle') || '')
+  const [jobDescription, setJobDescription] = useState(() => initialJobDescription || searchParams.get('jobDescription') || '')
   const [originalCv, setOriginalCv] = useState('')
   const [linkedinUrl, setLinkedinUrl] = useState('')
   const [usingPrevious, setUsingPrevious] = useState(false)

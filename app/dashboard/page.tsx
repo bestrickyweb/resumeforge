@@ -71,7 +71,7 @@ export default async function DashboardOverview() {
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-6">
           <div className="rounded-xl border border-border bg-card">
             <div className="flex items-center justify-between border-b border-border px-5 py-4">
               <h2 className="font-heading font-bold">Recent CVs</h2>
@@ -110,7 +110,7 @@ export default async function DashboardOverview() {
                       <div className="min-w-0">
                         <p className="truncate font-medium">{cv.jobTitle}</p>
                         <p className="truncate text-sm text-muted-foreground">
-                          {cv.company || 'Tailored CV'} Â·{' '}
+                          {cv.company || 'Tailored CV'} ·{' '}
                           {new Date(cv.createdAt).toLocaleDateString('en-NG', {
                             day: 'numeric',
                             month: 'short',
@@ -133,6 +133,47 @@ export default async function DashboardOverview() {
               </ul>
             )}
           </div>
+
+          {roadmaps.length > 0 && (
+            <div className="rounded-xl border border-border bg-card">
+              <div className="flex items-center justify-between border-b border-border px-5 py-4">
+                <h2 className="font-heading font-bold">Recent Roadmaps</h2>
+                <Link
+                  href="/dashboard/roadmaps"
+                  className="flex items-center gap-1 text-sm text-primary hover:underline"
+                >
+                  View all <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+              <ul className="divide-y divide-border">
+                {roadmaps.slice(0, 3).map((r) => {
+                  const band = interviewBand(r.readinessScore)
+                  return (
+                    <li key={r.id}>
+                      <Link
+                        href={`/dashboard/roadmap/${r.id}`}
+                        className="flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-muted/50"
+                      >
+                        <div className="min-w-0">
+                          <p className="truncate font-medium">{r.targetRole}</p>
+                          <p className="truncate text-sm text-muted-foreground">
+                            {new Date(r.createdAt).toLocaleDateString('en-NG', {
+                              day: 'numeric',
+                              month: 'short',
+                            })}
+                            {r.estimatedWeeks ? ` · ${r.estimatedWeeks} weeks` : ''}
+                          </p>
+                        </div>
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${bandBadgeClass[band]}`}>
+                          {bandLabel[band]}
+                        </span>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-6">

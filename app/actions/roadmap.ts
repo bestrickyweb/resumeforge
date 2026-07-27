@@ -72,6 +72,7 @@ const portfolioProjectSchema = z.object({
 })
 
 const roadmapOutputSchema = z.object({
+  targetRole: z.string().describe('The target role being analyzed.'),
   readinessScore: z
     .number()
     .max(100)

@@ -17,6 +17,8 @@ interface RoadmapSummary {
   status: string
   createdAt: string
   hoursPerWeek: number
+  completedSkills?: number
+  totalSkills?: number
 }
 
 export function RoadmapList() {
@@ -85,6 +87,7 @@ export function RoadmapList() {
     <div className="space-y-3">
       {roadmaps.map((r) => {
         const band = interviewBand(r.readinessScore)
+        const progressPct = r.totalSkills ? Math.round(((r.completedSkills ?? 0) / r.totalSkills) * 100) : 0
         return (
           <Card key={r.id} className="flex items-center justify-between gap-4 p-4">
             <div className="min-w-0 flex-1">
@@ -100,6 +103,11 @@ export function RoadmapList() {
                 <Badge variant="outline" className="text-[10px]">
                   {r.status}
                 </Badge>
+                {r.totalSkills ? (
+                  <span className="text-[10px] text-muted-foreground">
+                    {progressPct}% complete
+                  </span>
+                ) : null}
               </div>
             </div>
             <div className="flex items-center gap-2">

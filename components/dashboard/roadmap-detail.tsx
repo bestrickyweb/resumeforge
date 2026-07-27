@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
 import { RoadmapTabs } from '@/components/dashboard/roadmap-tabs'
 import type { CareerRoadmap } from '@/app/actions/roadmap'
 
@@ -48,12 +50,19 @@ export function RoadmapDetail({ roadmap }: { roadmap: CareerRoadmap & { id: numb
   }, [roadmap.id])
 
   return (
-    <RoadmapTabs
-      roadmap={roadmap}
-      hoursPerWeek={roadmap.hoursPerWeek ?? undefined}
-      showProgress
-      initialProgress={localStatus}
-      onProgressChange={handleProgressChange}
-    />
+    <div className="space-y-4">
+      <RoadmapTabs
+        roadmap={roadmap}
+        hoursPerWeek={roadmap.hoursPerWeek ?? undefined}
+        showProgress
+        initialProgress={localStatus}
+        onProgressChange={handleProgressChange}
+      />
+      <div className="flex justify-end">
+        <Button asChild variant="outline">
+          <Link href="/dashboard/roadmap">New Analysis</Link>
+        </Button>
+      </div>
+    </div>
   )
 }
