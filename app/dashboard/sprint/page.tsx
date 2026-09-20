@@ -1,10 +1,8 @@
-import { notFound } from 'next/navigation'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { SprintDashboard } from '@/components/dashboard/sprint-dashboard'
-import { getActiveSprint, createSprint } from '@/app/actions/sprint'
+import { SprintForm } from '@/components/dashboard/sprint-form'
+import { getActiveSprint } from '@/app/actions/sprint'
 import { getCareerRoadmaps } from '@/app/actions/queries'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import { Target, Sparkles } from 'lucide-react'
 
 export const metadata = { title: 'Career Sprint | ResumeForge' }
@@ -76,7 +74,7 @@ export default async function SprintPage() {
   )
 }
 
-async function SprintInitializer() {
+function SprintInitializer() {
   return (
     <div className="rounded-xl border border-dashed border-border bg-card p-8">
       <div className="flex flex-col items-center text-center">
@@ -87,79 +85,10 @@ async function SprintInitializer() {
         <p className="mt-2 max-w-md text-sm text-muted-foreground">
           Define your target role, set application and interview goals, and commit to a 90-day plan.
         </p>
-        <form className="mt-6 w-full max-w-md space-y-4">
+        <div className="mt-6 w-full max-w-md">
           <SprintForm />
-        </form>
+        </div>
       </div>
     </div>
   )
-}
-
-async function SprintForm() {
-  return (
-    <form action={handleCreateSprint}>
-      <div className="space-y-1.5">
-        <label htmlFor="goalRole" className="text-sm font-medium">Target role</label>
-          <input
-            id="goalRole"
-            name="goalRole"
-            required
-            placeholder="e.g. Product Manager"
-            className="flex h-9 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-          />
-        </div>
-      <div className="grid gap-4 sm:grid-cols-3">
-        <div className="space-y-1.5">
-          <label htmlFor="durationWeeks" className="text-sm font-medium">Duration (weeks)</label>
-          <input
-            id="durationWeeks"
-            name="durationWeeks"
-            type="number"
-            min={4}
-            max={24}
-            defaultValue={12}
-            className="flex h-9 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <label htmlFor="targetApplications" className="text-sm font-medium">Target applications</label>
-          <input
-            id="targetApplications"
-            name="targetApplications"
-            type="number"
-            min={1}
-            defaultValue={10}
-            className="flex h-9 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <label htmlFor="targetInterviews" className="text-sm font-medium">Target interviews</label>
-          <input
-            id="targetInterviews"
-            name="targetInterviews"
-            type="number"
-            min={1}
-            defaultValue={3}
-            className="flex h-9 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm"
-          />
-        </div>
-      </div>
-      <Button type="submit" className="w-full">
-        Start Sprint
-      </Button>
-    </form>
-  )
-}
-
-async function handleCreateSprint(formData: FormData) {
-  'use server'
-  const goalRole = formData.get('goalRole') as string
-  const targetApplications = parseInt(formData.get('targetApplications') as string) || 10
-  const targetInterviews = parseInt(formData.get('targetInterviews') as string) || 3
-  const durationWeeks = parseInt(formData.get('durationWeeks') as string) || 12
-
-  await createSprint({ goalRole, durationWeeks, targetApplications, targetInterviews })
-  const { revalidatePath } = await import('next/cache')
-  revalidatePath('/dashboard/sprint')
-  revalidatePath('/dashboard')
 }

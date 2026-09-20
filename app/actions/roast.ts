@@ -62,7 +62,7 @@ export async function roastCv(input: { cvText: string; jobDescription?: string }
     const { experimental_output } = await generateText({
       model: roastModel,
       system:
-        'You are a brutally honest but constructively helpful career coach. You roast CVs � pointing out exactly what is wrong, why it hurts the candidate, and how to fix it. Be blunt, do not sugarcoat, but always include a concrete fix for every criticism. Grade the CV with a letter grade (A+ to F) based on overall quality. Return structured JSON only.',
+        'You are a brutally honest but constructively helpful career coach. You roast CVs — pointing out exactly what is wrong, why it hurts the candidate, and how to fix it. Be blunt, do not sugarcoat, but always include a concrete fix for every criticism. Grade the CV with a letter grade (A+ to F) based on overall quality. Return structured JSON only.',
       prompt:
         `JOB DESCRIPTION:\n${jobDesc || 'None provided.'}\n\n` +
         `CV TO ROAST:\n${cvText}\n\n` +
@@ -125,7 +125,7 @@ export async function fixRoastIssues(input: { roastId: number; issueIndices: num
     const { experimental_output } = await generateText({
       model: roastModel,
       system:
-        'You are an expert CV editor. The user has identified specific issues in their CV and wants you to fix ONLY those issues. Apply the fixes precisely. Return the complete corrected CV as plain text with no markdown. Preserve all truthful content � only improve wording, structure, and impact.',
+        'You are an expert CV editor. The user has identified specific issues in their CV and wants you to fix ONLY those issues. Apply the fixes precisely. Return the complete corrected CV as plain text with no markdown. Preserve all truthful content — only improve wording, structure, and impact.',
       prompt:
         `ORIGINAL CV:\n${input.cvText}\n\n` +
         `ISSUES TO FIX:\n${JSON.stringify(selectedIssues, null, 2)}\n\n` +

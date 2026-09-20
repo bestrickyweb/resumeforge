@@ -133,7 +133,7 @@ export function RoastView({
             Resume Roast
           </DialogTitle>
           <DialogDescription>
-            Paste your CV and get brutally honest feedback � then fix issues and re-roast.
+            Paste your CV and get brutally honest feedback — then fix issues and re-roast.
           </DialogDescription>
         </DialogHeader>
 

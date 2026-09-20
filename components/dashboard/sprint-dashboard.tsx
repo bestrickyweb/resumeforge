@@ -129,7 +129,7 @@ export function SprintDashboard({ sprint, milestones }: { sprint: Awaited<Return
         <div>
           <h2 className="font-heading text-2xl font-bold">{sprint.name}</h2>
           <p className="text-muted-foreground">
-            {sprint.goalRole} � {sprint.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} �{' '}
+{sprint.goalRole} — {sprint.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} —{' '}
             {sprint.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </p>
         </div>
