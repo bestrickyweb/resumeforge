@@ -9,23 +9,25 @@ import {
   ArrowRight,
   Plus,
   Map,
+  BarChart3,
 } from 'lucide-react'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getSessionUser } from '@/lib/session'
-import { getDashboardStats, getTailoredCvs, getCareerRoadmaps } from '@/app/actions/queries'
+import { getDashboardStats, getTailoredCvs, getCareerRoadmaps, getPipelineIntelligence } from '@/app/actions/queries'
 import { OverviewSidebar } from './_sidebars/overview-sidebar'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function DashboardOverview() {
-  const [user, stats, cvs, roadmaps] = await Promise.all([
+  const [user, stats, cvs, roadmaps, pipeline] = await Promise.all([
     getSessionUser(),
     getDashboardStats(),
     getTailoredCvs(),
     getCareerRoadmaps(),
+    getPipelineIntelligence(),
   ])
 
   const firstName = user?.name?.split(' ')[0] ?? 'there'
@@ -37,6 +39,7 @@ export default async function DashboardOverview() {
     { label: 'Interviews & offers', value: stats.interviews, icon: Trophy },
     { label: 'In progress', value: stats.inProgress, icon: Sparkles },
     { label: 'Roadmaps', value: roadmaps.length, icon: Map },
+    { label: 'Pipeline Intelligence', value: pipeline.predictedApplicationsForNextInterview ?? '—', icon: BarChart3 },
   ]
 
   return (

@@ -15,6 +15,7 @@ import {
   User,
   Loader2,
   Map,
+  Target,
 } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import { Logo } from '@/components/logo'
@@ -29,6 +30,7 @@ const nav = [
   { href: '/dashboard/interview', label: 'Interview Studio', icon: Mic },
   { href: '/dashboard/fit', label: 'Job Fit', icon: Crosshair },
   { href: '/dashboard/roadmap', label: 'Career Roadmap', icon: Map },
+  { href: '/dashboard/sprint', label: 'Career Sprint', icon: Target },
   { href: '/dashboard/profile', label: 'LinkedIn', icon: User },
   { href: '/dashboard/billing', label: 'Billing', icon: CreditCard },
 ]

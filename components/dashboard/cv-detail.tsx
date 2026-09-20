@@ -20,6 +20,9 @@ import { deleteTailoredCv } from '@/app/actions/tailor'
 import { createApplication } from '@/app/actions/applications'
 import { scanAchievements } from '@/app/actions/scan'
 import { cn, interviewBand, bandBadgeClass, bandBarClass, bandLabel, type InterviewBand } from '@/lib/utils'
+import { Send, Users } from 'lucide-react'
+import { RoastView } from './roast-view'
+import { ReferralDialog } from './referral-dialog'
 
 interface CvRow {
   id: number
@@ -127,6 +130,7 @@ export function CvDetail({ cv, conversion }: { cv: CvRow; conversion: PipelineCo
   const [achievementsLoading, setAchievementsLoading] = useState(false)
   const [achievements, setAchievements] = useState<{ originalBullet: string; hasMetric: boolean; suggestion: string; metricType: string }[]>([])
   const [coverageScore, setCoverageScore] = useState<number | null>(null)
+  const [roastOpen, setRoastOpen] = useState(false)
 
   const keywords: string[] = (() => {
     try {
@@ -286,6 +290,10 @@ export function CvDetail({ cv, conversion }: { cv: CvRow; conversion: PipelineCo
           <Button onClick={() => setTrackOpen(true)} variant="outline" size="sm">
             <KanbanSquare className="mr-2 h-4 w-4" /> Track application
           </Button>
+          <Button onClick={() => setRoastOpen(true)} variant="outline" size="sm">
+            <Sparkles className="mr-2 h-4 w-4" /> Roast my CV
+          </Button>
+          <ReferralDialog cvText={cv.tailoredCv || cv.originalCv} tailoredCvId={cv.id} />
           <Button
             onClick={onDelete}
             variant="ghost"
@@ -422,6 +430,12 @@ export function CvDetail({ cv, conversion }: { cv: CvRow; conversion: PipelineCo
         </DialogContent>
       </Dialog>
 
+      <RoastView
+        cvText={cv.tailoredCv || cv.originalCv}
+        open={roastOpen}
+        onOpenChange={setRoastOpen}
+      />
+
       <Dialog open={achievementsOpen} onOpenChange={setAchievementsOpen}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
@@ -520,4 +534,6 @@ function DocPanel({
       </pre>
     </div>
   )
-}
+}
+
+

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { width: 320px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 16px; background: #fff; }
+      h2 { font-size: 16px; font-weight: 600; color: #111; margin-bottom: 12px; }
+      .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+      .btn-primary { background: #1a1a2e; color: #fff; }
+      .btn-primary:hover { background: #2d2d5e; }
+      .btn-primary:disabled { background: #999; cursor: not-allowed; }
+      .status { margin-top: 12px; font-size: 13px; color: #666; min-height: 20px; }
+      .status.success { color: #059669; }
+      .status.error { color: #dc2626; }
+      .link { display: block; margin-top: 16px; text-align: center; font-size: 13px; color: #1a1a2e; text-decoration: none; }
+      .link:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <h2>Save this job</h2>
+    <button id="saveBtn" class="btn btn-primary">Save to ResumeForge</button>
+    <div id="status" class="status"></div>
+    <a id="openDashboard" class="link" href="#" target="_blank">Open ResumeForge Dashboard</a>
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -346,6 +346,224 @@ export async function getPipelineConversion(): Promise<PipelineConversion[]> {
   )()
 }
 
+export interface PipelineIntelligence {
+  funnel: {
+    saved: number
+    applied: number
+    screen: number
+    assessment: number
+    interview: number
+    offer: number
+    accepted: number
+    declined: number
+    rejected: number
+  }
+  funnelRates: {
+    appliedToScreen: number
+    screenToInterview: number
+    interviewToOffer: number
+  }
+  bandBreakdown: {
+    band: InterviewBand
+    totalApps: number
+    interviews: number
+    interviewRate: number
+    offerRate: number
+  }[]
+  dropOffReasons: {
+    stage: string
+    count: number
+    likelyCause: string
+  }[]
+  topPerformingCv: {
+    id: number
+    jobTitle: string
+    keywordMatchPct: number
+    interviewRate: number
+  } | null
+  predictedApplicationsForNextInterview: number | null
+}
+
+const BANDS: InterviewBand[] = ['below-cliff', 'competitive', 'strong']
+
+function percentage(numerator: number, denominator: number): number {
+  return denominator > 0 ? Math.round((numerator / denominator) * 100) : 0
+}
+
+function normalizeBand(band: string): InterviewBand {
+  return band === 'competitive' || band === 'strong' ? band : 'below-cliff'
+}
+
+export async function getPipelineIntelligence(): Promise<PipelineIntelligence> {
+  const userId = await getUserId()
+
+  return unstable_cache(
+    async () => {
+      const [
+        funnelRows,
+        bandRows,
+        diagnosisRows,
+        topCvRows,
+      ] = await Promise.all([
+        db
+          .select({
+            totalApplications: sql<number>`COUNT(*)::int`,
+            saved: sql<number>`COUNT(*) FILTER (WHERE ${application.status} = 'saved')::int`,
+            applied: sql<number>`COUNT(*) FILTER (WHERE ${application.status} = 'applied')::int`,
+            screen: sql<number>`COUNT(*) FILTER (WHERE ${application.status} = 'screen')::int`,
+            assessment: sql<number>`COUNT(*) FILTER (WHERE ${application.status} = 'assessment')::int`,
+            interview: sql<number>`COUNT(*) FILTER (WHERE ${application.status} = 'interview')::int`,
+            offer: sql<number>`COUNT(*) FILTER (WHERE ${application.status} = 'offer')::int`,
+            accepted: sql<number>`COUNT(*) FILTER (WHERE ${application.status} = 'accepted')::int`,
+            declined: sql<number>`COUNT(*) FILTER (WHERE ${application.status} = 'declined')::int`,
+            rejected: sql<number>`COUNT(*) FILTER (WHERE ${application.status} = 'rejected')::int`,
+          })
+          .from(application)
+          .where(eq(application.userId, userId)),
+        db
+          .select({
+            band: sql<string>`COALESCE(${tailoredCv.interviewBand}, 'below-cliff')`,
+            totalApps: sql<number>`COUNT(${application.id})::int`,
+            interviews: sql<number>`COUNT(${application.id}) FILTER (WHERE ${application.status} IN ('interview', 'offer', 'accepted'))::int`,
+            offers: sql<number>`COUNT(${application.id}) FILTER (WHERE ${application.status} IN ('offer', 'accepted'))::int`,
+          })
+          .from(tailoredCv)
+          .innerJoin(
+            application,
+            and(eq(application.cvId, tailoredCv.id), eq(application.userId, userId)),
+          )
+          .where(eq(tailoredCv.userId, userId))
+          .groupBy(sql`COALESCE(${tailoredCv.interviewBand}, 'below-cliff')`),
+        db
+          .select({
+            linkedApps: sql<number>`COUNT(${tailoredCv.id})::int`,
+            linkedRejected: sql<number>`COUNT(${tailoredCv.id}) FILTER (WHERE ${application.status} = 'rejected')::int`,
+            lowKeywordApps: sql<number>`COUNT(${tailoredCv.id}) FILTER (WHERE ${tailoredCv.keywordMatchPct} < 70)::int`,
+            lowKeywordRejected: sql<number>`COUNT(${tailoredCv.id}) FILTER (WHERE ${tailoredCv.keywordMatchPct} < 70 AND ${application.status} = 'rejected')::int`,
+            lowFormatApps: sql<number>`COUNT(${tailoredCv.id}) FILTER (WHERE ${tailoredCv.formatScore} < 60)::int`,
+          })
+          .from(application)
+          .leftJoin(
+            tailoredCv,
+            and(eq(tailoredCv.id, application.cvId), eq(tailoredCv.userId, userId)),
+          )
+          .where(eq(application.userId, userId)),
+        db
+          .select({
+            id: tailoredCv.id,
+            jobTitle: tailoredCv.jobTitle,
+            keywordMatchPct: tailoredCv.keywordMatchPct,
+            totalApps: sql<number>`COUNT(${application.id})::int`,
+            interviews: sql<number>`COUNT(${application.id}) FILTER (WHERE ${application.status} IN ('interview', 'offer', 'accepted'))::int`,
+          })
+          .from(tailoredCv)
+          .innerJoin(
+            application,
+            and(eq(application.cvId, tailoredCv.id), eq(application.userId, userId)),
+          )
+          .where(eq(tailoredCv.userId, userId))
+          .groupBy(tailoredCv.id, tailoredCv.jobTitle, tailoredCv.keywordMatchPct)
+          .orderBy(
+            sql`COUNT(${application.id}) FILTER (WHERE ${application.status} IN ('interview', 'offer', 'accepted'))::numeric / NULLIF(COUNT(${application.id}), 0) DESC, COUNT(${application.id}) DESC, ${tailoredCv.keywordMatchPct} DESC`,
+          )
+          .limit(1),
+      ])
+
+      const funnelRow = funnelRows[0]
+      const diagnosis = diagnosisRows[0]
+      const funnel = {
+        saved: Number(funnelRow?.saved ?? 0),
+        applied: Number(funnelRow?.applied ?? 0),
+        screen: Number(funnelRow?.screen ?? 0),
+        assessment: Number(funnelRow?.assessment ?? 0),
+        interview: Number(funnelRow?.interview ?? 0),
+        offer: Number(funnelRow?.offer ?? 0),
+        accepted: Number(funnelRow?.accepted ?? 0),
+        declined: Number(funnelRow?.declined ?? 0),
+        rejected: Number(funnelRow?.rejected ?? 0),
+      }
+      const totalApplications = Number(funnelRow?.totalApplications ?? Object.values(funnel).reduce((total, count) => total + count, 0))
+
+      const bandBreakdown = BANDS.map((band) => {
+        const row = bandRows.find((candidate) => normalizeBand(candidate.band) === band)
+        const totalApps = Number(row?.totalApps ?? 0)
+        const interviews = Number(row?.interviews ?? 0)
+        const offers = Number(row?.offers ?? 0)
+
+        return {
+          band,
+          totalApps,
+          interviews,
+          interviewRate: percentage(interviews, totalApps),
+          offerRate: percentage(offers, totalApps),
+        }
+      })
+
+      const linkedApps = Number(diagnosis?.linkedApps ?? 0)
+      const linkedRejected = Number(diagnosis?.linkedRejected ?? 0)
+      const lowKeywordApps = Number(diagnosis?.lowKeywordApps ?? 0)
+      const lowKeywordRejected = Number(diagnosis?.lowKeywordRejected ?? 0)
+      const lowFormatApps = Number(diagnosis?.lowFormatApps ?? 0)
+      const otherKeywordApps = linkedApps - lowKeywordApps
+      const otherKeywordRejected = linkedRejected - lowKeywordRejected
+      const lowKeywordRejectionRate = lowKeywordApps > 0 ? lowKeywordRejected / lowKeywordApps : 0
+      const otherKeywordRejectionRate = otherKeywordApps > 0 ? otherKeywordRejected / otherKeywordApps : 0
+      const likelyCause =
+        lowKeywordApps > 0 &&
+        otherKeywordApps > 0 &&
+        lowKeywordRejected > 0 &&
+        lowKeywordRejectionRate > otherKeywordRejectionRate
+          ? 'low keyword match'
+          : lowFormatApps > 0
+            ? 'format issues'
+            : 'unknown'
+
+      const transitions = [
+        { stage: 'Saved → Applied', from: 'saved', to: 'applied' },
+        { stage: 'Applied → Screening', from: 'applied', to: 'screen' },
+        { stage: 'Screening → Assessment', from: 'screen', to: 'assessment' },
+        { stage: 'Assessment → Interview', from: 'assessment', to: 'interview' },
+        { stage: 'Interview → Offer', from: 'interview', to: 'offer' },
+      ] as const
+      const dropOffReasons = transitions
+        .map(({ stage, from, to }) => ({
+          stage,
+          count: Math.max(funnel[from] - funnel[to], 0),
+          likelyCause,
+        }))
+        .filter(({ count }) => count > 0)
+
+      const topCv = topCvRows[0]
+      const topPerformingCv = topCv
+        ? {
+            id: Number(topCv.id),
+            jobTitle: topCv.jobTitle ?? 'Untitled CV',
+            keywordMatchPct: Number(topCv.keywordMatchPct ?? 0),
+            interviewRate: percentage(Number(topCv.interviews), Number(topCv.totalApps)),
+          }
+        : null
+
+      const interviews = funnel.interview + funnel.offer + funnel.accepted
+
+      return {
+        funnel,
+        funnelRates: {
+          appliedToScreen: percentage(funnel.screen, funnel.applied),
+          screenToInterview: percentage(funnel.interview, funnel.screen),
+          interviewToOffer: percentage(funnel.offer, funnel.interview),
+        },
+        bandBreakdown,
+        dropOffReasons,
+        topPerformingCv,
+        predictedApplicationsForNextInterview:
+          interviews > 0 ? Math.ceil(totalApplications / interviews) : null,
+      }
+    },
+    ['pipeline-intelligence', userId],
+    { revalidate: 300 },
+  )()
+}
+
 export async function getCareerRoadmaps() {
   const userId = await getUserId()
   return db

@@ -7,9 +7,6 @@ import {
   integer,
 } from 'drizzle-orm/pg-core'
 
-// ---------------------------------------------------------------------------
-// Better Auth tables (do not rename columns)
-// ---------------------------------------------------------------------------
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
@@ -61,9 +58,6 @@ export const verification = pgTable('verification', {
   updatedAt: timestamp('updatedAt').defaultNow(),
 })
 
-// ---------------------------------------------------------------------------
-// App tables (scoped by userId — no FK by convention)
-// ---------------------------------------------------------------------------
 export const tailoredCv = pgTable('tailored_cv', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
@@ -218,6 +212,66 @@ export const feedback = pgTable('feedback', {
   rating: integer('rating').notNull(),
   comment: text('comment').notNull(),
   submittedAt: timestamp('submittedAt').notNull().defaultNow(),
+})
+
+export const roastSession = pgTable('roast_session', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  cvText: text('cvText').notNull(),
+  jobDescription: text('jobDescription'),
+  score: integer('score').notNull(),
+  grade: text('grade').notNull(),
+  issues: text('issues').notNull().default('[]'),
+  fixedIssueIds: text('fixedIssueIds').notNull().default('[]'),
+  fixedCvId: integer('fixedCvId'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+})
+
+export const referralRequest = pgTable('referral_request', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  tailoredCvId: integer('tailoredCvId'),
+  applicationId: integer('applicationId'),
+  referrerName: text('referrerName'),
+  referrerLinkedInUrl: text('referrerLinkedInUrl'),
+  referrerRole: text('referrerRole'),
+  connectionMessage: text('connectionMessage'),
+  followUpMessage: text('followUpMessage'),
+  sentAt: timestamp('sentAt'),
+  respondedAt: timestamp('respondedAt'),
+  status: text('status').notNull().default('draft'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+})
+
+export const careerSprint = pgTable('career_sprint', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  name: text('name').notNull(),
+  goalRole: text('goalRole').notNull(),
+  startDate: timestamp('startDate').notNull(),
+  endDate: timestamp('endDate').notNull(),
+  targetApplications: integer('targetApplications').default(10),
+  targetInterviews: integer('targetInterviews').default(3),
+  status: text('status').notNull().default('active'),
+  weeklyCheckins: text('weeklyCheckins').notNull().default('[]'),
+  milestoneLog: text('milestoneLog').notNull().default('[]'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+})
+
+export const weeklyCheckin = pgTable('weekly_checkin', {
+  id: serial('id').primaryKey(),
+  sprintId: integer('sprintId').notNull(),
+  userId: text('userId').notNull(),
+  weekNumber: integer('weekNumber').notNull(),
+  submittedAt: timestamp('submittedAt'),
+  applicationsSent: integer('applicationsSent').default(0),
+  interviewsAttended: integer('interviewsAttended').default(0),
+  offersReceived: integer('offersReceived').default(0),
+  skillsCompleted: text('skillsCompleted').notNull().default('[]'),
+  blockers: text('blockers'),
+  nextWeekFocus: text('nextWeekFocus'),
+  mood: integer('mood'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
 })
 
 export const careerRoadmap = pgTable('career_roadmap', {
