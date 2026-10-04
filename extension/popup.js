@@ -51,7 +51,7 @@ async function saveJob() {
   } catch (err) {
     showStatus(err.message, "error");
     saveBtn.disabled = false;
-    saveBtn.textContent = "Save to ResumePrime";
+    saveBtn.textContent = "Save to Tailorvance";
   }
 }
 

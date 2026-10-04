@@ -4,7 +4,7 @@ import { getUsage } from "@/app/actions/queries"
 import { PageHeader } from "@/components/dashboard/page-header"
 import { BillingPlans } from "@/components/dashboard/billing-plans"
 
-export const metadata = { title: "Billing & Plans | ResumePrime" }
+export const metadata = { title: "Billing & Plans | Tailorvance" }
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 

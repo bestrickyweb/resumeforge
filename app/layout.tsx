@@ -31,19 +31,19 @@ export const metadata: Metadata = {
     type: 'website',
     url: SITE_URL,
     images: [
-      {
-        url: '/resumeprime.png',
-        width: 1200,
-        height: 630,
-        alt: 'ResumePrime - Beat the ATS, Land the Interview',
-      },
+           {
+            url: '/tailorvance.png',
+            width: 1200,
+            height: 630,
+            alt: 'Tailorvance - Resume Builder That Beats ATS, Gets Interviews',
+          },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     title: SEO_TITLE,
     description: SEO_DESCRIPTION,
-    images: ['/resumeprime.png'],
+     images: ['/tailorvance.png'],
   },
   generator: 'v0.app',
   icons: {

@@ -119,12 +119,12 @@ function looksLikeJobPage() {
 }
 
 function createFloatingButton() {
-  if (document.getElementById("ResumePrime-save-btn")) return;
+  if (document.getElementById("tailorvance-save-btn")) return;
 
   const btn = document.createElement("button");
-  btn.id = "ResumePrime-save-btn";
-  btn.textContent = "Save to ResumePrime";
-  btn.setAttribute("aria-label", "Save this job to ResumePrime");
+  btn.id = "tailorvance-save-btn";
+  btn.textContent = "Save to Tailorvance";
+  btn.setAttribute("aria-label", "Save this job to Tailorvance");
   document.body.appendChild(btn);
 
   btn.addEventListener("click", async () => {
@@ -134,7 +134,7 @@ function createFloatingButton() {
 
     if (!jobData.title || !jobData.company) {
       btn.disabled = false;
-      btn.textContent = "Save to ResumePrime";
+      btn.textContent = "Save to Tailorvance";
       alert("Could not extract job title and company. Please try from the extension popup.");
       return;
     }
@@ -144,13 +144,13 @@ function createFloatingButton() {
         btn.textContent = "Saved!";
         btn.style.background = "#059669";
         setTimeout(() => {
-          btn.textContent = "Save to ResumePrime";
+          btn.textContent = "Save to Tailorvance";
           btn.style.background = "";
           btn.disabled = false;
         }, 2000);
       } else {
         btn.disabled = false;
-        btn.textContent = "Save to ResumePrime";
+        btn.textContent = "Save to Tailorvance";
         alert(response?.error || "Failed to save job. Try from the extension popup.");
       }
     });

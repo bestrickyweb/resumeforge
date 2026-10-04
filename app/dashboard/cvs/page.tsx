@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { getTailoredCvs } from '@/app/actions/queries'
 import { interviewBand, bandBadgeClass, bandLabel } from '@/lib/utils'
 
-export const metadata = { title: 'My CVs | ResumePrime' }
+export const metadata = { title: 'My CVs | Tailorvance' }
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 

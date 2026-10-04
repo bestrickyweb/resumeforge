@@ -8,7 +8,7 @@ const steps = [
   },
   {
     icon: Sparkles,
-    title: 'Let ResumePrime tailor it',
+     title: 'Let Tailorvance tailor it',
     desc: 'Our AI rewrites your summary, weaves in the right keywords, and reorders achievements to match the role.',
   },
   {

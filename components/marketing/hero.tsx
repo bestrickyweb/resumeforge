@@ -13,16 +13,16 @@ export function Hero() {
             Built for the Nigerian job market
           </div>
 
-          <h1 className="text-balance font-heading text-4xl font-extrabold leading-tight tracking-tight md:text-5xl lg:text-6xl">
-            ATS Optimized Resume Builder Powered by AI
-          </h1>
+           <h1 className="text-balance font-heading text-4xl font-extrabold leading-tight tracking-tight md:text-5xl lg:text-6xl">
+             Resume Builder That Beats ATS Filters — Tailored to Every Job
+           </h1>
 
-          <p className="mt-5 max-w-md text-pretty text-lg leading-relaxed text-muted-foreground">
-            ATS Resume Builder That Tailors Your CV to Any Job Description.
-            Upload your resume, paste a job description, and generate an ATS
-            optimized version in less than a minute. Increase keyword matching
-            and improve your chances of landing interviews.
-          </p>
+           <p className="mt-5 max-w-md text-pretty text-lg leading-relaxed text-muted-foreground">
+             Upload your resume, paste a job description, and generate an ATS
+             optimized version in less than a minute. Increase keyword matching,
+             fix formatting for ATS scanners, and improve your chances of
+             landing interviews.
+           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg" className="h-12 px-7 text-base sm:h-12">
@@ -84,7 +84,7 @@ export function Hero() {
           <div className="absolute -inset-4 -z-10 rounded-3xl bg-primary/5" />
           <Image
             src="/hero-dashboard.png"
-            alt="ResumePrime dashboard showing a CV optimized with an ATS match score of 92%"
+             alt="Tailorvance dashboard showing a resume optimized with an ATS match score of 92%"
             width={720}
             height={540}
             priority

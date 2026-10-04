@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { RoadmapDetail } from '@/components/dashboard/roadmap-detail'
 
-export const metadata = { title: 'Roadmap Details | ResumePrime' }
+export const metadata = { title: 'Roadmap Details | Tailorvance' }
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 

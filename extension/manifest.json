@@ -1,13 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "ResumePrime � Save Jobs",
+  "name": "Tailorvance — Save Jobs",
   "version": "1.0",
-  "description": "Save job postings to your ResumePrime tracker from any site.",
+  "description": "Save job postings to your Tailorvance tracker from any site.",
   "permissions": ["activeTab", "storage", "scripting"],
   "host_permissions": ["<all_urls>"],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Save to ResumePrime"
+    "default_title": "Save to Tailorvance"
   },
   "background": {
     "service_worker": "background.js"

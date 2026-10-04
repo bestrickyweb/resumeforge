@@ -4,7 +4,7 @@ import { getApplications, getApplicationStats, getTailoredCvs } from "@/app/acti
 import { PageHeader } from "@/components/dashboard/page-header"
 import { ApplicationsBoard } from "@/components/dashboard/applications-board"
 
-export const metadata = { title: "Application Tracker | ResumePrime" }
+export const metadata = { title: "Application Tracker | Tailorvance" }
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 

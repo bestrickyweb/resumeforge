@@ -1,4 +1,4 @@
-#ResumePrime-save-btn {
+#tailorvance-save-btn {
   position: fixed;
   bottom: 24px;
   right: 24px;
@@ -19,30 +19,30 @@
   gap: 8px;
 }
 
-#ResumePrime-save-btn:hover:not(:disabled) {
+#tailorvance-save-btn:hover:not(:disabled) {
   background: #2d2d5e;
   transform: translateY(-2px);
   box-shadow: 0 6px 28px rgba(26, 26, 46, 0.4);
 }
 
-#ResumePrime-save-btn:active:not(:disabled) {
+#tailorvance-save-btn:active:not(:disabled) {
   transform: translateY(0);
 }
 
-#ResumePrime-save-btn:disabled {
+#tailorvance-save-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-#ResumePrime-save-btn.saved {
+#tailorvance-save-btn.saved {
   background: #059669;
 }
 
 @media (prefers-color-scheme: dark) {
-  #ResumePrime-save-btn {
+  #tailorvance-save-btn {
     background: #1a1a2e;
   }
-  #ResumePrime-save-btn:hover:not(:disabled) {
+  #tailorvance-save-btn:hover:not(:disabled) {
     background: #2d2d5e;
   }
 }

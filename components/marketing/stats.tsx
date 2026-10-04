@@ -1,7 +1,7 @@
 const stats = [
   { value: '75%', label: 'of CVs rejected by ATS before a human reads them' },
   { value: '3x', label: 'more interview callbacks with a tailored CV' },
-  { value: '45s', label: 'average time to tailor a CV with ResumePrime' },
+  { value: '45s', label: 'average time to tailor a resume with Tailorvance' },
   { value: '12k+', label: 'Nigerian job seekers already onboard' },
 ]
 

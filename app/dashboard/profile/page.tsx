@@ -1,7 +1,7 @@
 import { PageHeader } from '@/components/dashboard/page-header'
 import { LinkedInOptimizer } from '@/components/dashboard/linkedin-optimizer'
 
-export const metadata = { title: 'LinkedIn Profile | ResumePrime' }
+export const metadata = { title: 'LinkedIn Profile | Tailorvance' }
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 

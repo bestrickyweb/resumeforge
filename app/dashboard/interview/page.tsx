@@ -9,7 +9,7 @@ import { getActiveSprint } from '@/app/actions/sprint'
 import { getCareerRoadmaps } from '@/app/actions/queries'
 import { Mic, Sparkles, Crosshair, Target } from 'lucide-react'
 
-export const metadata = { title: 'Interview Studio | ResumePrime' }
+export const metadata = { title: 'Interview Studio | Tailorvance' }
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 

@@ -1,14 +1,14 @@
-# ResumePrime — Competitive Features Research & Product Strategy
+# Tailorvance — Competitive Features Research & Product Strategy
 
 ## 1. Executive Summary
 
-ResumePrime has strong CV tailoring and ATS-scoring fundamentals, but competitors are aggressively expanding into application automation, interview coaching, and career intelligence. To capture share, ResumePrime should evolve from a "CV optimizer" into a true "career command center" — starting with quick wins in profile optimization and interview prep, then layering in job discovery and auto-apply workflows.
+Tailorvance has strong CV tailoring and ATS-scoring fundamentals, but competitors are aggressively expanding into application automation, interview coaching, and career intelligence. To capture share, Tailorvance should evolve from a "CV optimizer" into a true "career command center" — starting with quick wins in profile optimization and interview prep, then layering in job discovery and auto-apply workflows.
 
 ---
 
 ## 2. Feature Gap Analysis
 
-| Feature Category | Teal | Rezi | Jobscan | Kickresume | Resumly | Leepo | Karko AI | Orbyt | Offerum | JobTether | HireKit | CoPrep AI | ResumePrime |
+| Feature Category | Teal | Rezi | Jobscan | Kickresume | Resumly | Leepo | Karko AI | Orbyt | Offerum | JobTether | HireKit | CoPrep AI | Tailorvance |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **ATS Score / Resume Optimization** | | | | | | | | | | | | | |
 | CV Tailoring for JD | | | | | | | | | | | | | |
@@ -52,7 +52,7 @@ Legend: actively present.
 
 ### Gap Analysis Summary
 
-- **ResumePrime core strengths**: CV tailoring with ATS match score, cover letters, application tracker, usage/billing via Paystack.
+- **Tailorvance core strengths**: CV tailoring with ATS match score, cover letters, application tracker, usage/billing via Paystack.
 - **Biggest gaps vs. competitors**:
   1. No interview preparation suite (mock interviews, copilot, salary negotiation).
   2. No job discovery or intelligence (feed, fit scoring, ATS detection).
@@ -132,7 +132,7 @@ Legend: actively present.
 ### Priority 1: Core Retention & Revenue Drivers (Q1)
 **Features**: AI Mock Interviews, LinkedIn Optimizer & Import, Job Fit Analyzer, Smart Follow-Up Reminders, Achievements Scanner.
 
-**Rationale**: These features deepen value within the daily workflow, differentiate ResumePrime from pure ATS tools, and create premium upsell moments (mock interviews + negotiation coach). Low infrastructure risk as they reuse existing AI stack.
+Rationale: These features deepen value within the daily workflow, differentiate Tailorvance from pure ATS tools, and create premium upsell moments (mock interviews + negotiation coach). Low infrastructure risk as they reuse existing AI stack.
 
 ### Priority 2: Acquisition & Habit Formation (Q2)
 **Features**: Chrome Extension (job capture + tracker sync), Smart Job Feed, Ghost Detection, Salary Benchmarking.
@@ -162,11 +162,11 @@ Features achievable in < 2 weeks with the existing stack (Next.js, Vercel AI SDK
 
 ## 6. Strategic Differentiators
 
-These features would set ResumePrime apart and are not universally offered by competitors:
+These features would set Tailorvance apart and are not universally offered by competitors:
 
 1. **Unified Career Mode (90-Day Onboarding Journal)** — Unlike generic trackers, guide new users from day one through a structured career sprint with weekly check-ins.
 2. **ATS Autofill with Privacy Guardrails** — Auto-populate external application forms while giving users fine-grained control over what data leaves the platform (privacy-first angle).
-3. **Resume Roast + Live Fix Loop** — Combines jobTether-style "roast" with ResumePrime's existing tailoring to create an iterative improvement cycle: roast → fix → re-score.
+3. **Resume Roast + Live Fix Loop** — Combines jobTether-style "roast" with Tailorvance's existing tailoring to create an iterative improvement cycle: roast → fix → re-score.
 4. **Cover Letter + Referral Request Composer** — Generate both cover letters and personalized LinkedIn referral requests from the same tailoring context, reducing context-switching.
 5. **Full Pipeline Conversion Intelligence** — Beyond basic tracking, surface funnel drop-off reasons (e.g., "ATS rejection rate 60% → likely missing 4 keywords") and recommend targeted fixes.
 
