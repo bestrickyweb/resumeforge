@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "install": "pnpm install --ignore-scripts",
   "build": {
     "env": {
       "NODE_OPTIONS": "--max-old-space-size=6144"
