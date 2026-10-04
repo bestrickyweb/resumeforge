@@ -871,6 +871,97 @@ export function getLandingPageConfig(path: string) {
   return config
 }
 
+const relatedLinksMap: Record<string, Array<{ href: string; label: string }>> = {
+  '/resume-builder': [
+    { href: '/ats-resume-builder', label: 'ATS Resume Builder' },
+    { href: '/resume-tailoring', label: 'Resume Tailoring Tool' },
+    { href: '/resume-templates', label: 'Resume Templates' },
+    { href: '/cover-letter-generator', label: 'Cover Letter Generator' },
+  ],
+  '/resume-tailoring': [
+    { href: '/resume-builder', label: 'Resume Builder' },
+    { href: '/ats-resume-builder', label: 'ATS Resume Builder' },
+    { href: '/resume-optimizer', label: 'Resume Optimizer' },
+    { href: '/resume-keyword-optimizer', label: 'Resume Keyword Optimizer' },
+  ],
+  '/ats-resume-builder': [
+    { href: '/resume-builder', label: 'Resume Builder' },
+    { href: '/ats-resume-checker', label: 'ATS Resume Checker' },
+    { href: '/resume-optimizer', label: 'Resume Optimizer' },
+    { href: '/resume-keyword-optimizer', label: 'Resume Keyword Optimizer' },
+  ],
+  '/ats-resume-checker': [
+    { href: '/resume-builder', label: 'Resume Builder' },
+    { href: '/ats-resume-builder', label: 'ATS Resume Builder' },
+    { href: '/resume-optimizer', label: 'Resume Optimizer' },
+    { href: '/resume-keyword-optimizer', label: 'Resume Keyword Optimizer' },
+  ],
+  '/ai-resume-builder': [
+    { href: '/resume-builder', label: 'Resume Builder' },
+    { href: '/ats-resume-builder', label: 'ATS Resume Builder' },
+    { href: '/resume-tailoring', label: 'Resume Tailoring Tool' },
+    { href: '/cv-builder', label: 'CV Builder' },
+  ],
+  '/resume-optimizer': [
+    { href: '/resume-builder', label: 'Resume Builder' },
+    { href: '/ats-resume-builder', label: 'ATS Resume Builder' },
+    { href: '/resume-tailoring', label: 'Resume Tailoring Tool' },
+    { href: '/resume-keyword-optimizer', label: 'Resume Keyword Optimizer' },
+  ],
+  '/resume-keyword-optimizer': [
+    { href: '/resume-builder', label: 'Resume Builder' },
+    { href: '/ats-resume-builder', label: 'ATS Resume Builder' },
+    { href: '/resume-optimizer', label: 'Resume Optimizer' },
+    { href: '/resume-tailoring', label: 'Resume Tailoring Tool' },
+  ],
+  '/resume-tailoring-tool': [
+    { href: '/resume-builder', label: 'Resume Builder' },
+    { href: '/ats-resume-builder', label: 'ATS Resume Builder' },
+    { href: '/resume-tailoring', label: 'Resume Tailoring Tool' },
+    { href: '/resume-optimizer', label: 'Resume Optimizer' },
+  ],
+  '/cover-letter-generator': [
+    { href: '/resume-builder', label: 'Resume Builder' },
+    { href: '/ats-resume-builder', label: 'ATS Resume Builder' },
+    { href: '/resume-tailoring', label: 'Resume Tailoring Tool' },
+    { href: '/linkedin-profile-optimization', label: 'LinkedIn Optimization' },
+  ],
+  '/linkedin-profile-optimization': [
+    { href: '/resume-builder', label: 'Resume Builder' },
+    { href: '/cover-letter-generator', label: 'Cover Letter Generator' },
+    { href: '/ats-resume-builder', label: 'ATS Resume Builder' },
+    { href: '/resume-tailoring', label: 'Resume Tailoring Tool' },
+  ],
+  '/resume-templates': [
+    { href: '/resume-builder', label: 'Resume Builder' },
+    { href: '/cv-builder', label: 'CV Builder' },
+    { href: '/ats-resume-builder', label: 'ATS Resume Builder' },
+    { href: '/resume-optimizer', label: 'Resume Optimizer' },
+  ],
+  '/cv-builder': [
+    { href: '/resume-builder', label: 'Resume Builder' },
+    { href: '/ats-resume-builder', label: 'ATS Resume Builder' },
+    { href: '/resume-tailoring', label: 'Resume Tailoring Tool' },
+    { href: '/resume-templates', label: 'Resume Templates' },
+  ],
+  '/job-description-matcher': [
+    { href: '/resume-builder', label: 'Resume Builder' },
+    { href: '/ats-resume-builder', label: 'ATS Resume Builder' },
+    { href: '/resume-keyword-optimizer', label: 'Resume Keyword Optimizer' },
+    { href: '/resume-tailoring', label: 'Resume Tailoring Tool' },
+  ],
+  '/pricing': [
+    { href: '/resume-builder', label: 'Resume Builder' },
+    { href: '/ats-resume-builder', label: 'ATS Resume Checker' },
+    { href: '/resume-tailoring', label: 'Resume Tailoring Tool' },
+    { href: '/cover-letter-generator', label: 'Cover Letter Generator' },
+  ],
+}
+
+export function getRelatedLinks(path: string): Array<{ href: string; label: string }> {
+  return relatedLinksMap[path] ?? []
+}
+
 export function getLandingPageMetadata(path: string): Metadata {
   const config = getLandingPageConfig(path)
   const url = `${SITE_URL}${config.path}`

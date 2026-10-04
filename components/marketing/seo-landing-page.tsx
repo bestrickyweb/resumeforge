@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { SeoLandingPageConfig } from '@/lib/seo'
+import { getRelatedLinks } from '@/lib/seo'
 
 const dashboardPathMap: Record<string, { href: string; label: string }> = {
   '/resume-builder': { href: '/sign-in?callbackUrl=/dashboard/build-resume', label: 'Build My Resume Free' },
@@ -26,12 +27,13 @@ type SeoLandingPageProps = {
 
 export default function SeoLandingPage({ config }: SeoLandingPageProps) {
   const cta = dashboardPathMap[config.path] ?? { href: '/resume-builder', label: 'Tailor My Resume Free' }
+  const related = getRelatedLinks(config.path)
   return (
     <div className="flex min-h-screen flex-col">
       <main>
         <section className="mx-auto max-w-5xl px-4 py-16 text-center md:py-24">
           <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-             Tailorvance AI
+            Tailorvance AI
           </p>
           <h1 className="mt-4 text-balance font-heading text-4xl font-extrabold leading-tight tracking-tight md:text-6xl">
             {config.h1}
@@ -90,6 +92,32 @@ export default function SeoLandingPage({ config }: SeoLandingPageProps) {
           ))}
         </div>
 
+        {related.length > 0 && (
+          <section className="py-16">
+            <div className="mx-auto max-w-5xl px-4">
+              <h2 className="text-center text-balance font-heading text-2xl font-extrabold tracking-tight md:text-3xl">
+                You might also like
+              </h2>
+              <p className="mx-auto mt-3 max-w-2xl text-center text-pretty text-muted-foreground">
+                Explore other Tailorvance tools that work together to help you land more interviews.
+              </p>
+              <div className="mx-auto mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+                {related.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="group rounded-xl border border-border bg-card p-4 text-center transition-colors hover:border-primary hover:bg-primary/5"
+                  >
+                    <span className="text-sm font-semibold text-foreground group-hover:text-primary">
+                      {link.label}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         <section className="bg-secondary/40 py-20">
           <div className="mx-auto max-w-5xl px-4">
             <h2 className="text-balance font-heading text-3xl font-extrabold tracking-tight md:text-4xl">
@@ -116,4 +144,3 @@ export default function SeoLandingPage({ config }: SeoLandingPageProps) {
     </div>
   )
 }
-
