@@ -117,7 +117,7 @@ export function MarketingHeader() {
 
         <button
           className="lg:hidden"
-          onClick={() => setOpen((o) => !o)}
+          onClick={() => setOpen((o) => !open)}
           aria-label="Toggle menu"
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}

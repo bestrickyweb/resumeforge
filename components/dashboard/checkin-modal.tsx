@@ -76,7 +76,7 @@ export function CheckinModal({
         onOpenChange(false)
         resetForm()
       } else {
-        toast.error(res.error ?? 'Failed to submit check-in')
+        toast.error('Failed to submit check-in')
       }
     } catch {
       toast.error('Something went wrong')

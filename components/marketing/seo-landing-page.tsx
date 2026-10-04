@@ -1,3 +1,5 @@
+import { MarketingHeader } from '@/components/marketing/marketing-header'
+import { MarketingFooter } from '@/components/marketing/marketing-footer'
 import Link from 'next/link'
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -30,6 +32,7 @@ export default function SeoLandingPage({ config }: SeoLandingPageProps) {
   const related = getRelatedLinks(config.path)
   return (
     <div className="flex min-h-screen flex-col">
+      <MarketingHeader />
       <main>
         <section className="mx-auto max-w-5xl px-4 py-16 text-center md:py-24">
           <p className="text-sm font-semibold uppercase tracking-wider text-primary">
@@ -141,6 +144,7 @@ export default function SeoLandingPage({ config }: SeoLandingPageProps) {
           </div>
         </section>
       </main>
+      <MarketingFooter />
     </div>
   )
 }

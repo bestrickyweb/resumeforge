@@ -30,7 +30,7 @@ export type RoastResult = {
   ok: true
   score: number
   grade: string
-  roastLines: { severity: string; category: string; quote: string; critique: string; fix: string }[]
+  roastLines: { severity: 'critical' | 'major' | 'minor'; category: string; quote: string; critique: string; fix: string }[]
   topFixes: string[]
   hiddenKiller?: string
   roastId: number

@@ -86,7 +86,7 @@ export function RoastView({
     })
     setFixing(false)
     if (res.ok) {
-      setFixedCv(res.fixedCv)
+      setFixedCv(res.fixedCv ?? '')
       toast.success('Issues fixed! Review your improved CV below.')
     } else {
       toast.error(res.error || 'Fix failed')

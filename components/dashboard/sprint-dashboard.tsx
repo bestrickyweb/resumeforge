@@ -268,7 +268,7 @@ export function SprintDashboard({ sprint, milestones }: { sprint: Awaited<Return
         open={showCheckin}
         onOpenChange={setShowCheckin}
         sprintId={sprint.id}
-        sprintStartDate={sprint.startDate}
+        sprintStartDate={new Date(sprint.startDate).toISOString()}
         currentWeek={currentWeek}
         milestones={milestones}
         onSubmitted={handleCheckinSubmitted}

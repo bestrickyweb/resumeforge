@@ -277,18 +277,21 @@ export async function getSprintProgress(sprintId: number) {
     }
   }
 
-  const applicationsProgress = sprint.targetApplications > 0 ? Math.min(100, Math.round((totalApps / sprint.targetApplications) * 100)) : 0
-  const interviewsProgress = sprint.targetInterviews > 0 ? Math.min(100, Math.round((totalInterviews / sprint.targetInterviews) * 100)) : 0
+  const targetApps = sprint.targetApplications ?? 0
+  const targetInterviews = sprint.targetInterviews ?? 0
+
+  const applicationsProgress = targetApps > 0 ? Math.min(100, Math.round((totalApps / targetApps) * 100)) : 0
+  const interviewsProgress = targetInterviews > 0 ? Math.min(100, Math.round((totalInterviews / targetInterviews) * 100)) : 0
   const skillsList: string[] = Array.from(totalSkillsCompleted)
   const skillsProgress = skillsList.length
 
-  const allTargetsMet = totalApps >= sprint.targetApplications && totalInterviews >= sprint.targetInterviews
+  const allTargetsMet = totalApps >= targetApps && totalInterviews >= targetInterviews
 
   return {
     ok: true as const,
     progress: {
-      applications: { current: totalApps, target: sprint.targetApplications, percent: applicationsProgress },
-      interviews: { current: totalInterviews, target: sprint.targetInterviews, percent: interviewsProgress },
+      applications: { current: totalApps, target: targetApps, percent: applicationsProgress },
+      interviews: { current: totalInterviews, target: targetInterviews, percent: interviewsProgress },
       skills: { current: skillsProgress, target: null, list: skillsList },
       offers: totalOffers,
       allTargetsMet,
