@@ -3,11 +3,29 @@ import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { SeoLandingPageConfig } from '@/lib/seo'
 
+const dashboardPathMap: Record<string, { href: string; label: string }> = {
+  '/resume-builder': { href: '/sign-in?callbackUrl=/dashboard/build-resume', label: 'Build My Resume Free' },
+  '/resume-tailoring': { href: '/sign-in?callbackUrl=/dashboard/tailor', label: 'Tailor My Resume Free' },
+  '/ats-resume-builder': { href: '/sign-in?callbackUrl=/dashboard/ats-scanner', label: 'Check ATS Match Free' },
+  '/ats-resume-checker': { href: '/sign-in?callbackUrl=/dashboard/ats-scanner', label: 'Check ATS Score Free' },
+  '/ai-resume-builder': { href: '/sign-in?callbackUrl=/dashboard/build-resume', label: 'Generate Resume Free' },
+  '/resume-optimizer': { href: '/sign-in?callbackUrl=/dashboard/tailor', label: 'Optimize My Resume Free' },
+  '/resume-keyword-optimizer': { href: '/sign-in?callbackUrl=/dashboard/tailor', label: 'Optimize Keywords Free' },
+  '/resume-tailoring-tool': { href: '/sign-in?callbackUrl=/dashboard/tailor', label: 'Tailor My Resume Free' },
+  '/cover-letter-generator': { href: '/sign-in?callbackUrl=/dashboard/tailor', label: 'Write My Cover Letter Free' },
+  '/linkedin-profile-optimization': { href: '/sign-in?callbackUrl=/dashboard/profile', label: 'Optimize My LinkedIn Free' },
+  '/resume-templates': { href: '/sign-in?callbackUrl=/dashboard/build-resume', label: 'Choose Templates Free' },
+  '/cv-builder': { href: '/sign-in?callbackUrl=/dashboard/tailor', label: 'Build My CV Free' },
+  '/job-description-matcher': { href: '/sign-in?callbackUrl=/dashboard/tailor', label: 'Match My Resume Free' },
+  '/pricing': { href: '/sign-in?callbackUrl=/dashboard/billing', label: 'View Pricing' },
+}
+
 type SeoLandingPageProps = {
   config: SeoLandingPageConfig
 }
 
 export default function SeoLandingPage({ config }: SeoLandingPageProps) {
+  const cta = dashboardPathMap[config.path] ?? { href: '/resume-builder', label: 'Tailor My Resume Free' }
   return (
     <div className="flex min-h-screen flex-col">
       <main>
@@ -23,8 +41,8 @@ export default function SeoLandingPage({ config }: SeoLandingPageProps) {
           </p>
           <div className="mt-8">
             <Button asChild size="lg" className="h-12 px-7 text-base">
-              <Link href="/resume-builder">
-                Tailor My Resume Free
+              <Link href={cta.href}>
+                {cta.label}
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>
