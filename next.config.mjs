@@ -7,9 +7,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Keep large native/CJS server packages external so they aren't re-bundled.
-  // (ESM-only packages like ai/@ai-sdk/google are left bundled on purpose.)
-  serverExternalPackages: ['better-auth', 'pg', 'drizzle-orm', 'drizzle-orm/node-postgres'],
+  // On Vercel serverless, all dependencies are bundled automatically.
+  // Do NOT use serverExternalPackages on Vercel — it removes packages
+  // from the serverless function bundle, causing runtime errors.
+  // (This was needed for self-hosted Docker deployments only.)
 }
 
 export default nextConfig
