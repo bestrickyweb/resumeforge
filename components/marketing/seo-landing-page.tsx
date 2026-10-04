@@ -23,7 +23,7 @@ export default function SeoLandingPage({ config }: SeoLandingPageProps) {
           </p>
           <div className="mt-8">
             <Button asChild size="lg" className="h-12 px-7 text-base">
-              <Link href="/sign-up">
+              <Link href="/resume-builder">
                 Tailor My Resume Free
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>

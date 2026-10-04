@@ -29,6 +29,98 @@ export const SEO_KEYWORDS = [
 export const GOOGLE_SITE_VERIFICATION =
   'FhB1pmAlgd8FdgXXc3EGMiEZtyhnxq31zzqHfDir1G8'
 
+export const organizationData = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Tailorvance',
+  url: SITE_URL,
+  description:
+    'Tailorvance helps you build ATS-optimized resumes that get interviews. Tailored resumes, ATS-ready applications, and a LinkedIn profile that gets noticed.',
+  logo: `${SITE_URL}/tailorvance.png`,
+  sameAs: [
+    'https://www.linkedin.com/company/tailorvance',
+    'https://twitter.com/tailorvance',
+    'https://www.tiktok.com/@tailorvance',
+    'https://www.instagram.com/tailorvance',
+  ],
+}
+
+export const webSiteData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Tailorvance',
+  url: SITE_URL,
+  description:
+    'Tailorvance helps you build ATS-optimized resumes that get interviews.',
+  publisher: {
+    '@type': 'Organization',
+    name: 'Tailorvance',
+  },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${SITE_URL}/search?q={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
+}
+
+export const faqPageData = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Is this a free resume builder?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Tailorvance offers a free resume builder with 3 tailored resumes per week. Upgrade for more resumes, templates, and advanced AI features.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Will employers know I used Tailorvance?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. Tailorvance tailors your real experience to the role — it never invents jobs or qualifications. The result reads like a sharper version of your own resume, written by you.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is an ATS, and why does my resume need to pass it?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'An Applicant Tracking System is software recruiters use to filter resumes before a human reviews them. If your resume does not match the job keywords, it can be rejected automatically — even if you are qualified.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I tailor one resume for multiple jobs?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Paste each job description and Tailorvance creates a separate job-specific version of your resume for every application.',
+      },
+    },
+  ],
+}
+
+export const breadcrumbData = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: SITE_URL,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Resume Builder',
+      item: `${SITE_URL}/resume-builder`,
+    },
+  ],
+}
+
 export const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
@@ -430,6 +522,342 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
         question: 'Should I stuff keywords into my resume?',
         answer:
            'No. Tailorvance adds keywords naturally and keeps your CV readable for both ATS software and human recruiters.',
+      },
+     ],
+  },
+  {
+    path: '/resume-builder',
+    title: 'Resume Builder | AI Resume Builder That Beats ATS Filters',
+    h1: 'Resume Builder That Creates ATS-Optimized Resumes Automatically',
+    description:
+      'Use Tailorvance resume builder to create ATS-friendly resumes in seconds. AI rewrites your experience, adds keywords, and formats your resume to pass ATS scanners and land interviews.',
+    primaryKeyword: 'resume builder',
+    h2s: [
+      'ATS-Optimized Resume Builder for Every Job',
+      'AI Resume Formatting That Passes ATS Filters',
+      'Download Your Resume as DOCX or PDF',
+    ],
+    benefits: [
+      'ATS-friendly formatting that passes 90%+ of resume scanners',
+      'AI rewrites your experience to match the job description',
+      'Built-in keyword optimization for every role',
+      'Real-time match score before and after tailoring',
+    ],
+    steps: [
+      {
+        title: 'Start your resume',
+        description:
+          'Paste your current resume or start fresh with a proven template.',
+      },
+      {
+        title: 'Add the job description',
+        description:
+          'Tailorvance scans the job post for required skills and keywords.',
+      },
+      {
+        title: 'Download your ATS-optimized resume',
+        description:
+          'Get a polished, role-specific resume that beats ATS filters and impresses recruiters.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Is this a free resume builder?',
+        answer:
+          'Yes. Tailorvance offers a free resume builder with 3 tailored resumes per week. Upgrade for more resumes, templates, and advanced AI features.',
+      },
+      {
+        question: 'Can I download my resume as a Word document?',
+        answer:
+          'Yes. Tailorvance exports your resume as both DOCX and PDF, fully formatted for ATS systems.',
+      },
+    ],
+  },
+  {
+    path: '/resume-tailoring',
+    title: 'Resume Tailoring | AI Tailored Resume for Every Job Description',
+    h1: 'AI Resume Tailoring — Resumes Tailored to Every Job Description',
+    description:
+      'Tailor your resume to any job description with Tailorvance. Our AI resume tailor rewrites your experience, adds keyword matching, and creates a tailored resume that gets past ATS filters.',
+    primaryKeyword: 'resume tailoring',
+    h2s: [
+      'Resume Tailored to Job Description — Automatically',
+      'AI Resume Tailoring Without Fabricating Experience',
+      'Match Score Improvements for Every Application',
+    ],
+    benefits: [
+      'Role-specific resume rewrites for every application',
+      'Keyword matching optimized for the exact job post',
+      'ATS-friendly formatting and before/after match scores',
+      'No fabricated experience — only truthful tailoring',
+    ],
+    steps: [
+      {
+        title: 'Upload your resume',
+        description:
+          'Start with your current resume in PDF, DOCX, or plain text.',
+      },
+      {
+        title: 'Paste the job description',
+        description:
+          'Tailorvance extracts keywords and requirements automatically.',
+      },
+      {
+        title: 'Get your tailored resume',
+        description:
+          'Download a job-specific resume optimized for ATS and recruiters.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'What is resume tailoring?',
+        answer:
+          'Resume tailoring adapts your resume to each job description by aligning keywords, reordering achievements, and adjusting your summary to match the role requirements.',
+      },
+      {
+        question: 'Is tailored resume writing worth it?',
+        answer:
+          'Yes. Tailored resumes perform significantly better — they pass ATS filters and catch the recruiter’s attention by addressing the exact role requirements.',
+      },
+    ],
+  },
+  {
+    path: '/ats-resume-checker',
+    title: 'ATS Resume Checker | Free Resume Score Checker — Tailorvance',
+    h1: 'ATS Resume Checker — Free Resume Score Before You Apply',
+    description:
+      'Check your ATS resume score instantly with Tailorvance. Free ATS resume checker finds missing keywords, formatting issues, and optimization gaps before you apply.',
+    primaryKeyword: 'ATS resume checker',
+    h2s: [
+      'Check Your ATS Score Before Submitting Your Resume',
+      'Find Missing Keywords That ATS Scanners Look For',
+      'Free Resume Review — No Signup Required',
+    ],
+    benefits: [
+      'Instant ATS compatibility score (0-100 scale)',
+      'Missing keyword detection against the job description',
+      'Formatting audit for ATS-friendly resumes',
+      'Actionable fix recommendations',
+    ],
+    steps: [
+      {
+        title: 'Upload your resume',
+        description:
+          'Paste or upload your resume to check against any job description.',
+      },
+      {
+        title: 'Add the job description',
+        description:
+          'Tailorvance analyzes ATS match, keywords, and formatting in seconds.',
+      },
+      {
+        title: 'See how to improve',
+        description:
+          'Get a clear score, keyword gaps, and step-by-step recommendations.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Is the ATS resume checker free?',
+        answer:
+          'Yes. Tailorvance offers a free ATS resume checker with instant results. No signup required.',
+      },
+      {
+        question: 'How accurate is the ATS score?',
+        answer:
+          'Tailorvance uses industry-standard keyword matching and formatting heuristics modeled on real ATS systems used by Nigerian and international recruiters.',
+      },
+    ],
+  },
+  {
+    path: '/cover-letter-generator',
+    title: 'Cover Letter Generator | AI Cover Letter Writer for Job Applications',
+    h1: 'AI Cover Letter Generator — Write Your Cover Letter for Any Job',
+    description:
+      'Generate a tailored cover letter with Tailorvance. Our AI cover letter writer creates custom cover letters that match your resume to the job description and company.',
+    primaryKeyword: 'cover letter generator',
+    h2s: [
+      'AI Cover Letter for Every Job Application',
+      'Cover Letter Writer That Matches Your Resume',
+      'Professional Cover Letters in Under 60 Seconds',
+    ],
+    benefits: [
+      'AI-written cover letters tailored to each job',
+      'Cover letter matches your resume and the job description',
+      'ATS-friendly formatting and keyword integration',
+      'Download as DOCX or copy-paste ready',
+    ],
+    steps: [
+      {
+        title: 'Upload your resume',
+        description:
+          'Tailorvance reads your resume to write a relevant cover letter.',
+      },
+      {
+        title: 'Paste the job description',
+        description:
+          'Our AI identifies the company culture and role requirements.',
+      },
+      {
+        title: 'Get your cover letter',
+        description:
+          'Download a tailored cover letter that impresses hiring managers.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Do you need a cover letter for every job?',
+        answer:
+          'Not always, but it helps. Tailorvance makes it effortless to generate a tailored cover letter for roles where it matters most.',
+      },
+      {
+        question: 'Can I edit the AI-generated cover letter?',
+        answer:
+          'Yes. Every cover letter is editable. Tailorvance keeps your real experience as the basis, so you can tweak tone or add personal touches.',
+      },
+    ],
+  },
+  {
+    path: '/linkedin-profile-optimization',
+    title: 'LinkedIn Profile Optimization | AI LinkedIn Profile Writer',
+    h1: 'LinkedIn Profile Optimization — Get Noticed by Recruiters',
+    description:
+      'Optimize your LinkedIn profile with Tailorvance. Our AI LinkedIn profile writer crafts headlines, summaries, and experience sections that get you found by recruiters and hiring managers.',
+    primaryKeyword: 'LinkedIn profile optimization',
+    h2s: [
+      'LinkedIn Headline That Gets You Discovered',
+      'AI-Optimized Summary and Experience Sections',
+      'LinkedIn SEO for Recruiter Searches',
+    ],
+    benefits: [
+      'LinkedIn headline optimization for recruiter keyword searches',
+      'AI-crafted summary that showcases your value proposition',
+      'Experience sections optimized for profile views',
+      'Before and after keyword analysis',
+    ],
+    steps: [
+      {
+        title: 'Connect your LinkedIn',
+        description:
+          'Tailorvance reads your profile to identify gaps and opportunities.',
+      },
+      {
+        title: 'Set your target role',
+        description:
+          'Add the job description to align your profile with the right keywords.',
+      },
+      {
+        title: 'Optimize and apply',
+        description:
+          'Get an optimized LinkedIn profile that recruiters find and engage with.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Do you rewrite my entire LinkedIn profile?',
+        answer:
+          'Tailorvance suggests optimizations for your headline, summary, and experience sections while preserving your authentic voice and real achievements.',
+      },
+      {
+        question: 'Will optimization help me get more messages from recruiters?',
+        answer:
+          'Yes. A keyword-optimized LinkedIn profile appears in more recruiter searches and gets significantly more profile views and connection requests.',
+      },
+    ],
+  },
+  {
+    path: '/resume-templates',
+    title: 'Resume Templates | 5 ATS-Friendly Professional Resume Templates',
+    h1: 'Professional Resume Templates — 5 ATS-Optimized Designs',
+    description:
+      'Choose from 5 industry-specific resume templates at Tailorvance. Each ATS-friendly template is optimized for different roles and designed to pass ATS scanners.',
+    primaryKeyword: 'resume templates',
+    h2s: [
+      '5 ATS-Friendly Resume Templates for Every Industry',
+      'Templates Optimized for ATS and Recruiters',
+      'Industry-Specific Resume Designs',
+    ],
+    benefits: [
+      '5 professionally designed ATS-friendly templates',
+      'Templates for tech, finance, consulting, startups, and more',
+      'Optimized for both ATS scanners and human recruiters',
+      'Export as DOCX or PDF',
+    ],
+    steps: [
+      {
+        title: 'Choose your template',
+        description:
+          'Select from 5 ATS-optimized resume templates based on your industry.',
+      },
+      {
+        title: 'Customize for the job',
+        description:
+          'Tailorvance rewrites your content to match the template and job description.',
+      },
+      {
+        title: 'Download and apply',
+        description:
+          'Export your resume as a perfectly formatted DOCX or PDF.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Are the resume templates free?',
+        answer:
+          'The free plan includes 2 templates. Pro (4 of 5) and Unlimited (all 5 + future releases) unlock the full library.',
+      },
+      {
+        question: 'Are these templates ATS-friendly?',
+        answer:
+          'Yes. All 5 Tailorvance resume templates are designed with clean formatting and ATS-compatible structures that pass 90%+ of ATS scanners.',
+      },
+    ],
+  },
+  {
+    path: '/pricing',
+    title: 'Resume Builder Pricing | Affordable Resume & ATS Tools',
+    h1: 'Resume Builder Pricing — Start Free, Upgrade When Applying',
+    description:
+      'Tailorvance pricing built for Nigerian job seekers. Start with 3 free tailored resumes, then upgrade to Pro or Unlimited for more resumes, templates, and AI features.',
+    primaryKeyword: 'resume builder pricing',
+    h2s: [
+      '3 Free Resumes — No Card Required',
+      'Pro Plan: 30 Resumes/Month + All Templates',
+      'Unlimited: Everything Forever',
+    ],
+    benefits: [
+      'No credit card required to start',
+      'Paystack secure payments (card, bank transfer, USSD)',
+      'Cancel anytime',
+      '30-day money-back guarantee',
+    ],
+    steps: [
+      {
+        title: 'Start for free',
+        description:
+          'Sign up and build 3 tailored resumes per week with no payment required.',
+      },
+      {
+        title: 'Upgrade when ready',
+        description:
+          'Upgrade to Pro (₦3,500/month) or Unlimited (₦6,500/month) for more resumes and features.',
+      },
+      {
+        title: 'Apply with confidence',
+        description:
+          'Use all Tailorvance tools to tailor your resume and land more interviews.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Do I need a credit card to start?',
+        answer:
+          'No. Tailorvance is free to start — get 3 tailored resumes per week with no card required. Upgrade to Pro or Unlimited only when you are applying seriously.',
+      },
+      {
+        question: 'What payment methods do you accept?',
+        answer:
+          'We accept Paystack — debit cards, bank transfer, and USSD. All payments are secure and encrypted.',
       },
     ],
   },

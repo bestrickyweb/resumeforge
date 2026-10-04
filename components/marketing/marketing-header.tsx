@@ -7,10 +7,23 @@ import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/logo'
 
 const links = [
-  { href: '#how-it-works', label: 'How it works' },
-  { href: '#features', label: 'Features' },
-  { href: '#pricing', label: 'Pricing' },
-  { href: '#faq', label: 'FAQ' },
+  { href: '/resume-builder', label: 'Resume Builder' },
+  { href: '/resume-tailoring', label: 'Resume Tailoring' },
+  { href: '/ats-resume-builder', label: 'ATS Checker' },
+  { href: '/cover-letter-generator', label: 'Cover Letter' },
+  { href: '/linkedin-profile-optimization', label: 'LinkedIn' },
+  { href: '/resume-templates', label: 'Templates' },
+  { href: '/pricing', label: 'Pricing' },
+  { href: '/#how-it-works', label: 'How it works' },
+]
+
+const mobileLinks = [
+  { href: '/resume-builder', label: 'Resume Builder' },
+  { href: '/resume-tailoring', label: 'Resume Tailoring' },
+  { href: '/ats-resume-builder', label: 'ATS Checker' },
+  { href: '/pricing', label: 'Pricing' },
+  { href: '/#how-it-works', label: 'How it works' },
+  { href: '/#faq', label: 'FAQ' },
 ]
 
 export function MarketingHeader() {
@@ -56,7 +69,7 @@ export function MarketingHeader() {
       {open && (
         <div className="border-t border-border/60 bg-background px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-3">
-            {links.map((l) => (
+            {mobileLinks.map((l) => (
               <a
                 key={l.href}
                 href={l.href}

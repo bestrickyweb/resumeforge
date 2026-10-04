@@ -13,13 +13,18 @@ export function Pricing() {
         <p className="text-sm font-semibold uppercase tracking-wider text-primary">
           Pricing
         </p>
-        <h3 className="mt-2 text-balance font-heading text-3xl font-extrabold tracking-tight md:text-4xl">
-          Priced for Nigerian job seekers
-        </h3>
-        <p className="mt-3 text-pretty text-muted-foreground">
-          Start free. Upgrade only when you are applying seriously. Pay securely
-          with Paystack — card, bank transfer or USSD.
-        </p>
+           <h3 className="mt-2 text-balance font-heading text-3xl font-extrabold tracking-tight md:text-4xl">
+             Priced for Nigerian job seekers
+           </h3>
+           <p className="mt-3 text-pretty text-muted-foreground">
+             Start free. Upgrade only when you are applying seriously. Pay
+             securely with Paystack — card, bank transfer or USSD.
+           </p>
+           <p className="mt-2 text-sm text-muted-foreground">
+             <Link href="/pricing" className="underline">
+               See all pricing details
+             </Link>
+           </p>
       </div>
 
       <div className="mt-12 grid items-start gap-6 md:grid-cols-3">

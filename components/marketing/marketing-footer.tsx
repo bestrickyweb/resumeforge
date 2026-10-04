@@ -5,10 +5,24 @@ const cols = [
   {
     title: 'Product',
     links: [
-      { label: 'How it works', href: '#how-it-works' },
-      { label: 'Features', href: '#features' },
-      { label: 'Pricing', href: '#pricing' },
-      { label: 'FAQ', href: '#faq' },
+      { label: 'Resume Builder', href: '/resume-builder' },
+      { label: 'Resume Tailoring', href: '/resume-tailoring' },
+      { label: 'ATS Resume Checker', href: '/ats-resume-builder' },
+      { label: 'Cover Letter Generator', href: '/cover-letter-generator' },
+      { label: 'LinkedIn Optimization', href: '/linkedin-profile-optimization' },
+      { label: 'Resume Templates', href: '/resume-templates' },
+      { label: 'Pricing', href: '/pricing' },
+    ],
+  },
+  {
+    title: 'Resources',
+    links: [
+      { label: 'AI Resume Builder', href: '/ai-resume-builder' },
+      { label: 'Resume Optimizer', href: '/resume-optimizer' },
+      { label: 'Resume Keyword Optimizer', href: '/resume-keyword-optimizer' },
+      { label: 'Job Description Matcher', href: '/job-description-matcher' },
+      { label: 'ATS Resume Checker', href: '/ats-resume-checker' },
+      { label: 'CV Builder', href: '/cv-builder' },
     ],
   },
   {
@@ -28,19 +42,6 @@ const cols = [
       { label: 'Refund policy', href: '#' },
     ],
   },
-  {
-    title: 'SEO tools',
-    links: [
-      { label: 'ATS Resume Builder', href: '/ats-resume-builder' },
-      { label: 'Resume Tailoring Tool', href: '/resume-tailoring-tool' },
-      { label: 'AI Resume Builder', href: '/ai-resume-builder' },
-      { label: 'Resume Optimizer', href: '/resume-optimizer' },
-      { label: 'Job Description Matcher', href: '/job-description-matcher' },
-      { label: 'ATS Resume Checker', href: '/ats-resume-checker' },
-      { label: 'CV Builder', href: '/cv-builder' },
-      { label: 'Resume Keyword Optimizer', href: '/resume-keyword-optimizer' },
-    ],
-  },
 ]
 
 export function MarketingFooter() {
@@ -50,8 +51,9 @@ export function MarketingFooter() {
         <div>
           <Logo />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            Tailored CVs that beat the bots. Built in Nigeria, for Nigerian job
-            seekers chasing local and remote roles.
+            Tailored resumes, ATS-ready applications, and a LinkedIn profile
+            that gets noticed. Built in Nigeria, for Nigerian job seekers
+            chasing local and remote roles.
           </p>
         </div>
 

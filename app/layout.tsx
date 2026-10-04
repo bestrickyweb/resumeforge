@@ -8,11 +8,19 @@ import {
   SEO_TITLE,
   SITE_URL,
   structuredData,
+  organizationData,
+  webSiteData,
+  faqPageData,
+  breadcrumbData,
 } from '@/lib/seo'
 import './globals.css'
 import './font.css'
 
 const jsonLd = JSON.stringify(structuredData)
+const orgJsonLd = JSON.stringify(organizationData)
+const webSiteJsonLd = JSON.stringify(webSiteData)
+const faqJsonLd = JSON.stringify(faqPageData)
+const breadcrumbJsonLd = JSON.stringify(breadcrumbData)
 const bingSiteVerification = process.env.BING_SITE_VERIFICATION
 
 export const metadata: Metadata = {
@@ -67,6 +75,22 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: jsonLd }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: orgJsonLd }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: webSiteJsonLd }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: faqJsonLd }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
         />
         {children}
         <Toaster />

@@ -13,16 +13,16 @@ export function FinalCta() {
           Stop sending CVs into the void. Tailor your first three free — no card
           required — and see how many more callbacks you get.
         </p>
-        <Button
-          asChild
-          size="lg"
-          variant="secondary"
-          className="mt-8 h-12 px-8 text-base"
-        >
-          <Link href="/sign-up">
-            Tailor my CV free <ArrowRight className="ml-1 h-4 w-4" />
-          </Link>
-        </Button>
+          <Button
+            asChild
+            size="lg"
+            variant="secondary"
+            className="mt-8 h-12 px-8 text-base"
+          >
+            <Link href="/resume-builder">
+              Tailor my resume free <ArrowRight className="ml-1 h-4 w-4" />
+            </Link>
+          </Button>
       </div>
     </section>
   )

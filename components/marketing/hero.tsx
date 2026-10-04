@@ -26,8 +26,8 @@ export function Hero() {
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg" className="h-12 px-7 text-base sm:h-12">
-              <Link href="/sign-up">
-                Tailor My Resume Free <ArrowRight className="ml-1 h-4 w-4" />
+              <Link href="/resume-builder">
+                Build My Resume Free <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>
             <Button
@@ -36,12 +36,12 @@ export function Hero() {
               variant="outline"
               className="h-12 px-7 text-base sm:h-12"
             >
-              <a href="#how-it-works">See how it works</a>
+              <Link href="/ats-resume-builder">Check ATS Score</Link>
             </Button>
           </div>
 
           <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2">
-            {['3 tailored CVs per week', 'No card required', 'Paystack secure'].map(
+            {['3 tailored resumes per week', 'No card required', 'Paystack secure'].map(
               (item) => (
                 <li
                   key={item}
