@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { buildResume, type BuildResumeResult } from '@/app/actions/build-resume'
 import { CvUpload } from '@/components/dashboard/cv-upload'
 import { RoastView } from '@/components/dashboard/roast-view'
+import { ManualResumeForm, formatManualResumeToText, type ManualResumeData } from '@/components/dashboard/manual-resume-form'
 import { RESUME_TEMPLATES, type ResumeTemplate } from '@/lib/resume-templates'
 import { getTemplatesByTier } from '@/lib/resume-templates'
 import type { UsageInfo } from '@/app/actions/queries'
@@ -38,6 +39,8 @@ export function BuildResumeForm({ usage }: { usage: UsageInfo }) {
   const [scanResult, setScanResult] = useState<NonNullable<BuildResumeResult['scan']> | null>(null)
   const [roastOpen, setRoastOpen] = useState(false)
   const [builtCvText, setBuiltCvText] = useState<string | null>(null)
+  const [buildMode, setBuildMode] = useState<'paste' | 'manual'>('paste')
+  const [manualData, setManualData] = useState<ManualResumeData | null>(null)
 
   const cvRemaining = usage.features.cvTailoring.remaining
   const templateRemaining = usage.features.resumeTemplate?.remaining ?? 0
@@ -80,15 +83,17 @@ export function BuildResumeForm({ usage }: { usage: UsageInfo }) {
     }
 
     const result = await buildResume({
-      targetRole,
-      yearsOfExperience: years,
-      industry: industry.trim(),
-      previousCv: previousCv || undefined,
-      achievements: achievements.trim() || undefined,
-      pagePreference,
-      templateSlug: selectedTemplate,
-      targetRoleRaw: targetRole,
-    })
+       targetRole,
+       yearsOfExperience: years,
+       industry: industry.trim(),
+      previousCv: (buildMode === 'manual' && manualData
+        ? formatManualResumeToText(manualData)
+        : previousCv) || undefined,
+       achievements: achievements.trim() || undefined,
+       pagePreference,
+       templateSlug: selectedTemplate,
+       targetRoleRaw: targetRole,
+     })
 
     if (result.ok && result.cvId) {
       toast.success('Your resume has been built!')
@@ -234,6 +239,66 @@ export function BuildResumeForm({ usage }: { usage: UsageInfo }) {
       </div>
 
       <div className="flex flex-col gap-2">
+         <Label>Build mode</Label>
+         <div className="grid gap-3 sm:grid-cols-2">
+           <button
+             type="button"
+             onClick={() => setBuildMode('paste')}
+             className={`flex flex-col rounded-xl border px-4 py-3 text-left transition-colors ${
+               buildMode === 'paste'
+                 ? 'border-primary bg-primary/5'
+                 : 'border-border hover:border-muted-foreground/30'
+             }`}
+           >
+            <span
+              className={`text-sm font-semibold ${
+                buildMode === 'paste' ? 'text-primary' : 'text-foreground'
+              }`}
+            >
+              Paste my resume
+            </span>
+            <span className="mt-0.5 text-xs text-muted-foreground">
+              Upload or paste your existing resume and we'll tailor it.
+            </span>
+           </button>
+           <button
+             type="button"
+             onClick={() => setBuildMode('manual')}
+             className={`flex flex-col rounded-xl border px-4 py-3 text-left transition-colors ${
+               buildMode === 'manual'
+                 ? 'border-primary bg-primary/5'
+                 : 'border-border hover:border-muted-foreground/30'
+             }`}
+           >
+            <span
+              className={`text-sm font-semibold ${
+                buildMode === 'manual' ? 'text-primary' : 'text-foreground'
+              }`}
+            >
+              Build manually
+            </span>
+            <span className="mt-0.5 text-xs text-muted-foreground">
+              Fill in each section like a traditional resume builder.
+            </span>
+           </button>
+         </div>
+       </div>
+
+      {buildMode === 'manual' && (
+        <div className="rounded-xl border border-border bg-card p-5">
+          <h2 className="font-heading font-bold">Resume details</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Enter your resume details below. We'll format them into a polished,
+            ATS-friendly resume.
+          </p>
+          <div className="mt-4">
+            <ManualResumeForm onDataChange={setManualData} />
+          </div>
+        </div>
+      )}
+
+      {buildMode === 'paste' && (
+      <div className="flex flex-col gap-2">
         <Label htmlFor="previousCv">Previous resume (optional)</Label>
         <CvUpload
           onExtracted={(text) => {
@@ -257,6 +322,7 @@ export function BuildResumeForm({ usage }: { usage: UsageInfo }) {
           We'll pull facts and achievements from this — we won't invent anything new.
         </p>
       </div>
+      )}
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="achievements">Key achievements to highlight (optional)</Label>
@@ -295,8 +361,8 @@ export function BuildResumeForm({ usage }: { usage: UsageInfo }) {
 
       <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-muted-foreground">
-          Build a professional, ATS-safe resume from scratch with AI assistance.
-        </p>
+           Build a professional, ATS-safe resume {buildMode === 'manual' ? 'from your details' : 'with AI assistance'}.
+         </p>
         <Button type="submit" size="lg" disabled={loading} className="w-full sm:w-auto">
           {loading ? (
             <>
