@@ -32,10 +32,10 @@ export const metadata: Metadata = {
     url: SITE_URL,
     images: [
       {
-        url: '/resumeforge.png',
+        url: '/resumeprime.png',
         width: 1200,
         height: 630,
-        alt: 'ResumeForge - Beat the ATS, Land the Interview',
+        alt: 'ResumePrime - Beat the ATS, Land the Interview',
       },
     ],
   },
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: SEO_TITLE,
     description: SEO_DESCRIPTION,
-    images: ['/resumeforge.png'],
+    images: ['/resumeprime.png'],
   },
   generator: 'v0.app',
   icons: {
@@ -75,3 +75,4 @@ export default function RootLayout({
     </html>
   )
 }
+

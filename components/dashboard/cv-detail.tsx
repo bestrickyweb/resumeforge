@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Copy, Download, Trash2, Check, KanbanSquare, Loader2, Sparkles } from 'lucide-react'
+import { Copy, Download, Trash2, Check, KanbanSquare, Loader2, Sparkles, BarChart3 } from 'lucide-react'
 import { toast } from 'sonner'
 import { jsPDF } from 'jspdf'
 import { Button } from '@/components/ui/button'
@@ -19,6 +19,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { deleteTailoredCv } from '@/app/actions/tailor'
 import { createApplication } from '@/app/actions/applications'
 import { scanAchievements } from '@/app/actions/scan'
+import { scanResumeQuality, type ResumeScanResult } from '@/app/actions/resume-scan'
+import { getUsage } from '@/app/actions/queries'
+import { RESUME_TEMPLATES } from '@/lib/resume-templates'
 import { cn, interviewBand, bandBadgeClass, bandBarClass, bandLabel, type InterviewBand } from '@/lib/utils'
 import { Send, Users } from 'lucide-react'
 import { RoastView } from './roast-view'
@@ -41,6 +44,7 @@ interface CvRow {
   quantScore: number
   titleMatch: boolean
   interviewBand: string | null
+  template: string | null
   createdAt: Date
 }
 
@@ -131,6 +135,9 @@ export function CvDetail({ cv, conversion }: { cv: CvRow; conversion: PipelineCo
   const [achievements, setAchievements] = useState<{ originalBullet: string; hasMetric: boolean; suggestion: string; metricType: string }[]>([])
   const [coverageScore, setCoverageScore] = useState<number | null>(null)
   const [roastOpen, setRoastOpen] = useState(false)
+  const [scanOpen, setScanOpen] = useState(false)
+  const [scanLoading, setScanLoading] = useState(false)
+  const [scanResult, setScanResult] = useState<ResumeScanResult['scan'] | null>(null)
 
   const keywords: string[] = (() => {
     try {
@@ -251,6 +258,22 @@ export function CvDetail({ cv, conversion }: { cv: CvRow; conversion: PipelineCo
     }
   }
 
+  async function onAiScan() {
+    setScanLoading(true)
+    setScanResult(null)
+    const res = await scanResumeQuality({
+      cvText: cv.tailoredCv || cv.originalCv,
+      targetRole: cv.jobTitle,
+    })
+    setScanLoading(false)
+    if (res.ok && res.scan) {
+      setScanResult(res.scan)
+      setScanOpen(true)
+    } else {
+      toast.error(res.error || 'Could not scan resume')
+    }
+  }
+
   const delta = cv.matchAfter - cv.matchBefore
 
   return (
@@ -262,9 +285,20 @@ export function CvDetail({ cv, conversion }: { cv: CvRow; conversion: PipelineCo
             <h1 className="font-heading text-2xl font-extrabold tracking-tight">
               {cv.jobTitle}
             </h1>
-            <p className="text-sm text-muted-foreground">
-              {cv.company || 'Tailored CV'}
-            </p>
+             <p className="text-sm text-muted-foreground">
+               {cv.company || 'Tailored CV'}
+             </p>
+             {cv.template && (
+               <div className="mt-1 inline-flex items-center rounded-full border border-border bg-muted/50 px-2.5 py-0.5 text-xs font-medium">
+                 <span className="mr-1">
+                   {(() => {
+                     const template = RESUME_TEMPLATES.find((t) => t.slug === cv.template)
+                     return template ? template.name : cv.template
+                   })()}
+                 </span>
+                 <span className="text-muted-foreground">template</span>
+               </div>
+             )}
             <p className="mt-1 text-sm">
               <span className="text-muted-foreground">
                 ATS match {cv.matchBefore}% â†’{' '}
@@ -291,7 +325,21 @@ export function CvDetail({ cv, conversion }: { cv: CvRow; conversion: PipelineCo
             <KanbanSquare className="mr-2 h-4 w-4" /> Track application
           </Button>
           <Button onClick={() => setRoastOpen(true)} variant="outline" size="sm">
-            <Sparkles className="mr-2 h-4 w-4" /> Roast my CV
+            <Sparkles className="mr-2 h-4 w-4" /> Roast my resume
+          </Button>
+          <Button
+            onClick={onAiScan}
+            variant="outline"
+            size="sm"
+            disabled={scanLoading}
+            title="Run AI quality scan (Pro+ required)"
+          >
+            {scanLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <BarChart3 className="mr-2 h-4 w-4" />
+            )}
+            AI scan
           </Button>
           <ReferralDialog cvText={cv.tailoredCv || cv.originalCv} tailoredCvId={cv.id} />
           <Button
@@ -469,6 +517,71 @@ export function CvDetail({ cv, conversion }: { cv: CvRow; conversion: PipelineCo
               </div>
             ))}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={scanOpen} onOpenChange={setScanOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>AI Quality Scan</DialogTitle>
+            <DialogDescription>
+              {scanResult
+                ? scanResult.summary
+                : 'Scanning your CV for quality metrics...'}
+            </DialogDescription>
+          </DialogHeader>
+
+          {scanResult && (
+            <div className="space-y-4">
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div>
+                  <p className="text-xs text-muted-foreground">ATS Readiness</p>
+                  <p className="mt-1 font-heading text-xl font-extrabold">{scanResult.atsReadinessScore}%</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Format Safety</p>
+                  <p className="mt-1 font-heading text-xl font-extrabold">{scanResult.formatSafetyScore}%</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Quantification</p>
+                  <p className="mt-1 font-heading text-xl font-extrabold">{scanResult.quantificationScore}%</p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-xs text-muted-foreground">Keyword density</p>
+                <p className="font-medium">{scanResult.keywordDensity}%</p>
+              </div>
+
+              {scanResult.issues.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold">Key issues</h4>
+                  {scanResult.issues.map((issue, i) => (
+                    <div key={i} className="rounded-lg border border-border bg-card p-3">
+                      <div className="flex items-start justify-between">
+                        <p className="font-medium text-sm">{issue.issue}</p>
+                        <span className={`text-[10px] font-semibold uppercase ${
+                          issue.severity === 'critical'
+                            ? 'text-destructive'
+                            : issue.severity === 'high'
+                              ? 'text-orange-600'
+                              : issue.severity === 'medium'
+                                ? 'text-yellow-600'
+                                : 'text-muted-foreground'
+                        }`}>
+                          {issue.severity}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs text-muted-foreground">{issue.section}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        <strong>Fix:</strong> {issue.fix}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

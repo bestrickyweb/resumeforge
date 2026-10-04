@@ -4,7 +4,7 @@ import { getApplications, getApplicationStats, getTailoredCvs } from "@/app/acti
 import { PageHeader } from "@/components/dashboard/page-header"
 import { ApplicationsBoard } from "@/components/dashboard/applications-board"
 
-export const metadata = { title: "Application Tracker | ResumeForge" }
+export const metadata = { title: "Application Tracker | ResumePrime" }
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
@@ -32,3 +32,4 @@ export default async function ApplicationsPage() {
     </div>
   )
 }
+

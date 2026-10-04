@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 
-export const SITE_URL = 'https://resumeforgestrategy.vercel.app'
+export const SITE_URL = 'https://resumeprimestrategy.vercel.app'
 export const SEO_TITLE = 'ATS Resume Builder | AI Resume Tailoring for Every Job'
 export const SEO_DESCRIPTION =
-  'Build ATS optimized resumes in seconds. ResumeForge AI tailors your CV to any job description, improves keyword matching, and helps you land more interviews.'
+  'Build ATS optimized resumes in seconds. ResumePrime AI tailors your CV to any job description, improves keyword matching, and helps you land more interviews.'
 export const SEO_KEYWORDS = [
   'ATS resume builder',
   'AI resume builder',
@@ -32,7 +32,7 @@ export const GOOGLE_SITE_VERIFICATION =
 export const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
-  name: 'ResumeForge AI',
+  name: 'ResumePrime AI',
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Web',
   description:
@@ -62,7 +62,7 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
     title: 'ATS Resume Builder | AI Resume Tailoring for Every Job',
     h1: 'ATS Resume Builder That Tailors Your CV to Any Job Description',
     description:
-      'Create an ATS resume builder workflow that scans job descriptions, optimizes keywords, and generates a targeted CV in under a minute with ResumeForge AI.',
+      'Create an ATS resume builder workflow that scans job descriptions, optimizes keywords, and generates a targeted CV in under a minute with ResumePrime AI.',
     primaryKeyword: 'ATS resume builder',
     h2s: [
       'Tailor Your Resume to Any Job Description',
@@ -88,19 +88,19 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
       {
         title: 'Generate your ATS optimized resume',
         description:
-          'ResumeForge rewrites your CV to align with the role and improve keyword matching.',
+          'ResumePrime rewrites your CV to align with the role and improve keyword matching.',
       },
     ],
     faqs: [
       {
         question: 'What makes this an ATS resume builder?',
         answer:
-          'ResumeForge scans the job description, identifies important keywords, and rewrites your CV so it aligns with the language recruiters and ATS software look for.',
+          'ResumePrime scans the job description, identifies important keywords, and rewrites your CV so it aligns with the language recruiters and ATS software look for.',
       },
       {
         question: 'Can I tailor one resume for multiple jobs?',
         answer:
-          'Yes. Paste each job description and ResumeForge creates a separate job-specific version of your CV for every application.',
+          'Yes. Paste each job description and ResumePrime creates a separate job-specific version of your CV for every application.',
       },
     ],
   },
@@ -125,7 +125,7 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
       {
         title: 'Add your current CV',
         description:
-          'Use an existing resume or paste your experience directly into ResumeForge.',
+          'Use an existing resume or paste your experience directly into ResumePrime.',
       },
       {
         title: 'Add the target role',
@@ -142,7 +142,7 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
       {
         question: 'Does the resume tailoring tool rewrite my real experience?',
         answer:
-          'Yes. ResumeForge rewrites and reorders your real experience to match the role, but it does not invent jobs, skills, or qualifications.',
+          'Yes. ResumePrime rewrites and reorders your real experience to match the role, but it does not invent jobs, skills, or qualifications.',
       },
       {
         question: 'Is resume tailoring worth it for every application?',
@@ -177,7 +177,7 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
       {
         title: 'Choose the target job',
         description:
-          'Paste the job description so ResumeForge knows what the role needs.',
+          'Paste the job description so ResumePrime knows what the role needs.',
       },
       {
         title: 'Generate a tailored CV',
@@ -189,10 +189,10 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
       {
         question: 'Can an AI resume builder improve my existing CV?',
         answer:
-          'Yes. ResumeForge improves wording, structure, and keyword alignment while keeping your actual experience as the source of truth.',
+          'Yes. ResumePrime improves wording, structure, and keyword alignment while keeping your actual experience as the source of truth.',
       },
       {
-        question: 'Does ResumeForge create generic templates?',
+        question: 'Does ResumePrime create generic templates?',
         answer:
           'No. Each output is tailored to the job description you paste, so your CV is specific to the role instead of generic.',
       },
@@ -224,7 +224,7 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
       {
         title: 'Optimize for the role',
         description:
-          'ResumeForge adds relevant keywords naturally and improves CV structure.',
+          'ResumePrime adds relevant keywords naturally and improves CV structure.',
       },
       {
         title: 'Apply with a stronger score',
@@ -241,7 +241,7 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
       {
         question: 'Will optimization make my CV sound unnatural?',
         answer:
-          'ResumeForge prioritizes natural wording. Keywords are added in context so your CV still reads like a polished human-written resume.',
+          'ResumePrime prioritizes natural wording. Keywords are added in context so your CV still reads like a polished human-written resume.',
       },
     ],
   },
@@ -266,12 +266,12 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
       {
         title: 'Paste the job description',
         description:
-          'Add the full role posting so ResumeForge can extract requirements and keywords.',
+          'Add the full role posting so ResumePrime can extract requirements and keywords.',
       },
       {
         title: 'Compare your CV',
         description:
-          'ResumeForge checks how closely your current resume matches the role.',
+          'ResumePrime checks how closely your current resume matches the role.',
       },
       {
         title: 'Generate the matched version',
@@ -288,7 +288,7 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
       {
         question: 'Can I use this for remote jobs?',
         answer:
-          'Yes. ResumeForge works with local, remote, and international job descriptions because it matches your CV to the posting itself.',
+          'Yes. ResumePrime works with local, remote, and international job descriptions because it matches your CV to the posting itself.',
       },
     ],
   },
@@ -313,7 +313,7 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
       {
         title: 'Upload your CV',
         description:
-          'Start with your current resume so ResumeForge can read your experience.',
+          'Start with your current resume so ResumePrime can read your experience.',
       },
       {
         title: 'Add the role',
@@ -335,7 +335,7 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
       {
         question: 'Is the ATS score exact?',
         answer:
-          'No ATS score can guarantee an outcome, but ResumeForge gives a practical estimate that helps you improve keyword matching and relevance.',
+          'No ATS score can guarantee an outcome, but ResumePrime gives a practical estimate that helps you improve keyword matching and relevance.',
       },
     ],
   },
@@ -375,14 +375,14 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
     ],
     faqs: [
       {
-        question: 'Is ResumeForge a CV builder or only a checker?',
+        question: 'Is ResumePrime a CV builder or only a checker?',
         answer:
-          'It is both. ResumeForge helps you build, check, optimize, and tailor your CV for specific job applications.',
+          'It is both. ResumePrime helps you build, check, optimize, and tailor your CV for specific job applications.',
       },
       {
         question: 'Can I use it for different industries?',
         answer:
-          'Yes. Paste the job description for any industry and ResumeForge tailors your CV around the requirements of that role.',
+          'Yes. Paste the job description for any industry and ResumePrime tailors your CV around the requirements of that role.',
       },
     ],
   },
@@ -407,7 +407,7 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
       {
         title: 'Scan your resume',
         description:
-          'Upload your CV so ResumeForge can understand your current keyword coverage.',
+          'Upload your CV so ResumePrime can understand your current keyword coverage.',
       },
       {
         title: 'Compare the job post',
@@ -429,7 +429,7 @@ export const seoLandingPages: SeoLandingPageConfig[] = [
       {
         question: 'Should I stuff keywords into my resume?',
         answer:
-          'No. ResumeForge adds keywords naturally and keeps your CV readable for both ATS software and human recruiters.',
+          'No. ResumePrime adds keywords naturally and keeps your CV readable for both ATS software and human recruiters.',
       },
     ],
   },
@@ -468,3 +468,4 @@ export function getLandingPageMetadata(path: string): Metadata {
     },
   }
 }
+

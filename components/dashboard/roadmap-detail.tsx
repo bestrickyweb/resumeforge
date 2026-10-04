@@ -60,7 +60,7 @@ export function RoadmapDetail({ roadmap }: { roadmap: CareerRoadmap & { id: numb
       />
       <div className="flex justify-end">
         <Button asChild variant="outline">
-          <Link href="/dashboard/roadmap">New Analysis</Link>
+          <Link href="/dashboard/interview?tab=career-roadmap">New Analysis</Link>
         </Button>
       </div>
     </div>

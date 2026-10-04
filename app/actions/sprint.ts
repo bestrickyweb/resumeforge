@@ -160,7 +160,7 @@ Return as JSON:`,
     })
     .returning()
 
-  revalidatePath('/dashboard/sprint')
+  revalidatePath('/dashboard/interview')
   revalidatePath('/dashboard')
 
   return {
@@ -236,7 +236,7 @@ export async function submitWeeklyCheckin(sprintId: number, input: {
     await db.update(careerSprint).set({ weeklyCheckins: JSON.stringify(updated) }).where(eq(careerSprint.id, sprintId))
   }
 
-  revalidatePath('/dashboard/sprint')
+  revalidatePath('/dashboard/interview')
 
   return { ok: true as const }
 }
@@ -325,7 +325,7 @@ export async function pauseSprint(sprintId: number) {
     ),
   )
 
-  revalidatePath('/dashboard/sprint')
+  revalidatePath('/dashboard/interview')
   revalidatePath('/dashboard')
 
   return { ok: true as const }
@@ -341,7 +341,7 @@ export async function resumeSprint(sprintId: number) {
     ),
   )
 
-  revalidatePath('/dashboard/sprint')
+  revalidatePath('/dashboard/interview')
   revalidatePath('/dashboard')
 
   return { ok: true as const }
@@ -357,7 +357,7 @@ export async function completeSprint(sprintId: number) {
     ),
   )
 
-  revalidatePath('/dashboard/sprint')
+  revalidatePath('/dashboard/interview')
   revalidatePath('/dashboard')
 
   return { ok: true as const }

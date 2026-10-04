@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Skip type checking during dev/build for speed (use tsc separately)
   typescript: {
     ignoreBuildErrors: true,
   },

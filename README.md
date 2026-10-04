@@ -1,4 +1,4 @@
-# ResumeForge
+# ResumePrime
 
 An AI-powered career platform that helps candidates tailor their CVs to specific job descriptions, optimise them for Applicant Tracking Systems (ATS), and track every stage of the job application process — all in one place.
 
@@ -18,7 +18,7 @@ An AI-powered career platform that helps candidates tailor their CVs to specific
 
 ### CV Tailoring
 
-Paste a job description alongside a current CV (plain text, PDF, or DOCX). ResumeForge uses AI to rewrite the candidate's experience for that specific role without fabricating facts. It reorders sections, rephrases bullet points with quantified impact, and weaves in keywords pulled directly from the job post.
+Paste a job description alongside a current CV (plain text, PDF, or DOCX). ResumePrime uses AI to rewrite the candidate's experience for that specific role without fabricating facts. It reorders sections, rephrases bullet points with quantified impact, and weaves in keywords pulled directly from the job post.
 
 Every tailored CV is tagged with an estimated ATS match score before and after tailoring, so candidates can see exactly how much alignment improved.
 
@@ -51,7 +51,7 @@ Resumes can be uploaded or pasted directly. Supported formats include PDF, DOCX,
 ## Project Structure
 
 ```
-resumeforge/
+ResumePrime/
 ├── app/
 │   ├── actions/
 │   │   ├── applications.ts
@@ -128,8 +128,8 @@ Match scores are estimated by the AI model and stored as integers from 0 to 100.
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/<your-org>/resumeforge.git
-cd resumeforge
+git clone https://github.com/<your-org>/ResumePrime.git
+cd ResumePrime
 npm install
 ```
 

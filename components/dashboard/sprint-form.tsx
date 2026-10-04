@@ -22,7 +22,7 @@ export function SprintForm() {
     setLoading(false)
     if (result.ok) {
       toast.success('Sprint started!')
-      window.location.href = '/dashboard/sprint'
+      window.location.href = '/dashboard/interview?tab=career-sprint'
     } else {
       toast.error(result.error ?? 'Could not create sprint')
     }

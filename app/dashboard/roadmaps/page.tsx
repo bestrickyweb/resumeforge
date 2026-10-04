@@ -1,7 +1,7 @@
 import { PageHeader } from '@/components/dashboard/page-header'
 import { RoadmapList } from '@/components/dashboard/roadmap-list'
 
-export const metadata = { title: 'My Roadmaps | ResumeForge' }
+export const metadata = { title: 'My Roadmaps | ResumePrime' }
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
@@ -18,3 +18,4 @@ export default async function RoadmapsPage() {
     </div>
   )
 }
+

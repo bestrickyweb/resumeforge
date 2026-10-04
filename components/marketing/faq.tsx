@@ -6,8 +6,8 @@ import { cn } from '@/lib/utils'
 
 const faqs = [
   {
-    q: 'Will employers know I used ResumeForge?',
-    a: 'No. ResumeForge tailors your real experience to the role — it never invents jobs or qualifications. The result reads like a sharper version of your own CV, written by you.',
+    q: 'Will employers know I used ResumePrime?',
+    a: 'No. ResumePrime tailors your real experience to the role — it never invents jobs or qualifications. The result reads like a sharper version of your own CV, written by you.',
   },
   {
     q: 'What exactly is an ATS, and why does it matter?',
@@ -27,7 +27,7 @@ const faqs = [
   },
   {
     q: 'Does it work for remote and international roles?',
-    a: 'Absolutely. ResumeForge works for any job description you paste in — local Nigerian roles, remote-first companies, and international positions alike.',
+    a: 'Absolutely. ResumePrime works for any job description you paste in — local Nigerian roles, remote-first companies, and international positions alike.',
   },
 ]
 
@@ -77,3 +77,4 @@ export function Faq() {
     </section>
   )
 }
+

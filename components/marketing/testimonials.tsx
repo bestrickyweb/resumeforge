@@ -4,14 +4,14 @@ import { Star } from 'lucide-react'
 const testimonials = [
   {
     quote:
-      'I sent the same CV everywhere for months with zero replies. After tailoring it with ResumeForge, I got three interview invites in two weeks — and an offer from a fintech in Lagos.',
+      'I sent the same CV everywhere for months with zero replies. After tailoring it with ResumePrime, I got three interview invites in two weeks — and an offer from a fintech in Lagos.',
     name: 'Adaeze O.',
     role: 'Product Analyst, Lagos',
     avatar: '/avatar-1.png',
   },
   {
     quote:
-      'The match score was a wake-up call. My CV scored 38% for a role I was sure I was perfect for. ResumeForge fixed it to 90% and the recruiter actually called.',
+      'The match score was a wake-up call. My CV scored 38% for a role I was sure I was perfect for. ResumePrime fixed it to 90% and the recruiter actually called.',
     name: 'Tunde A.',
     role: 'Backend Engineer, Remote',
     avatar: '/avatar-2.png',
@@ -72,3 +72,4 @@ export function Testimonials() {
     </section>
   )
 }
+

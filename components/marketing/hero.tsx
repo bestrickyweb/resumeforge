@@ -84,7 +84,7 @@ export function Hero() {
           <div className="absolute -inset-4 -z-10 rounded-3xl bg-primary/5" />
           <Image
             src="/hero-dashboard.png"
-            alt="ResumeForge dashboard showing a CV optimized with an ATS match score of 92%"
+            alt="ResumePrime dashboard showing a CV optimized with an ATS match score of 92%"
             width={720}
             height={540}
             priority
@@ -95,3 +95,4 @@ export function Hero() {
     </section>
   )
 }
+

@@ -1,4 +1,4 @@
-#resumeforge-save-btn {
+#ResumePrime-save-btn {
   position: fixed;
   bottom: 24px;
   right: 24px;
@@ -19,30 +19,31 @@
   gap: 8px;
 }
 
-#resumeforge-save-btn:hover:not(:disabled) {
+#ResumePrime-save-btn:hover:not(:disabled) {
   background: #2d2d5e;
   transform: translateY(-2px);
   box-shadow: 0 6px 28px rgba(26, 26, 46, 0.4);
 }
 
-#resumeforge-save-btn:active:not(:disabled) {
+#ResumePrime-save-btn:active:not(:disabled) {
   transform: translateY(0);
 }
 
-#resumeforge-save-btn:disabled {
+#ResumePrime-save-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-#resumeforge-save-btn.saved {
+#ResumePrime-save-btn.saved {
   background: #059669;
 }
 
 @media (prefers-color-scheme: dark) {
-  #resumeforge-save-btn {
+  #ResumePrime-save-btn {
     background: #1a1a2e;
   }
-  #resumeforge-save-btn:hover:not(:disabled) {
+  #ResumePrime-save-btn:hover:not(:disabled) {
     background: #2d2d5e;
   }
 }
+

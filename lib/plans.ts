@@ -14,6 +14,9 @@ export type PlanFeatureKey =
   | 'skillsGap'
   | 'interviewCopilot'
   | 'autoApply'
+  | 'atsScanner'
+  | 'resumeTemplate'
+  | 'aiResumeScan'
 
 export interface PlanFeatureLimit {
   used: number
@@ -52,6 +55,9 @@ export const PLAN_FEATURE_LIMITS: Record<PlanId, Record<PlanFeatureKey, number>>
     skillsGap: 0,
     interviewCopilot: 0,
     autoApply: 0,
+    atsScanner: 3,
+    resumeTemplate: 2,
+    aiResumeScan: 0,
   },
   pro: {
     cvTailoring: 30,
@@ -68,6 +74,9 @@ export const PLAN_FEATURE_LIMITS: Record<PlanId, Record<PlanFeatureKey, number>>
     skillsGap: 1,
     interviewCopilot: 0,
     autoApply: 0,
+    atsScanner: 20,
+    resumeTemplate: 30,
+    aiResumeScan: 5,
   },
   unlimited: {
     cvTailoring: Infinity,
@@ -83,7 +92,10 @@ export const PLAN_FEATURE_LIMITS: Record<PlanId, Record<PlanFeatureKey, number>>
     chromeExtension: Infinity,
     skillsGap: Infinity,
     interviewCopilot: 10,
-    autoApply: Infinity,
+     autoApply: Infinity,
+    atsScanner: Infinity,
+    resumeTemplate: Infinity,
+    aiResumeScan: Infinity,
   },
 }
 
@@ -103,11 +115,13 @@ export const PLANS: Record<PlanId, Plan> = {
       'ATS match score',
       'Keyword suggestions',
       'Application tracker (5 active)',
+      '2 resume templates',
     ],
     featureLimits: {
       cvTailoring: 3,
       applicationTracker: 5,
       followUpReminder: 2,
+      resumeTemplate: 2,
     },
   },
   pro: {
@@ -128,6 +142,8 @@ export const PLANS: Record<PlanId, Plan> = {
       jobImport: 50,
       chromeExtension: Infinity,
       skillsGap: 1,
+      resumeTemplate: 30,
+      aiResumeScan: 5,
     },
     highlight: true,
     features: [
@@ -144,6 +160,8 @@ export const PLANS: Record<PlanId, Plan> = {
       '50 job auto-imports / month',
       'Chrome extension (job capture)',
       '1 skills gap analysis / month',
+      'Resume templates (4 of 5)',
+      'AI resume quality scan (5/month)',
     ],
   },
   unlimited: {
@@ -166,6 +184,8 @@ export const PLANS: Record<PlanId, Plan> = {
       skillsGap: Infinity,
       interviewCopilot: 10,
       autoApply: Infinity,
+      resumeTemplate: Infinity,
+      aiResumeScan: Infinity,
     },
     features: [
       'Unlimited tailored CVs',
@@ -183,6 +203,8 @@ export const PLANS: Record<PlanId, Plan> = {
       'Unlimited skills gap + learning paths',
       '10 real-time interview copilot sessions / month',
       'Auto-apply (capped)',
+      'All resume templates + future releases',
+      'Unlimited AI resume quality scans',
     ],
   },
 }

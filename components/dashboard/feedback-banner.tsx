@@ -16,7 +16,7 @@ export function FeedbackBanner() {
             <MessageSquare className="h-4 w-4" />
           </span>
           <div className="flex-1">
-            <p className="text-sm font-medium">Help us improve ResumeForge</p>
+            <p className="text-sm font-medium">Help us improve ResumePrime</p>
             <p className="mt-1 text-xs text-muted-foreground">
               We are iterating fast. This is a one-time question — your feedback directly shapes new features.
             </p>
@@ -30,3 +30,4 @@ export function FeedbackBanner() {
     </>
   )
 }
+

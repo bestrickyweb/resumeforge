@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { RoadmapDetail } from '@/components/dashboard/roadmap-detail'
 
-export const metadata = { title: 'Roadmap Details | ResumeForge' }
+export const metadata = { title: 'Roadmap Details | ResumePrime' }
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
@@ -13,7 +13,7 @@ export default async function RoadmapDetailPage({ params }: { params: Promise<{ 
 
   let roadmap
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/api/roadmaps/${roadmapId}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api/roadmaps/${roadmapId}`, {
       cache: 'no-store',
     })
     if (!res.ok) return notFound()

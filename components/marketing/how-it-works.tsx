@@ -8,7 +8,7 @@ const steps = [
   },
   {
     icon: Sparkles,
-    title: 'Let ResumeForge tailor it',
+    title: 'Let ResumePrime tailor it',
     desc: 'Our AI rewrites your summary, weaves in the right keywords, and reorders achievements to match the role.',
   },
   {
@@ -56,3 +56,4 @@ export function HowItWorks() {
     </section>
   )
 }
+

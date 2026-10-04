@@ -13,7 +13,7 @@ export default function SeoLandingPage({ config }: SeoLandingPageProps) {
       <main>
         <section className="mx-auto max-w-5xl px-4 py-16 text-center md:py-24">
           <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-            ResumeForge AI
+            ResumePrime AI
           </p>
           <h1 className="mt-4 text-balance font-heading text-4xl font-extrabold leading-tight tracking-tight md:text-6xl">
             {config.h1}
@@ -63,7 +63,7 @@ export default function SeoLandingPage({ config }: SeoLandingPageProps) {
               </h2>
               <p className="mt-4 max-w-3xl text-pretty text-lg leading-relaxed text-muted-foreground">
                 {index === 0
-                  ? 'ResumeForge compares your CV with the target job description, identifies missing keywords, and rewrites your experience so each application feels specific, relevant, and ATS-friendly.'
+                  ? 'ResumePrime compares your CV with the target job description, identifies missing keywords, and rewrites your experience so each application feels specific, relevant, and ATS-friendly.'
                   : index === 1
                     ? 'Every tailored CV includes an estimated before and after match score so you can see how keyword alignment improves before you apply.'
                     : 'Upload your resume, paste the job description, and generate a polished job-specific version in under a minute.'}
@@ -98,3 +98,4 @@ export default function SeoLandingPage({ config }: SeoLandingPageProps) {
     </div>
   )
 }
+

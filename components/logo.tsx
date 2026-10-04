@@ -19,7 +19,7 @@ export function Logo({
           textClassName,
         )}
       >
-        Resume<span className="text-primary">Forge</span>
+        Resume<span className="text-primary">Prime</span>
       </span>
     </div>
   )

@@ -25,7 +25,7 @@ export function BeforeAfter() {
         </h2>
         <p className="mt-3 text-pretty text-muted-foreground">
           Recruiters in Lagos, Abuja and beyond use ATS software to filter
-          hundreds of applicants. Here is what changes when ResumeForge tailors
+          hundreds of applicants. Here is what changes when ResumePrime tailors
           your CV.
         </p>
       </div>
@@ -47,7 +47,7 @@ export function BeforeAfter() {
 
         <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6 md:p-8">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
-            <Check className="h-4 w-4" /> After — tailored with ResumeForge
+            <Check className="h-4 w-4" /> After — tailored with ResumePrime
           </div>
           <ul className="flex flex-col gap-3">
             {after.map((item) => (
@@ -62,3 +62,4 @@ export function BeforeAfter() {
     </section>
   )
 }
+

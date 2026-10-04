@@ -33,7 +33,7 @@ export function FeedbackModal({ open, onOpenChange }: { open: boolean; onOpenCha
       <DialogContent showCloseButton={false}>
         <form onSubmit={onsubmit}>
           <DialogHeader>
-            <DialogTitle>Help us improve ResumeForge</DialogTitle>
+            <DialogTitle>Help us improve ResumePrime</DialogTitle>
             <DialogDescription>
               This is a one-time question. How would you rate your experience so far?
             </DialogDescription>
@@ -74,3 +74,4 @@ export function FeedbackModal({ open, onOpenChange }: { open: boolean; onOpenCha
     </Dialog>
   )
 }
+

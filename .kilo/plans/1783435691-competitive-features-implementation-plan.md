@@ -1,7 +1,7 @@
-# ResumeForge — Competitive Feature Implementation Plan
+# ResumeTailor — Competitive Feature Implementation Plan
 
 **Timestamp:** 1783435691  
-**Target:** ResumeForge (Next.js App Router, Vercel AI SDK, Drizzle ORM, Better Auth, Paystack)  
+**Target:** ResumeTailor (Next.js App Router, Vercel AI SDK, Drizzle ORM, Better Auth, Paystack)  
 **Goal:** Evolve from CV optimizer → full career command center by implementing prioritized competitive features.
 
 ---
@@ -231,7 +231,7 @@ All new components use existing `components/ui/` primitives (Card, Button, Badge
 
 ## 7. Chrome Extension Plan (Phase 2)
 
-Separate repo: `resumeforge-extension/`
+Separate repo: `ResumeTailor-extension/`
 
 **Manifest:** V3, permissions: `activeTab`, `storage`, `scripting`, host permissions for major job boards.
 
@@ -346,3 +346,4 @@ Each sprint should:
 1. Run `npm run lint` and `npm run build` before merging
 2. Update `docs/competitive-features-research.md` with shipped features
 3. Instrument feature usage via `@vercel/analytics` before launch
+

@@ -8,25 +8,23 @@ import {
   Trophy,
   ArrowRight,
   Plus,
-  Map,
   BarChart3,
 } from 'lucide-react'
 import { PageHeader } from '@/components/dashboard/page-header'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getSessionUser } from '@/lib/session'
-import { getDashboardStats, getTailoredCvs, getCareerRoadmaps, getPipelineIntelligence } from '@/app/actions/queries'
+import { getDashboardStats, getTailoredCvs, getPipelineIntelligence } from '@/app/actions/queries'
 import { OverviewSidebar } from './_sidebars/overview-sidebar'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function DashboardOverview() {
-  const [user, stats, cvs, roadmaps, pipeline] = await Promise.all([
+  const [user, stats, cvs, pipeline] = await Promise.all([
     getSessionUser(),
     getDashboardStats(),
     getTailoredCvs(),
-    getCareerRoadmaps(),
     getPipelineIntelligence(),
   ])
 
@@ -38,7 +36,6 @@ export default async function DashboardOverview() {
     { label: 'Applications', value: stats.totalApplications, icon: KanbanSquare },
     { label: 'Interviews & offers', value: stats.interviews, icon: Trophy },
     { label: 'In progress', value: stats.inProgress, icon: Sparkles },
-    { label: 'Roadmaps', value: roadmaps.length, icon: Map },
     { label: 'Pipeline Intelligence', value: pipeline.predictedApplicationsForNextInterview ?? '—', icon: BarChart3 },
   ]
 
@@ -136,47 +133,6 @@ export default async function DashboardOverview() {
               </ul>
             )}
           </div>
-
-          {roadmaps.length > 0 && (
-            <div className="rounded-xl border border-border bg-card">
-              <div className="flex items-center justify-between border-b border-border px-5 py-4">
-                <h2 className="font-heading font-bold">Recent Roadmaps</h2>
-                <Link
-                  href="/dashboard/roadmaps"
-                  className="flex items-center gap-1 text-sm text-primary hover:underline"
-                >
-                  View all <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
-              <ul className="divide-y divide-border">
-                {roadmaps.slice(0, 3).map((r) => {
-                  const band = interviewBand(r.readinessScore)
-                  return (
-                    <li key={r.id}>
-                      <Link
-                        href={`/dashboard/roadmap/${r.id}`}
-                        className="flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-muted/50"
-                      >
-                        <div className="min-w-0">
-                          <p className="truncate font-medium">{r.targetRole}</p>
-                          <p className="truncate text-sm text-muted-foreground">
-                            {new Date(r.createdAt).toLocaleDateString('en-NG', {
-                              day: 'numeric',
-                              month: 'short',
-                            })}
-                            {r.estimatedWeeks ? ` · ${r.estimatedWeeks} weeks` : ''}
-                          </p>
-                        </div>
-                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${bandBadgeClass[band]}`}>
-                          {bandLabel[band]}
-                        </span>
-                      </Link>
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
-          )}
         </div>
 
         <div className="flex flex-col gap-6">

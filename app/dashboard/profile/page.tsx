@@ -1,7 +1,7 @@
 import { PageHeader } from '@/components/dashboard/page-header'
 import { LinkedInOptimizer } from '@/components/dashboard/linkedin-optimizer'
 
-export const metadata = { title: 'LinkedIn Profile | ResumeForge' }
+export const metadata = { title: 'LinkedIn Profile | ResumePrime' }
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
@@ -18,3 +18,4 @@ export default async function ProfilePage() {
     </div>
   )
 }
+

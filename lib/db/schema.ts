@@ -77,6 +77,7 @@ export const tailoredCv = pgTable('tailored_cv', {
   quantScore: integer('quantScore').notNull().default(0),
   titleMatch: boolean('titleMatch').notNull().default(false),
   interviewBand: text('interviewBand'),
+  template: text('template').default('google'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
 })
 

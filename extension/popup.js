@@ -51,7 +51,7 @@ async function saveJob() {
   } catch (err) {
     showStatus(err.message, "error");
     saveBtn.disabled = false;
-    saveBtn.textContent = "Save to ResumeForge";
+    saveBtn.textContent = "Save to ResumePrime";
   }
 }
 
@@ -62,3 +62,4 @@ chrome.runtime.onMessage.addListener((msg) => {
     showStatus("Job detected on this page", "");
   }
 });
+

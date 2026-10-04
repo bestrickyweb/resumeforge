@@ -75,7 +75,7 @@ export function RoadmapList() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/dashboard/roadmap">
+            <Link href="/dashboard/interview?tab=career-roadmap">
             <Plus className="mr-2 h-4 w-4" /> Generate your first roadmap
           </Link>
         </Button>

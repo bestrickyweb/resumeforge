@@ -126,6 +126,24 @@ async function countRoadmaps(userId: string): Promise<number> {
   return Number(count)
 }
 
+async function countTemplateBuilds(userId: string): Promise<number> {
+  const startOfMonth = new Date()
+  startOfMonth.setDate(1)
+  startOfMonth.setHours(0, 0, 0, 0)
+
+  const [{ count }] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(tailoredCv)
+    .where(
+      and(
+        eq(tailoredCv.userId, userId),
+        sql`${tailoredCv.template} IS NOT NULL`,
+        gte(tailoredCv.createdAt, startOfMonth),
+      ),
+    )
+  return Number(count)
+}
+
 async function buildFeatureUsage(
   plan: PlanId,
   userId: string,
@@ -135,10 +153,12 @@ async function buildFeatureUsage(
     cvCount,
     appCount,
     roadmapCount,
+    templateCount,
   ] = await Promise.all([
     countWeeklyCvs(userId, plan),
     countApplications(userId),
     countRoadmaps(userId),
+    countTemplateBuilds(userId),
   ])
 
   const keys = [
@@ -156,6 +176,9 @@ async function buildFeatureUsage(
     'skillsGap',
     'interviewCopilot',
     'autoApply',
+    'atsScanner',
+    'resumeTemplate',
+    'aiResumeScan',
   ] as const satisfies readonly PlanFeatureKey[]
 
   const map = {} as PlanFeatureMap
@@ -167,7 +190,9 @@ async function buildFeatureUsage(
         ? appCount
         : key === 'skillsGap'
           ? roadmapCount
-          : 0
+          : key === 'resumeTemplate'
+            ? templateCount
+            : 0
     const remaining = limit === Infinity ? Infinity : Math.max(0, limit - used)
     map[key] = { used, limit, remaining }
   }

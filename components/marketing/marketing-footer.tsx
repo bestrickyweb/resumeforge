@@ -76,7 +76,7 @@ export function MarketingFooter() {
 
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-6 text-sm text-muted-foreground sm:flex-row">
-          <p>© {new Date().getFullYear()} ResumeForge. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} ResumePrime. All rights reserved.</p>
           <p className="flex items-center gap-2">
             Secured payments by
             <span className="font-semibold text-foreground">Paystack</span>
@@ -86,3 +86,4 @@ export function MarketingFooter() {
     </footer>
   )
 }
+
