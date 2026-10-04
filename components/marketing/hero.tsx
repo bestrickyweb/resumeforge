@@ -13,15 +13,15 @@ export function Hero() {
             Built for the Nigerian job market
           </div>
 
-           <h1 className="text-balance font-heading text-4xl font-extrabold leading-tight tracking-tight md:text-5xl lg:text-6xl">
-             Resume Builder That Beats ATS Filters — Tailored to Every Job
+           <h1 className="text-balance font-heading text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
+              Resume Builder That Beats ATS Filters — Tailored to Every Job
            </h1>
 
-           <p className="mt-5 max-w-md text-pretty text-lg leading-relaxed text-muted-foreground">
-             Upload your resume, paste a job description, and generate an ATS
-             optimized version in less than a minute. Increase keyword matching,
-             fix formatting for ATS scanners, and improve your chances of
-             landing interviews.
+           <p className="mt-4 max-w-md text-pretty text-base leading-relaxed text-muted-foreground sm:mt-5 sm:text-lg">
+              Upload your resume, paste a job description, and generate an ATS
+              optimized version in less than a minute. Increase keyword matching,
+              fix formatting for ATS scanners, and improve your chances of
+              landing interviews.
            </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">

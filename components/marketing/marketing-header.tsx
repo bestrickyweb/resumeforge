@@ -2,29 +2,25 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/logo'
 
 const links = [
   { href: '/resume-builder', label: 'Resume Builder' },
-  { href: '/resume-tailoring', label: 'Resume Tailoring' },
   { href: '/ats-resume-builder', label: 'ATS Checker' },
-  { href: '/cover-letter-generator', label: 'Cover Letter' },
-  { href: '/linkedin-profile-optimization', label: 'LinkedIn' },
-  { href: '/resume-templates', label: 'Templates' },
+  { href: '/resume-tailoring', label: 'Resume Tailoring' },
   { href: '/pricing', label: 'Pricing' },
   { href: '/#how-it-works', label: 'How it works' },
 ]
 
-const mobileLinks = [
-  { href: '/resume-builder', label: 'Resume Builder' },
-  { href: '/resume-tailoring', label: 'Resume Tailoring' },
-  { href: '/ats-resume-builder', label: 'ATS Checker' },
-  { href: '/pricing', label: 'Pricing' },
-  { href: '/#how-it-works', label: 'How it works' },
-  { href: '/#faq', label: 'FAQ' },
+const secondaryLinks = [
+  { href: '/cover-letter-generator', label: 'Cover Letter' },
+  { href: '/linkedin-profile-optimization', label: 'LinkedIn' },
+  { href: '/resume-templates', label: 'Templates' },
 ]
+
+const mobileLinks = [...links, ...secondaryLinks, { href: '/#faq', label: 'FAQ' }]
 
 export function MarketingHeader() {
   const [open, setOpen] = useState(false)
@@ -36,7 +32,7 @@ export function MarketingHeader() {
           <Logo />
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-6 md:flex">
           {links.map((l) => (
             <a
               key={l.href}
@@ -46,6 +42,15 @@ export function MarketingHeader() {
               {l.label}
             </a>
           ))}
+          <div className="relative">
+            <button
+              type="button"
+              className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              aria-label="More services"
+            >
+              More <ChevronDown className="h-3 w-3" />
+            </button>
+          </div>
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
@@ -53,7 +58,7 @@ export function MarketingHeader() {
             <Link href="/sign-in">Log in</Link>
           </Button>
           <Button asChild size="sm">
-            <Link href="/sign-up">Get started free</Link>
+            <Link href="/resume-builder">Build my resume</Link>
           </Button>
         </div>
 
@@ -74,7 +79,7 @@ export function MarketingHeader() {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="py-1 text-sm font-medium text-muted-foreground"
+                className="py-2 text-sm font-medium text-muted-foreground"
               >
                 {l.label}
               </a>
@@ -84,7 +89,7 @@ export function MarketingHeader() {
                 <Link href="/sign-in">Log in</Link>
               </Button>
               <Button asChild size="sm" className="h-10">
-                <Link href="/sign-up">Get started free</Link>
+                <Link href="/resume-builder">Build my resume</Link>
               </Button>
             </div>
           </nav>
