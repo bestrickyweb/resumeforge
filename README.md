@@ -144,6 +144,10 @@ Create a `.env` file in the project root. Required variables:
 - `PAYSTACK_SECRET_KEY` — Paystack API key for billing
 - `PAYSTACK_PUBLIC_KEY` — Paystack public key for client-side checkout
 
+Better Auth trusts the production origins `https://tailorvance.com`,
+`https://tailorvance.vercel.app`, and `https://resumeforgestrategy.vercel.app`.
+Add any additional custom application domain to `trustedOrigins` in `lib/auth.ts`.
+
 ### Paystack Webhook
 
 Configure your Paystack webhook to point to `/api/paystack/webhook` to receive asynchronous payment events (charge.success, charge.failed). The webhook verifies the signature using `PAYSTACK_SECRET_KEY`.
