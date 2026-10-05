@@ -83,16 +83,18 @@ export function MarketingHeader() {
               More <ChevronDown className="h-3 w-3" />
             </button>
             {moreOpen && (
-              <div className="absolute top-full right-0 mt-2 w-48 rounded-lg border border-border bg-card p-2 shadow-lg">
-                {secondaryLinks.map((l) => (
-                  <a
-                    key={l.href}
-                    href={navHref(l)}
-                    className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary"
-                  >
-                    {l.label}
-                  </a>
-                ))}
+              <div className="absolute top-full right-0 w-48 pt-2">
+                <div className="rounded-lg border border-border bg-card p-2 shadow-lg">
+                  {secondaryLinks.map((l) => (
+                    <a
+                      key={l.href}
+                      href={navHref(l)}
+                      className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary"
+                    >
+                      {l.label}
+                    </a>
+                  ))}
+                </div>
               </div>
             )}
           </div>
