@@ -1,5 +1,4 @@
 import { Analytics } from '@vercel/analytics/next'
-import { Inter, Plus_Jakarta_Sans, Geist_Mono } from 'next/font/google'
 import type { Metadata } from 'next'
 import { Toaster } from '@/components/ui/sonner'
 import {
@@ -16,25 +15,6 @@ import {
 } from '@/lib/seo'
 import './globals.css'
 import './font.css'
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-sans',
-  display: 'swap',
-})
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  weight: ['500', '600', '700', '800'],
-  variable: '--font-heading',
-  display: 'swap',
-})
-const geistMono = Geist_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-geist-mono',
-  display: 'swap',
-})
 
 const jsonLd = JSON.stringify(structuredData)
 const orgJsonLd = JSON.stringify(organizationData)
@@ -91,7 +71,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="bg-background" suppressHydrationWarning>
-      <body className={inter.variable + ' ' + jakarta.variable + ' ' + geistMono.variable + ' font-sans antialiased'}>
+      <body className="font-sans antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: jsonLd }}
@@ -119,4 +99,3 @@ export default function RootLayout({
     </html>
   )
 }
-
