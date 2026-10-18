@@ -7,6 +7,7 @@ import { db } from '@/lib/db'
 import { tailoredCv, user } from '@/lib/db/schema'
 import { getUserId } from '@/lib/session'
 import { getUsage } from '@/app/actions/queries'
+import { recordUsage } from '@/lib/usage'
 import { revalidatePath } from 'next/cache'
 import { and, eq } from 'drizzle-orm'
 import { getTemplate, DEFAULT_TEMPLATE_SLUG } from '@/lib/resume-templates'
@@ -25,7 +26,7 @@ const buildSchema = z.object({
   builtCv: z
     .string()
     .describe(
-      'The full resume in clean PLAIN TEXT, ATS-safe, following Google/Meta best practices. Reverse chronological work experience, quantified achievement bullets, action verbs, CAR format. Single column, no tables/images/markdown. Standard ALL CAPS headings.',
+      'The full resume in clean PLAIN TEXT, ATS-safe, following recruiter best practices. Reverse chronological work experience, quantified achievement bullets, action verbs, CAR format. Single column, no tables/images/markdown. Standard ALL CAPS headings.',
     ),
   keywords: z
     .array(z.string())
@@ -65,16 +66,8 @@ function validateBuiltCv(cv: string): string[] {
     }
   }
 
-  const bulletLines = cv.split('\n').filter((l) => l.trim().startsWith('-'))
-  if (bulletLines.length > 0) {
-    const withNumber = bulletLines.filter((l) => /\d/.test(l)).length
-    const ratio = withNumber / bulletLines.length
-    if (ratio < 0.5) {
-      problems.push(
-        `Add concrete numbers to more achievement bullets (${withNumber}/${bulletLines.length} currently have one).`,
-      )
-    }
-  }
+  // No metric-density check here: forcing numbers into bullets makes the model
+  // invent figures the candidate never gave us.
 
   if (!/@/.test(cv)) {
     problems.push('Include a contact email in the body of the CV.')
@@ -95,7 +88,7 @@ export async function buildResume(input: {
 }): Promise<BuildResumeResult> {
   const userId = await getUserId()
 
-  const usage = await getUsage()
+  const usage = await getUsage({ fresh: true })
   const cvRemaining = usage.features.cvTailoring.remaining
   if (cvRemaining !== Infinity && cvRemaining <= 0) {
     return {
@@ -155,18 +148,21 @@ export async function buildResume(input: {
       : ''
 
     const systemPrompt =
-      `You are a world-class CV architect who has reviewed 10,000+ resumes for Google, Meta, Amazon, and top startups. ` +
-      `Your resumes get callbacks because they follow the exact formatting and content patterns those companies expect. ` +
-      `You write in the Claude style: concise, scannable, no fluff, every line earns its place. ` +
-      `You never fabricate jobs, degrees, or qualifications. You extract and reframe truth from the candidate's background. ` +
+      `You are a world-class CV writer who has reviewed thousands of resumes for top employers and startups. ` +
+      `Your resumes get callbacks because they follow the formatting and content patterns recruiters expect. ` +
+      `You write concisely: scannable, no fluff, every line earns its place. ` +
+      `You never fabricate jobs, degrees, qualifications, or numbers. You extract and reframe truth from the candidate's background. ` +
+      `Keep the candidate's own voice and plain wording; avoid buzzwords and clichés like "spearheaded", "synergy", "results-driven" or "passionate". ` +
       `\n\n` +
-      `RESUME PRINCIPLES (Google / Meta / FAANG proven):\n` +
+      `RESUME PRINCIPLES:\n` +
       `1. REVERSE CHRONOLOGICAL: Most recent role first. This is what recruiters and ATS expect.\n` +
       `2. CAR FORMAT (Context-Action-Result) for bullets: What was the situation? What did YOU do? What was the quantified outcome?\n` +
       `3. ACTION VERBS: Start every bullet with a strong verb (Led, Built, Drove, Launched, Optimized, Scaled, Reduced, Increased...).\n` +
-      `4. QUANTIFY EVERYTHING: Add %, $, count, team size, timeframe, scale. "approximately X" is acceptable if exact figures aren't known.\n` +
+      `4. QUANTIFY WITH REAL NUMBERS ONLY: Use every %, $, count, team size, timeframe and scale the candidate provided. ` +
+      `NEVER invent, estimate or round up a figure that is not in their background — no "approximately X". ` +
+      `If a bullet has no real number, make it concrete with scope and outcome instead.\n` +
       `5. TAILOR TO TARGET ROLE: Mirror the exact role title. Front-load relevant skills and achievements.\n` +
-      `6. CLAUDE-STYLE CONCISENESS: Scannable, punchy, no jargon-filler. "Managed a team" → "Led 6-engineer team".\n` +
+      `6. CONCISENESS: Scannable, punchy, no jargon-filler. "Managed a team" → "Led 6-engineer team".\n` +
       `7. ATS SAFETY (critical): Output PURE PLAIN TEXT only. Single column. No tables, text boxes, columns, images, icons, graphics. ` +
       `Standard ALL CAPS headings: CONTACT, PROFESSIONAL SUMMARY, WORK EXPERIENCE, EDUCATION, SKILLS, CERTIFICATIONS, PROJECTS (if space permits). ` +
       `Place name, email, phone, LinkedIn in the document BODY (never header/footer). ` +
@@ -204,8 +200,11 @@ export async function buildResume(input: {
       const { experimental_output: retryOut } = await generateText({
         model: buildModel,
         system: systemPrompt,
+        // Resend the full brief: the retry previously got only the issue list
+        // and rebuilt the resume without the candidate's background.
         prompt:
-          `Fix ALL of these issues in the resume:\n- ` +
+          prompt +
+          `\n\nYour previous attempt had these issues — fix ALL of them:\n- ` +
           problems.join('\n- ') +
           '\n\nGenerate the corrected structured output.',
         experimental_output: Output.object({ schema: buildSchema }),
@@ -237,6 +236,7 @@ export async function buildResume(input: {
        })
       .returning({ id: tailoredCv.id })
 
+    await recordUsage(userId, 'resumeTemplate')
     revalidatePath('/dashboard')
     revalidatePath('/dashboard/cvs')
     revalidatePath(`/dashboard/cvs/${row.id}`)

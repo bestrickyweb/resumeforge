@@ -9,6 +9,7 @@ import { getUserId } from '@/lib/session'
 import { revalidatePath } from 'next/cache'
 import { and, eq } from 'drizzle-orm'
 import { getUsage } from '@/app/actions/queries'
+import { recordUsage } from '@/lib/usage'
 
 const tailorModel = process.env.GOOGLE_GENERATIVE_AI_API_KEY
   ? google('gemini-2.5-flash')
@@ -43,7 +44,7 @@ export async function generateInterviewQuestions(input: {
 }) {
   const userId = await getUserId()
 
-  const usage = await getUsage()
+  const usage = await getUsage({ fresh: true })
   const feature = usage.features.mockInterview
   if (feature.limit !== Infinity && feature.remaining <= 0) {
     return { ok: false as const, error: 'You have reached your mock interview limit for this period.' }
@@ -83,6 +84,7 @@ export async function generateInterviewQuestions(input: {
       })
       .returning({ id: interviewSession.id })
 
+    await recordUsage(userId, 'mockInterview')
     return { ok: true as const, sessionId: row.id, questions: out.questions }
   } catch (err) {
     console.log('[v0] generateInterviewQuestions error:', err instanceof Error ? err.message : err)

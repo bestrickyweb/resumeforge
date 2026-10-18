@@ -5,6 +5,7 @@ import { google } from '@ai-sdk/google'
 import { z } from 'zod'
 import { getUserId } from '@/lib/session'
 import { getUsage } from '@/app/actions/queries'
+import { recordUsage } from '@/lib/usage'
 
 const tailorModel = process.env.GOOGLE_GENERATIVE_AI_API_KEY
   ? google('gemini-2.5-flash')
@@ -13,7 +14,11 @@ const tailorModel = process.env.GOOGLE_GENERATIVE_AI_API_KEY
 const achievementSchema = z.object({
   originalBullet: z.string().describe('The exact bullet as it appears in the CV'),
   hasMetric: z.boolean().describe('Whether the bullet already contains a quantifiable metric'),
-  suggestion: z.string().describe('A suggested rewrite adding a metric if missing'),
+  suggestion: z
+    .string()
+    .describe(
+      'A suggested rewrite. Never invent numbers: where a metric is missing, use a bracketed placeholder the candidate fills in, e.g. "[X]%" or "[N] customers".',
+    ),
   metricType: z.string().describe('Type of metric: amount, percentage, frequency, scale'),
 })
 
@@ -32,7 +37,7 @@ export type AchievementScanResult = {
 export async function scanAchievements(input: { cvText: string }): Promise<AchievementScanResult> {
   const userId = await getUserId()
 
-  const usage = await getUsage()
+  const usage = await getUsage({ fresh: true })
   const feature = usage.features.achievementsScanner
   if (feature.limit !== Infinity && feature.remaining <= 0) {
     return {
@@ -63,6 +68,7 @@ export async function scanAchievements(input: { cvText: string }): Promise<Achie
     })
 
     const out = experimental_output
+    await recordUsage(userId, 'achievementsScanner')
     return {
       ok: true,
       achievements: out.achievements,

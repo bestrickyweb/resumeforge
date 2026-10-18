@@ -1,9 +1,10 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { tailoredCv, application, subscription, user, feedback, careerRoadmap } from '@/lib/db/schema'
+import { tailoredCv, application, subscription, user, feedback, careerRoadmap, reminder } from '@/lib/db/schema'
 import { getUserId } from '@/lib/session'
-import { and, desc, eq, gte, sql } from 'drizzle-orm'
+import { and, desc, eq, gte, notInArray, sql } from 'drizzle-orm'
+import { countUsageEvents, usagePeriodStart } from '@/lib/usage'
 import { unstable_cache } from 'next/cache'
 import { type InterviewBand } from '@/lib/utils'
 import {
@@ -58,89 +59,91 @@ export async function getSubscription(userId: string): Promise<SubscriptionInfo>
   )()
 }
 
-export async function getUsage(): Promise<UsageInfo> {
+// Server actions that enforce a limit pass { fresh: true } so a count cached
+// up to 30s ago can't let a user run past their limit.
+export async function getUsage(opts?: { fresh?: boolean }): Promise<UsageInfo> {
   const userId = await getUserId()
-  
-  return unstable_cache(
-    async () => {
-      const sub = await getSubscription(userId)
-      const plan = (sub.plan as PlanId) ?? 'free'
+  if (opts?.fresh) return computeUsage(userId)
 
-      const [userRow] = await db
-        .select({ feedbackSubmittedAt: user.feedbackSubmittedAt })
-        .from(user)
-        .where(eq(user.id, userId))
-        .limit(1)
-
-      const features = await buildFeatureUsage(plan, userId)
-
-      const cv = features.cvTailoring
-      return {
-        plan,
-        status: sub.status,
-        limit: cv.limit,
-        used: cv.used,
-        remaining: cv.remaining,
-        features,
-        feedbackSubmittedAt: userRow?.feedbackSubmittedAt ?? null,
-      }
-    },
+  const cached = await unstable_cache(
+    () => computeUsage(userId),
     ['usage', userId],
     { revalidate: 30 },
   )()
+  return reviveUsage(cached)
 }
 
-async function countWeeklyCvs(userId: string, plan: PlanId): Promise<number> {
-  const now = new Date()
-  const day = now.getDay()
-  const diffToMonday = day === 0 ? -6 : 1 - day
-  const startOfWeek = new Date(now)
-  startOfWeek.setHours(0, 0, 0, 0)
-  startOfWeek.setDate(startOfWeek.getDate() + diffToMonday)
+async function computeUsage(userId: string): Promise<UsageInfo> {
+  const sub = await getSubscription(userId)
+  const plan = (sub.plan as PlanId) ?? 'free'
 
+  const [userRow] = await db
+    .select({ feedbackSubmittedAt: user.feedbackSubmittedAt })
+    .from(user)
+    .where(eq(user.id, userId))
+    .limit(1)
+
+  const features = await buildFeatureUsage(plan, userId)
+
+  const cv = features.cvTailoring
+  return {
+    plan,
+    status: sub.status,
+    limit: cv.limit,
+    used: cv.used,
+    remaining: cv.remaining,
+    features,
+    feedbackSubmittedAt: userRow?.feedbackSubmittedAt ?? null,
+  }
+}
+
+// unstable_cache round-trips through JSON, which turns Infinity into null and
+// Dates into strings. Without this, every `limit !== Infinity && remaining <= 0`
+// check treats unlimited plans as exhausted on a cache hit.
+function reviveUsage(u: UsageInfo): UsageInfo {
+  const inf = (n: number | null) => (n === null ? Infinity : n)
+  const features = {} as PlanFeatureMap
+  for (const [key, f] of Object.entries(u.features) as [PlanFeatureKey, PlanFeatureLimit][]) {
+    features[key] = { used: f.used, limit: inf(f.limit), remaining: inf(f.remaining) }
+  }
+  return {
+    ...u,
+    limit: inf(u.limit),
+    remaining: inf(u.remaining),
+    features,
+    feedbackSubmittedAt: u.feedbackSubmittedAt ? new Date(u.feedbackSubmittedAt) : null,
+  }
+}
+
+async function countCvs(userId: string, since: Date): Promise<number> {
   const [{ count }] = await db
     .select({ count: sql<number>`count(*)::int` })
     .from(tailoredCv)
-    .where(
-      and(
-        eq(tailoredCv.userId, userId),
-        gte(tailoredCv.createdAt, startOfWeek),
-      ),
-    )
+    .where(and(eq(tailoredCv.userId, userId), gte(tailoredCv.createdAt, since)))
   return Number(count)
 }
 
-async function countApplications(userId: string): Promise<number> {
+// The tracker limit is on *active* applications, so closed ones free a slot.
+const CLOSED_APPLICATION_STATUSES = ['rejected', 'declined', 'accepted']
+
+async function countActiveApplications(userId: string): Promise<number> {
   const [{ count }] = await db
     .select({ count: sql<number>`count(*)::int` })
     .from(application)
-    .where(eq(application.userId, userId))
-  return Number(count)
-}
-
-async function countRoadmaps(userId: string): Promise<number> {
-  const [{ count }] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(careerRoadmap)
-    .where(eq(careerRoadmap.userId, userId))
-  return Number(count)
-}
-
-async function countTemplateBuilds(userId: string): Promise<number> {
-  const startOfMonth = new Date()
-  startOfMonth.setDate(1)
-  startOfMonth.setHours(0, 0, 0, 0)
-
-  const [{ count }] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(tailoredCv)
     .where(
       and(
-        eq(tailoredCv.userId, userId),
-        sql`${tailoredCv.template} IS NOT NULL`,
-        gte(tailoredCv.createdAt, startOfMonth),
+        eq(application.userId, userId),
+        notInArray(application.status, CLOSED_APPLICATION_STATUSES),
       ),
     )
+  return Number(count)
+}
+
+async function countPendingReminders(userId: string): Promise<number> {
+  const [{ count }] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(reminder)
+    .where(and(eq(reminder.userId, userId), eq(reminder.status, 'pending')))
   return Number(count)
 }
 
@@ -148,51 +151,26 @@ async function buildFeatureUsage(
   plan: PlanId,
   userId: string,
 ): Promise<PlanFeatureMap> {
-  const plans = PLAN_FEATURE_LIMITS
-  const [
-    cvCount,
-    appCount,
-    roadmapCount,
-    templateCount,
-  ] = await Promise.all([
-    countWeeklyCvs(userId, plan),
-    countApplications(userId),
-    countRoadmaps(userId),
-    countTemplateBuilds(userId),
+  const limits = PLAN_FEATURE_LIMITS[plan] ?? PLAN_FEATURE_LIMITS.free
+  const since = usagePeriodStart(plan)
+  const [cvCount, activeApps, pendingReminders, events] = await Promise.all([
+    countCvs(userId, since),
+    countActiveApplications(userId),
+    countPendingReminders(userId),
+    countUsageEvents(userId, since),
   ])
 
-  const keys = [
-    'cvTailoring',
-    'coverLetter',
-    'applicationTracker',
-    'mockInterview',
-    'linkedInOptimizer',
-    'achievementsScanner',
-    'salaryBenchmarking',
-    'followUpReminder',
-    'jobFitAnalyzer',
-    'jobImport',
-    'chromeExtension',
-    'skillsGap',
-    'interviewCopilot',
-    'autoApply',
-    'atsScanner',
-    'resumeTemplate',
-    'aiResumeScan',
-  ] as const satisfies readonly PlanFeatureKey[]
+  const usedFor = (key: PlanFeatureKey): number => {
+    if (key === 'cvTailoring') return cvCount
+    if (key === 'applicationTracker') return activeApps
+    if (key === 'followUpReminder') return pendingReminders
+    return events[key] ?? 0
+  }
 
   const map = {} as PlanFeatureMap
-  for (const key of keys) {
-    const limit = plans[plan]?.[key] ?? 0
-    const used = key === 'cvTailoring'
-      ? cvCount
-      : key === 'applicationTracker'
-        ? appCount
-        : key === 'skillsGap'
-          ? roadmapCount
-          : key === 'resumeTemplate'
-            ? templateCount
-            : 0
+  for (const key of Object.keys(limits) as PlanFeatureKey[]) {
+    const limit = limits[key]
+    const used = usedFor(key)
     const remaining = limit === Infinity ? Infinity : Math.max(0, limit - used)
     map[key] = { used, limit, remaining }
   }

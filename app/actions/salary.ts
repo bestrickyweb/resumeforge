@@ -5,6 +5,7 @@ import { google } from '@ai-sdk/google'
 import { z } from 'zod'
 import { getUserId } from '@/lib/session'
 import { getUsage } from '@/app/actions/queries'
+import { recordUsage } from '@/lib/usage'
 import { PLAN_FEATURE_LIMITS, type PlanId, type PlanFeatureKey } from '@/lib/plans'
 
 const tailorModel = process.env.GOOGLE_GENERATIVE_AI_API_KEY
@@ -36,7 +37,7 @@ export async function benchmarkSalary(input: {
 }): Promise<SalaryBenchmarkResult> {
   const userId = await getUserId()
 
-  const usage = await getUsage()
+  const usage = await getUsage({ fresh: true })
   const feature = usage.features.salaryBenchmarking
   if (feature.limit !== Infinity && feature.remaining <= 0) {
     return {
@@ -69,6 +70,7 @@ export async function benchmarkSalary(input: {
     })
 
     const out = experimental_output
+    await recordUsage(userId, 'salaryBenchmarking')
     return {
       ok: true,
       rangeLow: out.rangeLow,

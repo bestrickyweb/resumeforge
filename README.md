@@ -42,7 +42,7 @@ The dashboard surfaces counts for total CVs generated, total applications, inter
 
 ### Usage & Billing
 
-Free-tier users receive three tailored CVs per month. Paid tiers unlock higher monthly limits and cover letters. Payments are handled through Paystack. Usage is tracked per calendar month for paying users, while free-tier usage is tracked across the lifetime of the account.
+Free-tier users receive three tailored CVs per week. Paid tiers unlock higher monthly limits and cover letters. Payments are handled through Paystack. Free-tier limits reset every Monday; paid limits reset on the 1st of each calendar month (see `usagePeriodStart` in `lib/usage.ts`). Metered AI features that don't otherwise save a row record a `usage_event` so their limits can be counted.
 
 ### File Upload & Extraction
 

@@ -103,7 +103,7 @@ export function ApplicationsBoard({
       toast.success(`Reminder set for ${when.toLocaleDateString()}`)
       router.refresh()
     } else {
-      toast.error("Could not set reminder")
+      toast.error(("error" in res && res.error) || "Could not set reminder")
     }
   }
 

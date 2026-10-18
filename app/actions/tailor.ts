@@ -71,7 +71,6 @@ export type TailorResult = {
 // Returns a list of human-readable problems; empty means the CV passed.
 function validateTailoredCv(cv: string): string[] {
   const problems: string[] = []
-  const lines = cv.split('\n')
 
   // No markdown leakage. Exclude '_' because emails legitimately contain it
   // (e.g. john_doe@x.com) and the CV is plain text with dash bullets.
@@ -88,17 +87,8 @@ function validateTailoredCv(cv: string): string[] {
     }
   }
 
-  // Quantification: at least 60% of experience bullets should carry a digit.
-  const bulletLines = lines.filter((l) => l.trim().startsWith('-'))
-  if (bulletLines.length > 0) {
-    const withNumber = bulletLines.filter((l) => /\d/.test(l)).length
-    const ratio = withNumber / bulletLines.length
-    if (ratio < 0.6) {
-      problems.push(
-        `Add a concrete metric (%, $, count, scale, or timeframe) to more achievement bullets (${withNumber}/${bulletLines.length} currently have one).`,
-      )
-    }
-  }
+  // No metric-density check: demanding numbers the original CV doesn't have
+  // pushes the model to invent them.
 
   // Contact line: name on its own line plus an email/@ somewhere.
   if (!/@/.test(cv)) {
@@ -130,7 +120,7 @@ export async function tailorCv(input: {
   const linkedinUrl = sanitizeLinkedInUrl(input.linkedinUrl)
 
   // Enforce usage limits
-  const usage = await getUsage()
+  const usage = await getUsage({ fresh: true })
   const cvRemaining = usage.features.cvTailoring.remaining
   if (cvRemaining !== Infinity && cvRemaining <= 0) {
     return {
@@ -169,9 +159,11 @@ export async function tailorCv(input: {
       'Be honest in the match scores: a generic untailored CV should usually score between 30-55 before tailoring. ' +
       'KEYWORD MATCH IS THE HIGHEST-LEVERAGE FACTOR: resumes below 70% keyword match are filtered before a human reads them; ' +
       'aim for 85%+. Mirror the job title and required skills verbatim where truthful. ' +
-      'QUANTIFICATION: every achievement bullet under WORK EXPERIENCE must carry at least one concrete number ' +
-      '(percentage, dollar amount, count, team size, scale, or timeframe). If the original implies a magnitude but omits it, ' +
-      'insert a conservative "approximately X" rather than inventing a precise figure. ' +
+      'QUANTIFICATION: keep and surface every real number in the original CV (percentage, amount, count, team size, scale, timeframe). ' +
+      'NEVER invent, estimate or inflate a figure that is not in the original — no "approximately X". ' +
+      'If a bullet has no real number, make it concrete with scope and outcome instead. ' +
+      'VOICE: keep the candidate\'s own plain wording where it works; avoid buzzwords and clichés like ' +
+      '"spearheaded", "synergy", "results-driven" or "passionate" — recruiters now reject resumes that read as AI-generated. ' +
       'ATS PARSE-SAFETY (critical): output PURE PLAIN TEXT, single column only. NEVER use tables, text boxes, columns, ' +
       'images, icons, or graphics. Use ALL CAPS for standard section headings ' +
       '(PROFESSIONAL SUMMARY, WORK EXPERIENCE, SKILLS, EDUCATION, CERTIFICATIONS). ' +

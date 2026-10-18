@@ -7,6 +7,7 @@ import { db } from '@/lib/db'
 import { linkedinProfile } from '@/lib/db/schema'
 import { getUserId } from '@/lib/session'
 import { getUsage } from '@/app/actions/queries'
+import { recordUsage } from '@/lib/usage'
 import { revalidatePath } from 'next/cache'
 import { and, eq } from 'drizzle-orm'
 
@@ -97,7 +98,7 @@ export async function importLinkedInProfile(input: { urlOrText: string }) {
 export async function optimizeLinkedInProfile(input: { profileText?: string }) {
   const userId = await getUserId()
 
-  const usage = await getUsage()
+  const usage = await getUsage({ fresh: true })
   const feature = usage.features.linkedInOptimizer
   if (feature.limit !== Infinity && feature.remaining <= 0) {
     return {
@@ -143,6 +144,7 @@ export async function optimizeLinkedInProfile(input: { profileText?: string }) {
       })
       .where(eq(linkedinProfile.userId, userId))
 
+    await recordUsage(userId, 'linkedInOptimizer')
     revalidatePath('/dashboard/profile')
     return {
       ok: true as const,
