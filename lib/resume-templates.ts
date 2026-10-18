@@ -8,15 +8,17 @@ export interface ResumeTemplate {
   aiGuidance: string
 }
 
+// Slugs are persisted on tailored_cv.template, so never rename them — only the
+// display name and guidance.
 export const RESUME_TEMPLATES: ResumeTemplate[] = [
   {
     slug: 'google',
-    name: 'Google',
+    name: 'Impact',
     description:
       'Clean, ATS-safe, single-column layout with standard headings. The safest choice for passing automated screening systems.',
     tier: 'free',
     aiGuidance:
-      'Format: Google-style resume. Single column, ATS-safe, standard ALL CAPS headings (CONTACT, PROFESSIONAL SUMMARY, EXPERIENCE, SKILLS, EDUCATION). Emphasise quantifiable impact at Google-scale companies. Use concise, results-oriented bullets. Keep to 1-2 pages. Place contact info in the body, not header/footer.',
+      'Format: Impact resume. Single column, ATS-safe, standard ALL CAPS headings (CONTACT, PROFESSIONAL SUMMARY, EXPERIENCE, SKILLS, EDUCATION). Emphasise the real, measurable impact the candidate achieved. Use concise, results-oriented bullets. Keep to 1-2 pages. Place contact info in the body, not header/footer.',
   },
   {
     slug: 'classic',
@@ -29,12 +31,12 @@ export const RESUME_TEMPLATES: ResumeTemplate[] = [
   },
   {
     slug: 'meta',
-    name: 'Meta',
+    name: 'Product Builder',
     description:
-      'Project-focused format with a dedicated "Selected Projects" section. Emphasizes measurable outcomes and rapid iteration — mirroring Meta\'s engineering culture.',
+      'Project-focused format with a dedicated "Selected Projects" section. Emphasizes measurable outcomes and rapid iteration — ideal for product and engineering roles.',
     tier: 'pro',
     aiGuidance:
-      'Format: Meta/Facebook engineering resume style. Key differences from generic: (1) Include a "PROJECTS" section after Experience with 2-3 major projects, each with 3-4 bullets showing impact at scale (MAU, % improvement, cost savings). (2) Lead bullets with the metric first (e.g. "Increased X by 30%"). (3) Use Meta-specific keywords like "growth", "engagement", "retention", "A/B testing", "pirate metrics" where truthful. (4) Keep skills section concise with core languages and frameworks. (5) Single column, plain text ATS-safe. No "References available upon request".',
+      'Format: Product/engineering resume. Key differences from generic: (1) Include a "PROJECTS" section after Experience with 2-3 major projects, each with 3-4 bullets showing impact (users, % improvement, cost savings) using only figures the candidate provided. (2) Where a real metric exists, lead the bullet with it (e.g. "Increased X by 30%"). (3) Use product keywords like "growth", "engagement", "retention", "A/B testing" where truthful. (4) Keep skills section concise with core languages and frameworks. (5) Single column, plain text ATS-safe. No "References available upon request".',
   },
   {
     slug: 'nigeria',
@@ -47,21 +49,21 @@ export const RESUME_TEMPLATES: ResumeTemplate[] = [
   },
   {
     slug: 'microsoft',
-    name: 'Microsoft',
+    name: 'Enterprise',
     description:
       'Corporate, structured format with a "Core Competencies" skills matrix and achievement-focused bullets. Ideal for enterprise and technical roles.',
     tier: 'pro',
     aiGuidance:
-      'Format: Microsoft/corporate enterprise resume. Include a "CORE COMPETENCIES" section near the top with categorized skills (e.g. Languages: ..., Cloud: ..., Tools: ...). Work experience bullets follow CAR format (Challenge, Action, Result) with metrics first. Use Microsoft-style action verbs (Architected, Orchestrated, Spearheaded, Optimised, Delivered). Single column, plain text, ALL CAPS headings (PROFESSIONAL SUMMARY, CORE COMPETENCIES, PROFESSIONAL EXPERIENCE, EDUCATION). Keep 1-2 pages.',
+      'Format: Corporate enterprise resume. Include a "CORE COMPETENCIES" section near the top with categorized skills (e.g. Languages: ..., Cloud: ..., Tools: ...). Work experience bullets follow CAR format (Challenge, Action, Result), leading with the result where a real metric exists. Use plain, specific action verbs (Built, Led, Designed, Reduced, Delivered) rather than buzzwords. Single column, plain text, ALL CAPS headings (PROFESSIONAL SUMMARY, CORE COMPETENCIES, PROFESSIONAL EXPERIENCE, EDUCATION). Keep 1-2 pages.',
   },
   {
     slug: 'apple',
-    name: 'Apple',
+    name: 'Minimalist',
     description:
       'Minimalist, design-forward format that emphasises simplicity and elegance. Focuses on innovation, design thinking, and high-impact achievements.',
     tier: 'unlimited',
     aiGuidance:
-      'Format: Apple-inspired resume. Extremely concise and minimalist. "PROFESSIONAL SUMMARY" is 1-2 punchy lines, not a paragraph. Work experience bullets are sparse but powerful — 2-3 bullets per role, each starting with a strong verb and a concrete metric. Include a "DESIGN" or "INNOVATION" callout if the candidate has relevant projects. Use clean section headings. No graphics, single column, plain text. ATS-safe. Less is more — whitespace between sections.',
+      'Format: Minimalist resume. Extremely concise. "PROFESSIONAL SUMMARY" is 1-2 punchy lines, not a paragraph. Work experience bullets are sparse but powerful — 2-3 bullets per role, each starting with a strong verb and a concrete outcome. Include a "DESIGN" or "INNOVATION" callout if the candidate has relevant projects. Use clean section headings. No graphics, single column, plain text. ATS-safe. Less is more — whitespace between sections.',
   },
 ]
 

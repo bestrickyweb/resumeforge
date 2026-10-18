@@ -5,6 +5,7 @@ import { google } from '@ai-sdk/google'
 import { z } from 'zod'
 import { getUserId } from '@/lib/session'
 import { getUsage } from '@/app/actions/queries'
+import { recordUsage } from '@/lib/usage'
 import { db } from '@/lib/db'
 import { careerSprint, weeklyCheckin, careerRoadmap } from '@/lib/db/schema'
 import { and, desc, eq } from 'drizzle-orm'
@@ -53,7 +54,7 @@ export async function createSprint(input: {
 }) {
   const userId = await getUserId()
 
-  const usage = await getUsage()
+  const usage = await getUsage({ fresh: true })
   const feature = usage.features.skillsGap
   if (feature.limit !== Infinity && feature.remaining <= 0) {
     return {
@@ -160,6 +161,7 @@ Return as JSON:`,
     })
     .returning()
 
+  await recordUsage(userId, 'skillsGap')
   revalidatePath('/dashboard/interview')
   revalidatePath('/dashboard')
 

@@ -4,6 +4,7 @@ import { google } from '@ai-sdk/google'
 import { z } from 'zod'
 import { getUserId } from '@/lib/session'
 import { getUsage } from '@/app/actions/queries'
+import { recordUsage } from '@/lib/usage'
 import { db } from '@/lib/db'
 import { roastSession } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
@@ -42,7 +43,7 @@ export type RoastResult = {
 export async function roastCv(input: { cvText: string; jobDescription?: string }): Promise<RoastResult> {
   const userId = await getUserId()
 
-  const usage = await getUsage()
+  const usage = await getUsage({ fresh: true })
   const feature = usage.features.achievementsScanner
   if (feature.limit !== Infinity && feature.remaining <= 0) {
     return {
@@ -87,6 +88,7 @@ export async function roastCv(input: { cvText: string; jobDescription?: string }
       })
       .returning({ id: roastSession.id })
 
+    await recordUsage(userId, 'achievementsScanner')
     return {
       ok: true,
       score: Math.round(out.overallScore),

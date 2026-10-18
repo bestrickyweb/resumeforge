@@ -5,6 +5,7 @@ import { google } from '@ai-sdk/google'
 import { z } from 'zod'
 import { getUserId } from '@/lib/session'
 import { getUsage } from '@/app/actions/queries'
+import { recordUsage } from '@/lib/usage'
 
 const model = process.env.GOOGLE_GENERATIVE_AI_API_KEY
   ? google('gemini-2.5-flash')
@@ -31,7 +32,7 @@ export type AtsScanResult = {
 export async function scanResume(input: { cvText: string; jobDescription: string }): Promise<AtsScanResult> {
   const userId = await getUserId()
 
-  const usage = await getUsage()
+  const usage = await getUsage({ fresh: true })
   const feature = usage.features.atsScanner
   if (feature.limit !== Infinity && feature.remaining <= 0) {
     return {
@@ -61,6 +62,7 @@ export async function scanResume(input: { cvText: string; jobDescription: string
       experimental_output: Output.object({ schema: atsSchema }),
     })
 
+    await recordUsage(userId, 'atsScanner')
     return { ok: true, scan: experimental_output }
   } catch (err) {
     console.log('[v0] scanResume error:', err instanceof Error ? err.message : err)

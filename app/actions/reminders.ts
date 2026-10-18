@@ -31,6 +31,14 @@ export async function setReminder(input: {
   scheduledAt: string
 }) {
   const userId = await getUserId()
+  const usage = await getUsage({ fresh: true })
+  const reminders = usage.features.followUpReminder
+  if (reminders.limit !== Infinity && reminders.remaining <= 0) {
+    return {
+      ok: false,
+      error: `The free plan allows ${reminders.limit} pending reminders. Dismiss one or upgrade for unlimited reminders.`,
+    }
+  }
   const scheduled = new Date(input.scheduledAt)
   await db.insert(reminder).values({
     userId,

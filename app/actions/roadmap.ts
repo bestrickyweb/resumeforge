@@ -5,13 +5,14 @@ import { google } from '@ai-sdk/google'
 import { z } from 'zod'
 import { getUserId } from '@/lib/session'
 import { getUsage } from '@/app/actions/queries'
+import { recordUsage } from '@/lib/usage'
 import { db } from '@/lib/db'
 import {
   careerRoadmap,
   roadmapProgress,
 } from '@/lib/db/schema'
 import { and, desc, eq } from 'drizzle-orm'
-import { analyzeJobFit } from '@/app/actions/fit'
+import { runJobFit } from '@/lib/job-fit'
 
 const tailorModel = process.env.GOOGLE_GENERATIVE_AI_API_KEY
   ? google('gemini-2.5-flash')
@@ -114,7 +115,7 @@ export async function generateCareerRoadmap(input: {
 }) {
   const userId = await getUserId()
 
-  const usage = await getUsage()
+  const usage = await getUsage({ fresh: true })
   const feature = usage.features.skillsGap
   if (feature.limit !== Infinity && feature.remaining <= 0) {
     return {
@@ -138,7 +139,7 @@ export async function generateCareerRoadmap(input: {
   }
 
   try {
-    const fitResult = await analyzeJobFit({ jobDescription, cvText })
+    const fitResult = await runJobFit({ jobDescription, cvText })
     if (!fitResult.ok || !fitResult.matchScore) {
       return { ok: false as const, error: fitResult.error ?? 'Could not analyze job fit.' }
     }
@@ -235,6 +236,8 @@ Build a structured roadmap. Return the roadmap as JSON only.`,
     if (progressRows.length > 0) {
       await db.insert(roadmapProgress).values(progressRows)
     }
+
+    await recordUsage(userId, 'skillsGap')
 
     return {
       ok: true as const,

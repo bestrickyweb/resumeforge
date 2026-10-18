@@ -5,6 +5,7 @@ import { google } from '@ai-sdk/google'
 import { z } from 'zod'
 import { getUserId } from '@/lib/session'
 import { getUsage } from '@/app/actions/queries'
+import { recordUsage } from '@/lib/usage'
 
 const scanModel = process.env.GOOGLE_GENERATIVE_AI_API_KEY
   ? google('gemini-2.5-flash')
@@ -70,7 +71,7 @@ export async function scanResumeQuality(input: {
 }): Promise<ResumeScanResult> {
   const userId = await getUserId()
 
-  const usage = await getUsage()
+  const usage = await getUsage({ fresh: true })
   const feature = usage.features.aiResumeScan ?? { used: 0, limit: 0, remaining: 0 }
   if (feature.limit !== Infinity && feature.remaining <= 0) {
     return {
@@ -95,7 +96,7 @@ export async function scanResumeQuality(input: {
     const { experimental_output } = await generateText({
       model: scanModel,
       system:
-        'You are a senior recruiter and resume expert with 15 years of experience reviewing CVs for Google, Meta, and Fortune 500 companies. ' +
+        'You are a senior recruiter and resume expert with 15 years of experience reviewing CVs for top employers. ' +
         'You evaluate resumes holistically for ATS-readiness, keyword coverage, quantification, and format safety. ' +
         'Be honest and critical, but actionable. A fresh-from-scratch resume usually scores 65-85. Below 70 is likely filtered by ATS systems. ' +
         'Identify the 3-5 most impactful issues and give specific fixes.',
@@ -107,6 +108,7 @@ export async function scanResumeQuality(input: {
     })
 
     const out = experimental_output
+    await recordUsage(userId, 'aiResumeScan')
     return {
       ok: true,
       scan: {

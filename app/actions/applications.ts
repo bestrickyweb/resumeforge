@@ -5,6 +5,7 @@ import { application } from '@/lib/db/schema'
 import { getUserId } from '@/lib/session'
 import { and, eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
+import { getUsage } from '@/app/actions/queries'
 import type { ApplicationStatus } from '@/lib/applications'
 
 export async function createApplication(input: {
@@ -20,6 +21,14 @@ export async function createApplication(input: {
   const userId = await getUserId()
   if (!input.company.trim() || !input.role.trim()) {
     return { ok: false, error: 'Company and role are required.' }
+  }
+  const usage = await getUsage({ fresh: true })
+  const tracker = usage.features.applicationTracker
+  if (tracker.limit !== Infinity && tracker.remaining <= 0) {
+    return {
+      ok: false,
+      error: `The free plan tracks up to ${tracker.limit} active applications. Close one out or upgrade to track more.`,
+    }
   }
   await db.insert(application).values({
     userId,

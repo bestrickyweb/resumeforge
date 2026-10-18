@@ -275,6 +275,15 @@ export const weeklyCheckin = pgTable('weekly_checkin', {
   createdAt: timestamp('createdAt').notNull().defaultNow(),
 })
 
+// One row per metered AI action, so plan limits can be counted for features
+// that do not otherwise persist a row (ATS scans, job fit, etc.).
+export const usageEvent = pgTable('usage_event', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  feature: text('feature').notNull(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+})
+
 export const careerRoadmap = pgTable('career_roadmap', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
